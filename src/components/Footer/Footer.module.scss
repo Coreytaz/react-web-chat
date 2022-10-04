@@ -1,0 +1,11 @@
+.footer {
+    background-color: var(--additionalAccentColor);
+    position: absolute;
+    height: 60px;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 20px;
+}

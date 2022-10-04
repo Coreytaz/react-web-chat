@@ -1,0 +1,88 @@
+.form {
+    font-family: "Fira Sans";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+
+    letter-spacing: 0.009em;
+
+    color: #b3b3b3;
+
+    width: 100%;
+    position: relative;
+    height: 50px;
+    overflow: hidden;
+    & img {
+        position: absolute;
+        bottom: 6px;
+        left: 3px;
+    }
+    & input {
+        width: 100%;
+        height: 100%;
+        color: #000;
+        font-family: "Fira Sans";
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 18px;
+        padding-left: 26px;
+        letter-spacing: 0.009em;
+
+        color: #000000;
+        padding-top: 20px;
+        border: none;
+        outline: none;
+        &:focus + .labelName::after,
+        :valid + .labelName::after {
+            transform: translateX(0%);
+        }
+        &:focus + .labelName .contentName,
+        :valid + .labelName .contentName {
+            transform: translateY(-150%);
+            left: 1px;
+            color: #b3b3b3;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 14px;
+            letter-spacing: 0.009em;
+        }
+    }
+    & label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        border-bottom: 1px solid #e6e6e6;
+        &::after {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0;
+            bottom: -1px;
+            border-bottom: 2px solid var(--mainAccentColor);
+            transform: translateX(-100%);
+            transition: all 0.3s ease-in-out;
+        }
+    }
+    & .contentName {
+        position: absolute;
+        bottom: 5px;
+        left: 26px;
+        transition: all 0.3s ease-in-out;
+    }
+}
+
+.form input:focus ~ .labelName .contentName,
+.form input:valid ~ .labelName .contentName {
+    transform: translateY(-150%);
+    left: 1px;
+    color: #b3b3b3;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: 0.009em;
+}

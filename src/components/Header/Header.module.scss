@@ -1,4 +1,40 @@
-.header {
+header {
+    background-color: var(--additionalAccentColor);
+}
+
+.header__inner {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+.logo {
+    cursor: pointer;
+    color: var(--font-primay);
+    transition: color 0.3s ease-in-out;
+    &:hover {
+        color: var(--mainAccentColor);
+        & span {
+            color: var(--font-primay);
+        }
+    }
+    & span {
+        transition: color 0.3s ease-in-out;
+        color: var(--mainAccentColor);
+    }
+}
+
+.nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+    & li {
+        font-size: 1.24rem;
+        transition: color 0.3s ease-in-out;
+        cursor: pointer;
+        &:hover {
+            color: var(--mainAccentColor);
+        }
+    }
 }
