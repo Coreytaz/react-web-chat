@@ -1,13 +1,12 @@
 .form {
-    font-family: "Fira Sans";
+    font-family: inherit;
     font-style: normal;
     font-weight: 400;
     font-size: 15px;
     line-height: 18px;
 
     letter-spacing: 0.009em;
-
-    color: #b3b3b3;
+    background-color: var(--primary-color);
 
     width: 100%;
     position: relative;
@@ -19,6 +18,7 @@
         left: 3px;
     }
     & input {
+        background-color: var(--primary-color);
         width: 100%;
         height: 100%;
         color: #000;
@@ -41,7 +41,7 @@
         :valid + .labelName .contentName {
             transform: translateY(-150%);
             left: 1px;
-            color: #b3b3b3;
+            color: var(--font-primary);
             font-weight: 400;
             font-size: 12px;
             line-height: 14px;
@@ -51,27 +51,26 @@
     & label {
         position: absolute;
         bottom: 0;
-        left: 0;
+        left: 10px;
         width: 100%;
         height: 100%;
         pointer-events: none;
-        border-bottom: 1px solid #e6e6e6;
         &::after {
             content: "";
             position: absolute;
             height: 100%;
             width: 100%;
-            left: 0;
+            left: -5px;
             bottom: -1px;
-            border-bottom: 2px solid var(--mainAccentColor);
+            border-bottom: 3px solid var(--mainAccentColor);
             transform: translateX(-100%);
             transition: all 0.3s ease-in-out;
         }
     }
     & .contentName {
         position: absolute;
-        bottom: 5px;
-        left: 26px;
+        bottom: 15px;
+        left: 15px;
         transition: all 0.3s ease-in-out;
     }
 }
@@ -79,6 +78,7 @@
 .form input:focus ~ .labelName .contentName,
 .form input:valid ~ .labelName .contentName {
     transform: translateY(-150%);
+    bottom: 5px;
     left: 1px;
     color: #b3b3b3;
     font-weight: 400;
