@@ -11,12 +11,12 @@ header {
 
 .logo {
     cursor: pointer;
-    color: var(--font-primay);
+    color: var(--font-primary);
     transition: color 0.3s ease-in-out;
     &:hover {
         color: var(--mainAccentColor);
         & span {
-            color: var(--font-primay);
+            color: var(--font-primary);
         }
     }
     & span {
