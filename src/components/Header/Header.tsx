@@ -18,12 +18,12 @@ const Header = () => {
           </div>
           <nav className={style.nav}>
             <ul>
-              {location.pathname != "/auth" && (
+              {location.pathname !== "/auth" && (
                 <li>
                   <Link to="/auth">Регистрация</Link>
                 </li>
               )}
-              {location.pathname != "/" && (
+              {location.pathname !== "/" && (
                 <li>
                   <Link to="/">Авторизация</Link>
                 </li>
