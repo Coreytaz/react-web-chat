@@ -1,9 +1,9 @@
-import React from "react";
-import { Footer, Header } from "../components";
+import React from 'react'
+import { Footer, Header } from '../components'
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
+interface LayoutProps {
+  children: React.ReactNode
+}
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="container">{children}</div>
       <Footer />
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

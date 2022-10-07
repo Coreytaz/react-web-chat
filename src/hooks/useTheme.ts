@@ -1,11 +1,14 @@
-import React from "react";
+import React from 'react'
 
-export const useTheme = () => {
-  const [theme, setTheme] = React.useState("light");
+export const useTheme = (): {
+  theme: string
+  setTheme: React.Dispatch<React.SetStateAction<string>>
+} => {
+  const [theme, setTheme] = React.useState('light')
 
   React.useLayoutEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
-  return { theme, setTheme };
-};
+  return { theme, setTheme }
+}

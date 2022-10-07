@@ -1,13 +1,13 @@
-import React from "react";
-import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
-import { Routes, Route } from "react-router-dom";
+import React from 'react'
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
+import { Routes, Route } from 'react-router-dom'
 
-import "./style/index.scss";
-import Layout from "./layout/Layout";
-import Auth from "./pages/Auth";
+import './style/index.scss'
+import Layout from './layout/Layout'
+import Auth from './pages/Auth'
 
-function App() {
+function App (): JSX.Element {
   return (
     <Layout>
       <Routes>
@@ -16,7 +16,7 @@ function App() {
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </Layout>
-  );
+  )
 }
 
-export default App;
+export default App

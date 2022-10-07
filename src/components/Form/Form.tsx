@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
 interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const Form: React.FC<FormProps> = ({ children, className }) => {
@@ -9,7 +9,7 @@ const Form: React.FC<FormProps> = ({ children, className }) => {
     <form action="" className={className}>
       {children}
     </form>
-  );
-};
+  )
+}
 
-export default Form;
+export default Form

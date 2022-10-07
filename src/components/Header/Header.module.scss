@@ -10,7 +10,9 @@ header {
 }
 
 .logo {
-    cursor: pointer;
+    //cursor: pointer;
+    display: flex;
+    gap: 10px;
     color: var(--font-primary);
     transition: color 0.3s ease-in-out;
     & h2 {

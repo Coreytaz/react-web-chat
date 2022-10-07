@@ -1,6 +1,6 @@
-import React from "react";
-import styles from "./Input.module.scss";
-import cn from "classnames";
+import React from 'react'
+import styles from './Input.module.scss'
+import cn from 'classnames'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -12,7 +12,7 @@ const Input: React.FC<InputProps> = ({ className, ...props }) => {
         <span className={cn(styles.contentName)}>{props.placeholder}</span>
       </label>
     </div>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

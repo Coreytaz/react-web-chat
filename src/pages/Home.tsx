@@ -1,10 +1,10 @@
-import React from "react";
-import { Button, Form } from "../components";
-import Input from "../components/UI/Input/Input";
-import styles from "../style/Page/Home.module.scss";
+import React from 'react'
+import { Button, Form } from '../components'
+import Input from '../components/UI/Input/Input'
+import styles from '../style/Page/Home.module.scss'
 
-const Home = () => {
-  const [auth, setAuth] = React.useState(false);
+const Home = (): JSX.Element => {
+  const [auth, setAuth] = React.useState(false)
 
   if (!auth) {
     return (
@@ -18,7 +18,7 @@ const Home = () => {
           Войти
         </Button>
       </Form>
-    );
+    )
   }
 
   return (
@@ -66,7 +66,7 @@ const Home = () => {
         </main>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
