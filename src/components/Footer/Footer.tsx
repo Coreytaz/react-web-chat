@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '..'
+import { ThemeButton } from '..'
 import { useTheme } from '../../hooks/useTheme'
 import styles from './Footer.module.scss'
 
@@ -16,9 +16,7 @@ const Footer = (): JSX.Element => {
   return (
     <footer className={styles.footer}>
       <h3>Copyright © УрФУ, 2022</h3>
-      <Button appearance="primary" onClick={changeTheme}>
-        Сменить тему
-      </Button>
+      <ThemeButton appearance={theme === 'light' ? 'light' : 'dark'} onClick={changeTheme}/>
     </footer>
   )
 }

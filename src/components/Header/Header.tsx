@@ -1,20 +1,9 @@
 import React from 'react'
 import style from './Header.module.scss'
 import { Link, useLocation } from 'react-router-dom'
-import { useTheme } from '../../hooks/useTheme'
-import Button from '../UI/Button/Button'
 
 const Header = (): JSX.Element => {
   const location = useLocation()
-  const { theme, setTheme } = useTheme()
-
-  const changeTheme = (): void => {
-    if (theme === 'light') {
-      setTheme('dark')
-    } else {
-      setTheme('light')
-    }
-  }
 
   return (
     <header>
@@ -26,9 +15,6 @@ const Header = (): JSX.Element => {
                 React <span>Chat</span>
               </h2>
             </Link>
-            <Button appearance="primary" onClick={changeTheme}>
-        Сменить тему
-      </Button>
           </div>
           <nav className={style.nav}>
             <ul>
