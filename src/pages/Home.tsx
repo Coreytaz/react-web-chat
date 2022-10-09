@@ -1,11 +1,16 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
+import { isAuth } from '../redux/slice/authSlice'
+import { RootState, useAppDispatch } from '../redux/store'
 import styles from '../style/Page/Home.module.scss'
 
 const Home = (): JSX.Element => {
-  const [auth, setAuth] = React.useState(false)
+  const { auth } = useSelector((state: RootState) => state.authSlice)
+  const dispatch = useAppDispatch()
 
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!auth) {
     return (
       <Form className={styles.form}>
@@ -14,7 +19,7 @@ const Home = (): JSX.Element => {
           <Input name="Почта" placeholder="Почта" required />
           <Input name="Пароль" placeholder="Пароль" required />
         </div>
-        <Button appearance="primary" onClick={() => setAuth(!auth)}>
+        <Button appearance="primary" onClick={() => dispatch(isAuth())}>
           Войти
         </Button>
       </Form>
