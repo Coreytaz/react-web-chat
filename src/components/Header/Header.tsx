@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import style from './Header.module.scss'
 import { Link, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux/store'
 
 const Header = (): JSX.Element => {
+  const { auth, user } = useSelector((state: RootState) => state.authSlice)
   const location = useLocation()
 
   return (
@@ -18,16 +22,19 @@ const Header = (): JSX.Element => {
           </div>
           <nav className={style.nav}>
             <ul>
-              {location.pathname !== '/auth' && (
-                <li>
-                  <Link to="/auth">Регистрация</Link>
-                </li>
-              )}
-              {location.pathname !== '/' && (
-                <li>
-                  <Link to="/">Авторизация</Link>
-                </li>
-              )}
+              {!auth
+                ? (location.pathname !== '/auth'
+                    ? (
+                  <li>
+                    <Link to="/auth">Регистрация</Link>
+                  </li>
+                      )
+                    : (
+                  <li>
+                    <Link to="/">Авторизация</Link>
+                  </li>
+                      ))
+                : <h3>{user?.email}</h3>}
             </ul>
           </nav>
         </div>

@@ -4,9 +4,9 @@ interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   children: React.ReactNode
 }
 
-const Form: React.FC<FormProps> = ({ children, className }) => {
+const Form: React.FC<FormProps> = ({ children, className, ...props }) => {
   return (
-    <form action="" className={className}>
+    <form action="" className={className} {...props}>
       {children}
     </form>
   )
