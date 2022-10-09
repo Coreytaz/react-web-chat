@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:5000/api'
 axios.defaults.headers.options = {
@@ -6,11 +6,11 @@ axios.defaults.headers.options = {
 }
 
 export const AuthService = {
-  async login (email: string, password: string) {
+  async login (email: string, password: string): Promise<AxiosResponse<any, any>> {
     return await axios.post('auth/login', { email, password })
   },
 
-  async register (email: string, password: string) {
+  async register (email: string, password: string): Promise<AxiosResponse<any, any>> {
     return await axios.post('auth/register', { email, password })
   }
 }
