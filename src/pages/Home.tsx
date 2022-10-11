@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React from 'react'
 import { useMutation } from 'react-query'
 import { useSelector } from 'react-redux'
@@ -21,6 +22,27 @@ const Home = (): JSX.Element => {
       dispatch(isAuth(data))
     }
   })
+
+  React.useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises, @typescript-eslint/no-unused-vars
+    const token = localStorage.getItem('token')
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (token) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      refresh(token)
+    }
+  }, [])
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const refresh = async (token: string) => {
+    try {
+      // eslint-disable-next-line quote-props
+      const data = await axios.get('http://localhost:5000/api/auth/refresh', { headers: { 'Authorization': `Bearer ${token}` } })
+      dispatch(isAuth(data))
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const onHandleSubmit = (): void => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
