@@ -21,8 +21,7 @@ const Auth = (): JSX.Element => {
   })
 
   const onHandleSubmit = (): void => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    registerAsync()
+    void registerAsync()
   }
   return (
     <Form className={styles.form} onSubmit={e => e.preventDefault()}>

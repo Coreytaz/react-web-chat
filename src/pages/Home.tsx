@@ -24,20 +24,15 @@ const Home = (): JSX.Element => {
   })
 
   React.useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises, @typescript-eslint/no-unused-vars
     const token = localStorage.getItem('token')
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (token) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      refresh(token)
+    if (token !== null) {
+      void refresh(token)
     }
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const refresh = async (token: string) => {
+  const refresh = async (token: string): Promise<void> => {
     try {
-      // eslint-disable-next-line quote-props
-      const data = await axios.get('http://localhost:5000/api/auth/refresh', { headers: { 'Authorization': `Bearer ${token}` } })
+      const { data } = await axios.get('http://localhost:5000/api/auth/refresh', { headers: { Authorization: `Bearer ${token}` } })
       dispatch(isAuth(data))
     } catch (error) {
       console.log(error)
@@ -45,11 +40,9 @@ const Home = (): JSX.Element => {
   }
 
   const onHandleSubmit = (): void => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    loginAsync()
+    void loginAsync()
   }
 
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!auth) {
     return (
       <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
