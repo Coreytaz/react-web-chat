@@ -17,5 +17,9 @@ export const AuthService = {
 
   async refresh (token: string): Promise<AxiosResponse<any, any>> {
     return await axios.get('auth/refresh', { headers: { 'Authorization': `Bearer ${token}` } })
+  },
+
+  async logout (): Promise<AxiosResponse<any, any>> {
+    return await axios.get('auth/logout')
   }
 }

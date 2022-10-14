@@ -21,7 +21,7 @@ export const useLogin = (email: string, password: string): useLoginType => {
       dispatch(setList({
         id: Date.now(),
         title: 'Success',
-        description: 'This is a success toast component',
+        description: 'Вы вошли в систему!',
         backgroundColor: '#5cb85c'
       }))
     }

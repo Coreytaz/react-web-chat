@@ -4,7 +4,7 @@ export const useTheme = (): {
   theme: string
   setTheme: React.Dispatch<React.SetStateAction<string>>
 } => {
-  const [theme, setTheme] = React.useState(String(localStorage.getItem('theme')))
+  const [theme, setTheme] = React.useState(localStorage.getItem('theme') !== null ? String(localStorage.getItem('theme')) : 'light')
 
   React.useLayoutEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)

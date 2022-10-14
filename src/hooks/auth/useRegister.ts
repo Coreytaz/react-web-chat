@@ -22,7 +22,7 @@ export const useRegister = (email: string, password: string): useRegisterType =>
       dispatch(setList({
         id: Date.now(),
         title: 'Success',
-        description: 'This is a success toast component',
+        description: 'Вы зарегистрировались!',
         backgroundColor: '#5cb85c'
       }))
     }

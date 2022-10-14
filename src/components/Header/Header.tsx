@@ -4,10 +4,16 @@ import style from './Header.module.scss'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/store'
+import { useLogout } from '../../hooks/auth/useLogout'
 
 const Header = (): JSX.Element => {
   const { auth, user } = useSelector((state: RootState) => state.authSlice)
+  const { asyncLogout } = useLogout()
   const location = useLocation()
+
+  const onLogout = (): void => {
+    void asyncLogout()
+  }
 
   return (
     <header>
@@ -34,7 +40,7 @@ const Header = (): JSX.Element => {
                     <Link to="/">Авторизация</Link>
                   </li>
                       ))
-                : <h3>{user?.email}</h3>}
+                : <h3 className={style.name} onClick={() => onLogout()}>{user?.email}</h3>}
             </ul>
           </nav>
         </div>
