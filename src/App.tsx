@@ -6,8 +6,17 @@ import { Routes, Route } from 'react-router-dom'
 import './style/index.scss'
 import Layout from './layout/Layout'
 import Auth from './pages/Auth'
+import { useRefresh } from './hooks/auth/useRefresh'
 
 function App (): JSX.Element {
+  const { asyncRefresh } = useRefresh()
+
+  React.useLayoutEffect(() => {
+    if (localStorage.getItem('token') != null) {
+      void asyncRefresh()
+    }
+  }, [])
+
   return (
     <Layout>
       <Routes>

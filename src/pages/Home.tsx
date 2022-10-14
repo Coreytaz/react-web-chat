@@ -1,43 +1,16 @@
-import axios from 'axios'
 import React from 'react'
-import { useMutation } from 'react-query'
 import { useSelector } from 'react-redux'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
-import { isAuth } from '../redux/slice/authSlice'
-import { RootState, useAppDispatch } from '../redux/store'
-import { AuthService } from '../service/auth.service'
+import { useLogin } from '../hooks/auth/useLogin'
+import { RootState } from '../redux/store'
 import styles from '../style/Page/Home.module.scss'
 
 const Home = (): JSX.Element => {
   const { auth } = useSelector((state: RootState) => state.authSlice)
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const dispatch = useAppDispatch()
-  const { mutateAsync: loginAsync, isLoading } = useMutation('login', async () => await AuthService.login(email, password), {
-    onError: (err: Error) => alert(err),
-    onSuccess: ({ data }) => {
-      console.log(data)
-      localStorage.setItem('token', data.accessToken)
-      dispatch(isAuth(data))
-    }
-  })
-
-  React.useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token !== null) {
-      void refresh(token)
-    }
-  }, [])
-
-  const refresh = async (token: string): Promise<void> => {
-    try {
-      const { data } = await axios.get('http://localhost:5000/api/auth/refresh', { headers: { Authorization: `Bearer ${token}` } })
-      dispatch(isAuth(data))
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { loginAsync, isLoading } = useLogin(email, password)
 
   const onHandleSubmit = (): void => {
     void loginAsync()

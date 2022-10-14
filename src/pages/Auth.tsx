@@ -1,28 +1,18 @@
 import React from 'react'
-import { useMutation } from 'react-query'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
-import { isAuth } from '../redux/slice/authSlice'
-import { useAppDispatch } from '../redux/store'
-import { AuthService } from '../service/auth.service'
+import { useRegister } from '../hooks/auth/useRegister'
 import styles from '../style/Page/Home.module.scss'
 
 const Auth = (): JSX.Element => {
-  const dispatch = useAppDispatch()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const { mutateAsync: registerAsync, isLoading } = useMutation('register', async () => await AuthService.register(email, password), {
-    onError: (err: Error) => alert(err),
-    onSuccess: ({ data }) => {
-      console.log(data)
-      localStorage.setItem('token', data.accessToken)
-      dispatch(isAuth({ ...data }))
-    }
-  })
+  const { registerAsync, isLoading } = useRegister(email, password)
 
   const onHandleSubmit = (): void => {
     void registerAsync()
   }
+
   return (
     <Form className={styles.form} onSubmit={e => e.preventDefault()}>
         <h2 className={styles.title}>Регистрация React Chat</h2>
