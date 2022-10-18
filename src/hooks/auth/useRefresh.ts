@@ -1,6 +1,7 @@
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
 import { isAuth } from '../../redux/slice/authSlice'
+import { setList } from '../../redux/slice/toastSlice'
 import { useAppDispatch } from '../../redux/store'
 import { AuthService } from '../../service/auth.service'
 
@@ -16,7 +17,24 @@ export const useRefresh = (): useRefreshType => {
     onSuccess: ({ data }) => {
       dispatch(isAuth(data))
     },
-    onError: (err: Error) => alert(err),
+    onError: (err: AxiosError) => {
+      const res: any = err.response?.data
+      if (Array.isArray(res.message)) {
+        res.message.map((data: any) => dispatch(setList({
+          id: Date.now(),
+          title: res.error,
+          description: data,
+          backgroundColor: '#bd362f'
+        })))
+      } else {
+        dispatch(setList({
+          id: Date.now(),
+          title: res.error,
+          description: res.message,
+          backgroundColor: '#bd362f'
+        }))
+      }
+    },
     enabled: false
   })
 

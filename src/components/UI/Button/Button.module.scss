@@ -32,4 +32,9 @@ button {
         background-color: var(--mainAccentColor-active);
         border-color: var(--mainAccentColor-active);
     }
+    &:disabled {
+        background-color: var(--mainAccentColor-active);
+        border-color: var(--mainAccentColor-active);
+
+    }
 }
