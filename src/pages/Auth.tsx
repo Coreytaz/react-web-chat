@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useRegister } from '../hooks/auth/useRegister'
+import { RootState } from '../redux/store'
 import styles from '../style/Page/Home.module.scss'
 
 const Auth = (): JSX.Element => {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const { registerAsync, isLoading } = useRegister(email, password)
+  const { auth } = useSelector((state: RootState) => state.authSlice)
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (auth) {
+      navigate('/')
+    }
+  }, [auth, navigate])
 
   const onHandleSubmit = (): void => {
     void registerAsync()

@@ -4,28 +4,49 @@
     z-index: 10;
   }
 
-  .buttom-right {
+  .bottom-right {
     bottom: 1rem;
     right: 1rem;
     animation: toast-in-right .7s;
+    transform: translateX(100%);
+    animation-name: toast-in-right, leave-from-right;
+    animation-timing-function: linear, linear;
+    animation-fill-mode: forwards;
+    animation-duration: .7s, .7s;
+    animation-delay: 0s, 2.5s;
   }
 
-  .buttom-left {
+  .bottom-left {
     bottom: 1rem;
     left: 1rem;
-    animation: toast-in-left .7s;
+    transform: translateX(-100%);
+    animation-name: toast-in-left, leave-from-left;
+    animation-timing-function: linear, linear;
+    animation-fill-mode: forwards;
+    animation-duration: .7s, .7s;
+    animation-delay: 0s, 2.5s;
   }
 
   .top-right {
     top: 1rem;
     right: 1rem;
-    animation: toast-in-right .7s;
+    transform: translateX(100%);
+    animation-name: toast-in-right, leave-from-right;
+    animation-timing-function: linear, linear;
+    animation-fill-mode: forwards;
+    animation-duration: .7s, .7s;
+    animation-delay: 0s, 2.5s;
   }
 
   .top-left {
     top: 1rem;
     left: 1rem;
-    animation: toast-in-left .7s;
+    transform: translateX(-100%);
+    animation-name: toast-in-left, leave-from-left;
+    animation-timing-function: linear, linear;
+    animation-fill-mode: forwards;
+    animation-duration: .7s, .7s;
+    animation-delay: 0s, 2.5s;
   }
 
   .notification {
@@ -78,16 +99,33 @@
       transform: translateX(100%);
     }
     to {
-      transform: translateX(0);
+      transform: translateX(-100%);
     }
   }
 
+  @keyframes leave-from-right {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes leave-from-left {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
 
   @keyframes toast-in-left {
     from {
       transform: translateX(-100%);
     }
     to {
-      transform: translateX(0);
+      transform: translateX(100%);
     }
   }

@@ -12,7 +12,7 @@ interface toastList {
 
 interface ToastProps {
   toastlist: toastList[]
-  position: 'top-left' | 'top-right' | 'buttom-left' | 'buttom-right'
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
   setList: any
 }
 
@@ -23,14 +23,14 @@ const Toast: React.FC<ToastProps> = ({ position, toastlist, setList }) => {
   }, [dispatch])
 
   React.useEffect(() => {
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       if (toastlist.length > 0) {
         deleteToast(toastlist[0].id)
       }
-    }, 3000)
+    }, 3500)
 
     return () => {
-      clearInterval(interval)
+      clearTimeout(timeout)
     }
   }, [toastlist, deleteToast])
 
