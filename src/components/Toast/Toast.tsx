@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { deleteList } from '../../redux/slice/toastSlice'
 import { useAppDispatch } from '../../redux/store'
 import styles from './Toast.module.scss'
@@ -18,9 +18,9 @@ interface ToastProps {
 
 const Toast: React.FC<ToastProps> = ({ position, toastlist, setList }) => {
   const dispatch = useAppDispatch()
-  const deleteToast = (id: any): void => {
+  const deleteToast = useCallback((id: any): void => {
     dispatch(deleteList(id))
-  }
+  }, [dispatch])
 
   React.useEffect(() => {
     const interval = setInterval(() => {
