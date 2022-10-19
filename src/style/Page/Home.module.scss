@@ -27,16 +27,28 @@
 }
 
 aside {
-    padding: 15px;
+    overflow: hidden;
     height: 100%;
     border-radius: 15px;
     background-color: var(--additionalAccentColor);
     width: 20%;
+    & ul {
+        height: 690px;
+        overflow: scroll;
+        overflow-x: hidden;
+        scrollbar-width: none; /*mozilla*/
+    }
+    ::-webkit-scrollbar {
+        display: none; /*chrome*/
+    }
     ul li {
-        margin-bottom: 25px;
+        padding: 15px;
         display: flex;
         align-items: center;
         gap: 0 10px;
+        &:hover {
+            background-color: var(--hover-btn-theme);
+        }
         & img {
             border-radius: 50%;
         }

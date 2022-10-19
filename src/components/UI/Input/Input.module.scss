@@ -18,10 +18,11 @@
         left: 3px;
     }
     & input {
-        background-color: var(--primary-color);
+        background-color: var(--primary-color) !important;
         width: 100%;
         height: 100%;
-        color: var(--font-primary);
+        color: var(--font-primary) !important;
+        appearance: inherit !important;
         font-family: "Fira Sans";
         font-weight: 400;
         font-size: 15px;

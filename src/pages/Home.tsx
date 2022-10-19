@@ -21,7 +21,7 @@ const Home = (): JSX.Element => {
       <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <h2 className={styles.title}>Вход React Chat</h2>
         <div className={styles.inputs}>
-          <Input name="Почта" value={email} onChange={(e => setEmail(e.target.value))} placeholder="Почта" required />
+          <Input name="Почта" type="email" value={email} onChange={(e => setEmail(e.target.value))} placeholder="Почта" required />
           <Input name="Пароль" type="password" value={password} onChange={(e => setPassword(e.target.value))} placeholder="Пароль" required />
         </div>
         <Button appearance="primary" onClick={() => onHandleSubmit()} disabled={isLoading}>
@@ -36,6 +36,38 @@ const Home = (): JSX.Element => {
       <div className={styles.inbox}>
         <aside>
           <ul>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
+            <li>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+            </li>
             <li>
               <img src="https://via.placeholder.com/45" alt="avatar" />
               <p>Lorem ipsum</p>
