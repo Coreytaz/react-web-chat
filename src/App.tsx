@@ -15,7 +15,7 @@ function App (): JSX.Element {
     if (localStorage.getItem('token') != null) {
       void asyncRefresh()
     }
-  }, [])
+  }, [asyncRefresh])
 
   return (
     <Layout>
