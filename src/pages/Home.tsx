@@ -1,3 +1,5 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
+/* eslint-disable no-tabs */
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Form } from '../components'
@@ -5,6 +7,8 @@ import Input from '../components/UI/Input/Input'
 import { useLogin } from '../hooks/auth/useLogin'
 import { RootState } from '../redux/store'
 import styles from '../style/Page/Home.module.scss'
+import Point from '../assets/point.svg'
+import cn from 'classnames'
 
 const Home = (): JSX.Element => {
   const { auth } = useSelector((state: RootState) => state.authSlice)
@@ -83,19 +87,73 @@ const Home = (): JSX.Element => {
           </ul>
         </aside>
         <main>
-          <div className={styles.messages_wrap}>
-            <div className="message">
-              <p></p>
-              <img src="" alt="" />
+          <div>
+            <div className={styles.mesage_header}>
+              <div className={styles.message_user}>
+              <img src="https://via.placeholder.com/45" alt="avatar" />
+              <p>Lorem ipsum</p>
+              </div>
+              <div className={styles.message_dropdown}>
+                  <img src={Point} className={styles.dropBtn}/>
+                     <div className={styles.message_dropdown_content}>
+                       <a href="#">Link 1</a>
+                       <a href="#">Link 2</a>
+                       <a href="#">Link 3</a>
+                </div>
+              </div>
             </div>
-            <div className="message">
-              <p></p>
-              <img src="" alt="" />
-            </div>
-            <div className="message">
-              <p></p>
-              <img src="" alt="" />
-            </div>
+            <div className={styles.message_inner}>
+            <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
+				Hello dude!
+			</div>
+		  </div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello
+			  </div>
+			</div>
+      <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello
+			  </div>
+			</div>
+      <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello
+			  </div>
+			</div>
+      <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello
+			  </div>
+			</div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello dude!
+			  </div>
+			</div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
+				Hello dude!
+			  </div>
+			</div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
+				Hello dude!
+			  </div>
+			</div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
+				Hello dude!
+			  </div>
+			</div>
+		  <div className={cn(styles.row, styles.no_gutters)}>
+			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
+				Hello dude!
+			  </div>
+			</div>
+      </div>
           </div>
           <div className={styles.messges_input}>
             <Input
