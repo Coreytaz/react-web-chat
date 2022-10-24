@@ -9,6 +9,8 @@ interface authSliceProps {
 interface user {
   id: string
   email: string
+  login: string
+  username: string
 }
 
 const initialState: authSliceProps = {

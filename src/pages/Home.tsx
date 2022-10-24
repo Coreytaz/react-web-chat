@@ -12,9 +12,9 @@ import cn from 'classnames'
 
 const Home = (): JSX.Element => {
   const { auth } = useSelector((state: RootState) => state.authSlice)
-  const [email, setEmail] = React.useState('')
+  const [emailOrLogin, setEmailOrLogin] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const { loginAsync, isLoading } = useLogin(email, password)
+  const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
 
   const onHandleSubmit = (): void => {
     void loginAsync()
@@ -25,7 +25,7 @@ const Home = (): JSX.Element => {
       <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <h2 className={styles.title}>Вход React Chat</h2>
         <div className={styles.inputs}>
-          <Input name="Почта" type="email" value={email} onChange={(e => setEmail(e.target.value))} placeholder="Почта" required />
+          <Input name="Почта" value={emailOrLogin} onChange={(e => setEmailOrLogin(e.target.value))} placeholder="E-mail или Логин" required />
           <Input name="Пароль" type="password" value={password} onChange={(e => setPassword(e.target.value))} placeholder="Пароль" required />
         </div>
         <Button appearance="primary" onClick={() => onHandleSubmit()} disabled={isLoading}>
@@ -125,7 +125,7 @@ const Home = (): JSX.Element => {
 			</div>
       <div className={cn(styles.row, styles.no_gutters)}>
 			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae facere magnam laboriosam assumenda aperiam esse obcaecati error odio. Cupiditate, maiores nihil reiciendis provident itaque praesentium eveniet ea nulla? Vel, assumenda.
 			  </div>
 			</div>
 		  <div className={cn(styles.row, styles.no_gutters)}>
@@ -145,7 +145,7 @@ const Home = (): JSX.Element => {
 			</div>
 		  <div className={cn(styles.row, styles.no_gutters)}>
 			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
-				Hello dude!
+				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Similique, hic fugit suscipit possimus provident aut voluptatum numquam saepe dignissimos dolore perferendis facilis maiores magnam tempora sed impedit unde. Aut, veniam.
 			  </div>
 			</div>
 		  <div className={cn(styles.row, styles.no_gutters)}>

@@ -16,10 +16,10 @@ interface useLoginType {
 //   statusCode: number
 // }
 
-export const useLogin = (email: string, password: string): useLoginType => {
+export const useLogin = (emailOrLogin: string, password: string): useLoginType => {
   const dispatch = useAppDispatch()
 
-  const { mutateAsync: loginAsync, isLoading } = useMutation('login', async () => await AuthService.login(email, password), {
+  const { mutateAsync: loginAsync, isLoading } = useMutation('login', async () => await AuthService.login(emailOrLogin, password), {
     onError: (err: AxiosError) => {
       const res: any = err.response?.data
       if (Array.isArray(res.message)) {

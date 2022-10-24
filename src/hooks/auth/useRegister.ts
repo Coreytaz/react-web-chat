@@ -10,10 +10,10 @@ interface useRegisterType {
   isLoading: boolean
 }
 
-export const useRegister = (email: string, password: string): useRegisterType => {
+export const useRegister = (email: string, password: string, login: string): useRegisterType => {
   const dispatch = useAppDispatch()
 
-  const { mutateAsync: registerAsync, isLoading } = useMutation('register', async () => await AuthService.register(email, password), {
+  const { mutateAsync: registerAsync, isLoading } = useMutation('register', async () => await AuthService.register(email, password, login), {
     onError: (err: AxiosError) => {
       const res: any = err.response?.data
       if (Array.isArray(res.message)) {

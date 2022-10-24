@@ -10,7 +10,8 @@ import styles from '../style/Page/Home.module.scss'
 const Auth = (): JSX.Element => {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const { registerAsync, isLoading } = useRegister(email, password)
+  const [login, setLogin] = React.useState('')
+  const { registerAsync, isLoading } = useRegister(email, password, login)
   const { auth } = useSelector((state: RootState) => state.authSlice)
   const navigate = useNavigate()
   useEffect(() => {
@@ -28,6 +29,7 @@ const Auth = (): JSX.Element => {
         <h2 className={styles.title}>Регистрация React Chat</h2>
         <div className={styles.inputs}>
         <Input name="Почта" value={email} onChange={(e => setEmail(e.target.value))} placeholder="Почта" required />
+        <Input name="Логин" value={login} onChange={(e => setLogin(e.target.value))} placeholder="Логин" required />
           <Input name="Пароль" type="password" value={password} onChange={(e => setPassword(e.target.value))} placeholder="Пароль" required />
         </div>
         <Button appearance="primary" onClick={() => onHandleSubmit()} disabled={isLoading}>Зарегистрироваться</Button>
