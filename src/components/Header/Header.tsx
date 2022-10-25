@@ -40,7 +40,11 @@ const Header = (): JSX.Element => {
                     <Link to="/">Авторизация</Link>
                   </li>
                       ))
-                : <h3 className={style.name} onClick={() => onLogout()}>{user?.username}</h3>}
+
+                : <div className={style.user} onClick={() => onLogout()}>
+              <img src={user?.avatar} alt="avatar" />
+              <p>{user?.username}</p>
+              </div> }
             </ul>
           </nav>
         </div>

@@ -11,6 +11,7 @@ interface user {
   email: string
   login: string
   username: string
+  avatar: string
 }
 
 const initialState: authSliceProps = {
