@@ -7,12 +7,12 @@ axios.defaults.headers.options = {
   'Content-Type': 'application/json'
 }
 
-const mail =
-            /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/gm
+const mail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 export const AuthService = {
   async login (emailOrLogin: string, password: string): Promise<AxiosResponse<any, any>> {
     const data = mail.test(emailOrLogin) ? { email: emailOrLogin } : { login: emailOrLogin }
+    console.log(data)
     return await axios.post('auth/login', { ...data, password })
   },
 

@@ -22,6 +22,9 @@ const Auth = (): JSX.Element => {
 
   const onHandleSubmit = (): void => {
     void registerAsync()
+    setEmail('')
+    setPassword('')
+    setLogin('')
   }
 
   return (

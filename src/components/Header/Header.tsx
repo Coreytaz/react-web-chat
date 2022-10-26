@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/store'
 import { useLogout } from '../../hooks/auth/useLogout'
+import Avatar from '../../assets/defaultAvatar.jpg'
 
 const Header = (): JSX.Element => {
   const { auth, user } = useSelector((state: RootState) => state.authSlice)
@@ -42,7 +43,7 @@ const Header = (): JSX.Element => {
                       ))
 
                 : <div className={style.user} onClick={() => onLogout()}>
-              <img src={user?.avatar} alt="avatar" />
+              <img src={user?.avatar !== null ? user?.avatar : Avatar} alt="avatar" />
               <p>{user?.username}</p>
               </div> }
             </ul>

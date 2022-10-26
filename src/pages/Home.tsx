@@ -18,6 +18,8 @@ const Home = (): JSX.Element => {
 
   const onHandleSubmit = (): void => {
     void loginAsync()
+    setEmailOrLogin('')
+    setPassword('')
   }
 
   if (!auth) {
