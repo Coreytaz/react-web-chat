@@ -15,8 +15,8 @@ export const useLogout = (): useRefreshType => {
 
   const { refetch: asyncLogout, isLoading } = useQuery('logout', async () => await AuthService.logout(), {
     onSuccess: () => {
-      dispatch(isClear())
       localStorage.removeItem('token')
+      dispatch(isClear())
       dispatch(setList({
         id: Date.now(),
         title: 'Success',

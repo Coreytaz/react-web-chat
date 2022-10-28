@@ -3,6 +3,7 @@ import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } fr
 import { isAuth } from '../../redux/slice/authSlice'
 import { setList } from '../../redux/slice/toastSlice'
 import { useAppDispatch } from '../../redux/store'
+import { apiSetHeader } from '../../service/api.service'
 import { AuthService } from '../../service/auth.service'
 
 interface useRefreshType {
@@ -13,8 +14,10 @@ interface useRefreshType {
 export const useRefresh = (): useRefreshType => {
   const dispatch = useAppDispatch()
 
-  const { refetch: asyncRefresh, isLoading } = useQuery('refresh', async () => await AuthService.refresh(String(localStorage.getItem('token'))), {
+  const { refetch: asyncRefresh, isLoading } = useQuery('refresh', async () => await AuthService.refresh(), {
     onSuccess: ({ data }) => {
+      localStorage.setItem('token', data.accessToken)
+      apiSetHeader('Authorization', `Bearer ${data.accessToken}`)
       dispatch(isAuth(data))
     },
     onError: (err: AxiosError) => {

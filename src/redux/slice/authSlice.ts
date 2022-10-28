@@ -1,17 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { IUser } from '../../types/User.interface'
 
 interface authSliceProps {
   auth: boolean
-  user: user | null
+  user: IUser | null
   accessToken: string
-}
-
-interface user {
-  id: string
-  email: string
-  login: string
-  username: string
-  avatar: string
 }
 
 const initialState: authSliceProps = {

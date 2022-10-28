@@ -1,30 +1,24 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable quote-props */
-import axios, { AxiosResponse } from 'axios'
-
-axios.defaults.baseURL = 'http://localhost:5000/api'
-axios.defaults.headers.options = {
-  'Content-Type': 'application/json'
-}
+import { AxiosResponse } from 'axios'
+import { IUser } from '../types/User.interface'
+import api from './api.service'
 
 const mail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
 export const AuthService = {
-  async login (emailOrLogin: string, password: string): Promise<AxiosResponse<any, any>> {
-    const data = mail.test(emailOrLogin) ? { email: emailOrLogin } : { login: emailOrLogin }
-    console.log(data)
-    return await axios.post('auth/login', { ...data, password })
+  async login (emailOrLogin: string, password: string): Promise<AxiosResponse<IUser, any>> {
+    const _emailOrLogin = mail.test(emailOrLogin) ? { email: emailOrLogin } : { login: emailOrLogin }
+    return await api.post('auth/login', { ..._emailOrLogin, password })
   },
 
-  async register (email: string, password: string, login: string): Promise<AxiosResponse<any, any>> {
-    return await axios.post('auth/register', { email, password, login })
+  async register (email: string, password: string, login: string): Promise<AxiosResponse<IUser, any>> {
+    return await api.post('auth/register', { email, password, login })
   },
 
-  async refresh (token: string): Promise<AxiosResponse<any, any>> {
-    return await axios.get('auth/refresh', { headers: { 'Authorization': `Bearer ${token}` } })
+  async refresh (): Promise<AxiosResponse<IUser, any>> {
+    return await api.get('auth/refresh')
   },
 
-  async logout (): Promise<AxiosResponse<any, any>> {
-    return await axios.get('auth/logout')
+  async logout (): Promise<AxiosResponse<void, any>> {
+    return await api.get('auth/logout')
   }
 }
