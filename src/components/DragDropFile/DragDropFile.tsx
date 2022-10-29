@@ -1,11 +1,28 @@
 import React from 'react'
+import { useMutation } from 'react-query'
+import { useSelector } from 'react-redux'
+import { setList } from '../../redux/slice/toastSlice'
+import { RootState, useAppDispatch } from '../../redux/store'
+import { UserService } from '../../service/user/user.service'
 import styles from './DragDropFile.module.scss'
 
-const DragDropFile = (): JSX.Element => {
+interface DragDropFileProps {
+  formDataRef: React.MutableRefObject<FormData | undefined>
+}
+
+const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
+  const avatar = useSelector((state: RootState) => state.authSlice.user?.avatar)
+  const dispatch = useAppDispatch()
   const [drag, setDrag] = React.useState(false)
   const [selectAvatar, setSelectedAvatar] = React.useState(false)
   const avatarRef = React.useRef<HTMLImageElement>(null)
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const formData = new FormData()
+
+  React.useEffect(() => {
+    if (avatarRef.current != null) {
+      avatarRef.current.src = avatar as string
+    }
+  }, [avatar, formDataRef])
 
   const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
@@ -20,8 +37,12 @@ const DragDropFile = (): JSX.Element => {
   const onDropHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
     const file = [...e.dataTransfer.files]
-    const formData = new FormData()
-    formData.append('file', file[0])
+    if (!(/\.(jpe?g?|png|)$/).test(file[0].name)) {
+      setDrag(false)
+      return
+    }
+    formData.append('avatar', file[0])
+    formDataRef.current = formData
     const reader = new FileReader()
     reader.readAsDataURL(file[0])
     reader.onload = function (event) {
@@ -35,11 +56,11 @@ const DragDropFile = (): JSX.Element => {
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault()
-    const file = inputRef.current?.files
-    const formData = new FormData()
+    const file = e.target.files
     if (file != null) {
-      formData.append('file', file[0])
+      formData.append('avatar', file[0])
       const reader = new FileReader()
+      formDataRef.current = formData
       reader.readAsDataURL(file[0])
       reader.onload = function (event) {
         if (avatarRef.current != null) {
@@ -49,6 +70,43 @@ const DragDropFile = (): JSX.Element => {
     }
     setSelectedAvatar(true)
   }
+
+  const { mutateAsync: removeAvatar } = useMutation('removeAvatar', async () => await UserService.removeAvatar(), {
+    onError: (err: any) => {
+      const res: any = err.response?.data
+      if (Array.isArray(res.message)) {
+        res.message.map((data: any) => dispatch(setList({
+          id: Date.now(),
+          title: 'Error',
+          description: data,
+          backgroundColor: '#bd362f'
+        })))
+      } else {
+        dispatch(setList({
+          id: Date.now(),
+          title: 'Error',
+          description: res.message,
+          backgroundColor: '#bd362f'
+        }))
+      }
+    },
+    onSuccess: ({ data }) => {
+      dispatch(setList({
+        id: Date.now(),
+        title: 'Success',
+        description: data.message,
+        backgroundColor: '#5cb85c'
+      }))
+    }
+  })
+
+  const onRemoveAvatar = (): void => {
+    formData.delete('avatar')
+    formDataRef.current = formData
+    setSelectedAvatar(false)
+    void removeAvatar()
+  }
+
   return (
     <>{drag
       ? <div className={styles.drop_area}
@@ -62,10 +120,19 @@ const DragDropFile = (): JSX.Element => {
       onDragLeave={e => dragLeaveHandler(e)}
       onDragOver={e => dragStartHandler(e)}
     ><label className={styles.input_file}>
-      <input type="file" ref={inputRef} onChange={e => onChangeInput(e)}/><span>Выберите файл</span></label><div className={styles.input_file_list}></div>
+      <input type="file" accept=".jpg, .jpeg, .png" onChange={e => onChangeInput(e)}/><span>Выберите файл</span></label><div className={styles.input_file_list}></div>
     </div>
   }
-  {selectAvatar && <img ref={avatarRef} className={styles.newAvatar} alt="avatar" />}</>
+  {(avatar != null)
+    ? <div className={styles.newAvatar_wrapper}>
+    <img ref={avatarRef} src={avatarRef.current?.src} className={styles.newAvatar} alt="avatar" />
+    <span onClick={() => onRemoveAvatar()} className={styles.newAvatar_remove}>x</span>
+  </div>
+    : selectAvatar && <div className={styles.newAvatar_wrapper}>
+    <img ref={avatarRef} className={styles.newAvatar} alt="avatar" />
+    <span onClick={() => onRemoveAvatar()} className={styles.newAvatar_remove}>x</span>
+  </div>}
+  </>
   )
 }
 

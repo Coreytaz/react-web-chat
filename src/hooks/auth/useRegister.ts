@@ -33,7 +33,6 @@ export const useRegister = (email: string, password: string, login: string): use
       }
     },
     onSuccess: ({ data }) => {
-      console.log(data)
       localStorage.setItem('token', data.accessToken)
       dispatch(isAuth({ ...data }))
       dispatch(setList({

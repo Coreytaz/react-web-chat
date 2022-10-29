@@ -43,4 +43,24 @@
     height: 100px;
     object-fit: cover;
     border-radius: 50%;
+    &_remove {
+        cursor: pointer;
+        color: #fff;
+        text-decoration: none;
+        display: inline-block;
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        top: 5px;
+        right: 5px;
+        background: #ff0202;
+        width: 16px;
+        height: 16px;
+        text-align: center;
+        line-height: 16px;
+        border-radius: 50%;
+    }
+    &_wrapper {
+        position: relative;
+    }
 }

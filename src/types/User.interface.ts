@@ -3,6 +3,6 @@ export interface IUser {
   email: string
   login: string
   username: string
-  avatar: string
+  avatar: string | null
   accessToken: string
 }

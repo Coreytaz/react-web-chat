@@ -6,15 +6,38 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/store'
 import { useLogout } from '../../hooks/auth/useLogout'
 import Avatar from '../../assets/defaultAvatar.jpg'
+import { ReactComponent as Exit } from '../../assets/Exit.svg'
+import { ReactComponent as Profile } from '../../assets/Profile.svg'
+
+type PopupClick = MouseEvent & {
+  path: Node[]
+}
 
 const Header = (): JSX.Element => {
+  const [popup, setPopup] = React.useState(false)
   const { auth, user } = useSelector((state: RootState) => state.authSlice)
+  const sortRef = React.useRef<HTMLDivElement>(null)
   const { asyncLogout } = useLogout()
   const location = useLocation()
 
   const onLogout = (): void => {
     void asyncLogout()
   }
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent): void => {
+      const _event = event as PopupClick
+      if (sortRef.current && !_event.path.includes(sortRef.current)) {
+        setPopup(false)
+      }
+    }
+
+    document.body.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
 
   return (
     <header>
@@ -42,10 +65,14 @@ const Header = (): JSX.Element => {
                   </li>
                       ))
 
-                : <div className={style.user} onClick={() => onLogout()}>
-              <img src={user?.avatar !== null ? user?.avatar : Avatar} alt="avatar" />
-              <p>{user?.username}</p>
-              </div> }
+                : <div className={style.message_dropdown} ref={sortRef} onClick={() => setPopup(!popup)}>
+                      <div className={style.user}><img src={user?.avatar !== null ? user?.avatar : Avatar} alt="avatar" />
+                    <p>{user?.username}</p></div>
+                        {popup && <div className={style.message_dropdown_content}>
+                       <Link to="/profile"><Profile/> Профиль</Link>
+                       <a onClick={() => onLogout()}><Exit/> Выход</a>
+                    </div>}
+                    </div> }
             </ul>
           </nav>
         </div>
