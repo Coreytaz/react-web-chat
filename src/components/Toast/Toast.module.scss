@@ -8,45 +8,41 @@
     bottom: 1rem;
     right: 1rem;
     animation: toast-in-right .7s;
-    transform: translateX(100%);
     animation-name: toast-in-right, leave-from-right;
     animation-timing-function: linear, linear;
     animation-fill-mode: forwards;
     animation-duration: .7s, .7s;
-    animation-delay: 0s, 2.5s;
+    animation-delay: 0s, 3.1s;
   }
 
   .bottom-left {
     bottom: 1rem;
     left: 1rem;
-    transform: translateX(-100%);
     animation-name: toast-in-left, leave-from-left;
     animation-timing-function: linear, linear;
     animation-fill-mode: forwards;
     animation-duration: .7s, .7s;
-    animation-delay: 0s, 2.5s;
+    animation-delay: 0s, 3.1s;
   }
 
   .top-right {
     top: 1rem;
     right: 1rem;
-    transform: translateX(100%);
     animation-name: toast-in-right, leave-from-right;
     animation-timing-function: linear, linear;
     animation-fill-mode: forwards;
     animation-duration: .7s, .7s;
-    animation-delay: 0s, 2.5s;
+    animation-delay: 0s, 3.1s;
   }
 
   .top-left {
     top: 1rem;
     left: 1rem;
-    transform: translateX(-100%);
     animation-name: toast-in-left, leave-from-left;
     animation-timing-function: linear, linear;
     animation-fill-mode: forwards;
     animation-duration: .7s, .7s;
-    animation-delay: 0s, 2.5s;
+    animation-delay: 0s, 3.1s;
   }
 
   .notification {

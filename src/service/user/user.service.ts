@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios'
 import api from '../api.service'
 
 export const UserService = {
-  async avatar (file: any): Promise<AxiosResponse<any, any>> {
+  async avatar (file: FormData): Promise<AxiosResponse<any, any> | null> {
     return await api.post('user/avatar', file)
   },
 

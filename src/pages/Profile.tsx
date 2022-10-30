@@ -3,6 +3,7 @@ import React from 'react'
 import { useMutation } from 'react-query'
 import { useSelector } from 'react-redux'
 import { Button, DragDropFile, Form } from '../components'
+import { setAvatar } from '../redux/slice/authSlice'
 import { setList } from '../redux/slice/toastSlice'
 import { RootState, useAppDispatch } from '../redux/store'
 import { UserService } from '../service/user/user.service'
@@ -13,7 +14,7 @@ const Profile = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const formDataRef = React.useRef<FormData>()
 
-  const { mutateAsync: avatarAsync, isLoading } = useMutation('avatar', async () => await UserService.avatar(formDataRef.current), {
+  const { mutateAsync: avatarAsync } = useMutation('avatar', async () => await UserService.avatar(formDataRef.current as FormData), {
     onError: (err: any) => {
       const res: any = err.response?.data
       if (Array.isArray(res.message)) {
@@ -32,13 +33,15 @@ const Profile = (): JSX.Element => {
         }))
       }
     },
-    onSuccess: ({ data }) => {
+    onSuccess: ({ data }: any) => {
+      dispatch(setAvatar(data.avatar))
       dispatch(setList({
         id: Date.now(),
         title: 'Success',
         description: data.message,
         backgroundColor: '#5cb85c'
       }))
+      formDataRef.current?.delete('avatar')
     }
   })
 
@@ -53,7 +56,7 @@ const Profile = (): JSX.Element => {
         <h2 className={styles.title}>Профиль: {user?.username}</h2>
         <div className={styles.inputs}>
           <DragDropFile formDataRef={formDataRef}/>
-            <Button appearance="primary" type="submit" disabled={isLoading}>Обновить</Button>
+            <Button appearance="primary" type="submit">Обновить</Button>
         </ div>
     </Form>
     </>

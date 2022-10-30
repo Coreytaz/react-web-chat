@@ -74,6 +74,7 @@ header {
     position: relative;
     display: inline-block;
     &_content {
+        overflow: hidden;
         border: 1px solid var(--hover-btn-theme);
         border-radius: 0 0 15px 15px;
         position: absolute;

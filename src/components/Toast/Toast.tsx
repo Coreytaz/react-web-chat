@@ -13,14 +13,14 @@ interface toastList {
 interface ToastProps {
   toastlist: toastList[]
   position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-  setList: any
 }
 
-const Toast: React.FC<ToastProps> = ({ position, toastlist, setList }) => {
+const Toast: React.FC<ToastProps> = ({ position, toastlist }) => {
   const dispatch = useAppDispatch()
   const deleteToast = useCallback((id: any): void => {
-    dispatch(deleteList(id))
-  }, [dispatch])
+    const toastListItem = toastlist.filter(e => e.id !== id)
+    dispatch(deleteList(toastListItem))
+  }, [dispatch, toastlist])
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation } from 'react-query'
 import { useSelector } from 'react-redux'
+import { setAvatar } from '../../redux/slice/authSlice'
 import { setList } from '../../redux/slice/toastSlice'
 import { RootState, useAppDispatch } from '../../redux/store'
 import { UserService } from '../../service/user/user.service'
@@ -22,7 +23,7 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
     if (avatarRef.current != null) {
       avatarRef.current.src = avatar as string
     }
-  }, [avatar, formDataRef])
+  }, [avatar])
 
   const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
@@ -91,6 +92,7 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
       }
     },
     onSuccess: ({ data }) => {
+      dispatch(setAvatar(data.avatar))
       dispatch(setList({
         id: Date.now(),
         title: 'Success',

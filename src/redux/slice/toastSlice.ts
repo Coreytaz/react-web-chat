@@ -24,8 +24,7 @@ export const toastSlice = createSlice({
     },
     deleteList (state, actions) {
       return {
-        ...state,
-        toastlist: state.toastlist.filter((toast) => toast.id !== actions.payload)
+        toastlist: actions.payload
       }
     }
   }
