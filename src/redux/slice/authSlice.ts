@@ -31,10 +31,15 @@ export const authSlice = createSlice({
       state.auth = false
       state.user = null
       state.accessToken = ''
+    },
+    updateUser (state, actions) {
+      if (state.user !== null) {
+        state.user = { ...state.user, ...actions.payload }
+      }
     }
   }
 })
 
-export const { isAuth, isClear, setAvatar } = authSlice.actions
+export const { isAuth, isClear, setAvatar, updateUser } = authSlice.actions
 
 export default authSlice.reducer
