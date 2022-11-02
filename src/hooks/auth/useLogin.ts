@@ -3,6 +3,7 @@ import { UseMutateAsyncFunction, useMutation } from 'react-query'
 import { isAuth } from '../../redux/slice/authSlice'
 import { setList } from '../../redux/slice/toastSlice'
 import { useAppDispatch } from '../../redux/store'
+import { apiSetHeader } from '../../service/api.service'
 import { AuthService } from '../../service/auth.service'
 
 interface useLoginType {
@@ -40,6 +41,7 @@ export const useLogin = (emailOrLogin: string, password: string): useLoginType =
     },
     onSuccess: ({ data }) => {
       localStorage.setItem('token', data.accessToken)
+      apiSetHeader('Authorization', `Bearer ${data.accessToken}`)
       dispatch(isAuth(data))
       dispatch(setList({
         id: Date.now(),
