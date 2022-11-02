@@ -73,6 +73,9 @@ header {
 .message_dropdown {
     position: relative;
     display: inline-block;
+    &.active {
+        background-color: var(--hover-btn-theme);
+    }
     &_content {
         overflow: hidden;
         border: 1px solid var(--hover-btn-theme);

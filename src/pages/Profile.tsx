@@ -1,7 +1,6 @@
 import React from 'react'
 import { useMutation } from 'react-query'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import { Button, DragDropFile, Form, Input } from '../components'
 import { setAvatar, updateUser } from '../redux/slice/authSlice'
 import { setList } from '../redux/slice/toastSlice'
@@ -10,18 +9,11 @@ import { UserService } from '../service/user/user.service'
 import styles from '../style/Page/Profile.module.scss'
 
 const Profile = (): JSX.Element => {
-  const { user, auth } = useSelector((state: RootState) => state.authSlice)
+  const { user } = useSelector((state: RootState) => state.authSlice)
   const [email, setEmail] = React.useState(user?.email)
   const [userName, setUserName] = React.useState(user?.username)
   const dispatch = useAppDispatch()
   const formDataRef = React.useRef<FormData>()
-  const navigate = useNavigate()
-
-  React.useEffect(() => {
-    if (!auth) {
-      navigate('/')
-    }
-  }, [auth, navigate])
 
   React.useEffect(() => {
     setEmail(user?.email)
@@ -92,7 +84,9 @@ const Profile = (): JSX.Element => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     void avatarAsync()
-    void userAsync()
+    if (!(email === user?.email && userName === user?.username)) {
+      void userAsync()
+    }
   }
 
   return (

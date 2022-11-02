@@ -8,6 +8,7 @@ import { useLogout } from '../../hooks/auth/useLogout'
 import Avatar from '../../assets/defaultAvatar.jpg'
 import { ReactComponent as Exit } from '../../assets/Exit.svg'
 import { ReactComponent as Profile } from '../../assets/Profile.svg'
+import cn from 'classnames'
 
 type PopupClick = MouseEvent & {
   path: Node[]
@@ -65,7 +66,7 @@ const Header = (): JSX.Element => {
                   </li>
                       ))
 
-                : <div className={style.message_dropdown} ref={sortRef} onClick={() => setPopup(!popup)}>
+                : <div className={cn(style.message_dropdown, { [style.active]: popup })} ref={sortRef} onClick={() => setPopup(!popup)}>
                       <div className={style.user}><img src={user?.avatar !== null ? user?.avatar : Avatar} alt="avatar" />
                     <p>{user?.username}</p></div>
                         {popup && <div className={style.message_dropdown_content}>

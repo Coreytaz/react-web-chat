@@ -1,3 +1,5 @@
+/* eslint-disable no-constant-condition */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
@@ -7,9 +9,11 @@ import Layout from './layout/Layout'
 import Auth from './pages/Auth'
 import { useRefresh } from './hooks/auth/useRefresh'
 import Profile from './pages/Profile'
+import { Loading } from './components'
+import PrivateRoutes from './utils/PrivateRoutes'
 
 function App (): JSX.Element {
-  const { asyncRefresh } = useRefresh()
+  const { asyncRefresh, isLoading } = useRefresh()
 
   React.useLayoutEffect(() => {
     if (localStorage.getItem('token') != null) {
@@ -18,13 +22,18 @@ function App (): JSX.Element {
   }, [asyncRefresh])
 
   return (
-    <Layout>
-      <Routes>
+    <Layout>{
+      isLoading
+        ? <Loading/>
+        : <Routes>
+        <Route element={<PrivateRoutes/>}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/*" element={<NotFound />} />
-      </Routes>
+        </Routes>
+      }
     </Layout>
   )
 }
