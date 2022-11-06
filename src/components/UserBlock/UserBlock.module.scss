@@ -1,0 +1,17 @@
+.skeleton stop[offset="0%"] {
+    stop-color: var(--skeleton-bg);
+}
+
+.skeleton stop[offset="50%"] {
+    stop-color: var(--skeleton-fc);
+}
+
+.skeleton stop[offset="100%"] {
+    stop-color: var(--skeleton-bg);
+}
+
+.img {
+    object-fit: cover;
+    width: 45px;
+    height: 45px;
+}

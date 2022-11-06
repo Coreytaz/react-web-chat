@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import Home from './pages/Home'

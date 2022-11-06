@@ -1,10 +1,10 @@
+import { AxiosError } from 'axios'
 import React from 'react'
 import { useMutation } from 'react-query'
-import { useSelector } from 'react-redux'
-import { setAvatar } from '../../redux/slice/authSlice'
-import { setList } from '../../redux/slice/toastSlice'
-import { RootState, useAppDispatch } from '../../redux/store'
+import { useAction } from '../../hooks/useAction'
+import { useTypedSelector } from '../../hooks/useTypedSelector'
 import { UserService } from '../../service/user/user.service'
+import { ErrorResData } from '../../types/Error.interface'
 import styles from './DragDropFile.module.scss'
 
 interface DragDropFileProps {
@@ -12,8 +12,8 @@ interface DragDropFileProps {
 }
 
 const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
-  const avatar = useSelector((state: RootState) => state.authSlice.user?.avatar)
-  const dispatch = useAppDispatch()
+  const avatar = useTypedSelector((state) => state.authSlice.user?.avatar)
+  const { setSuccess, setAvatar, setError } = useAction()
   const [drag, setDrag] = React.useState(false)
   const [selectAvatar, setSelectedAvatar] = React.useState(false)
   const avatarRef = React.useRef<HTMLImageElement>(null)
@@ -73,32 +73,13 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
   }
 
   const { mutateAsync: removeAvatar } = useMutation('removeAvatar', async () => await UserService.removeAvatar(), {
-    onError: (err: any) => {
-      const res: any = err.response?.data
-      if (Array.isArray(res.message)) {
-        res.message.map((data: any) => dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: data,
-          backgroundColor: '#bd362f'
-        })))
-      } else {
-        dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: res.message,
-          backgroundColor: '#bd362f'
-        }))
-      }
+    onError: (err: AxiosError) => {
+      const { message, error } = err.response?.data as ErrorResData
+      setError({ message, error })
     },
     onSuccess: ({ data }) => {
-      dispatch(setAvatar(data.avatar))
-      dispatch(setList({
-        id: Date.now(),
-        title: 'Success',
-        description: data.message,
-        backgroundColor: '#5cb85c'
-      }))
+      setAvatar(data.avatar)
+      setSuccess(data.message)
     }
   })
 

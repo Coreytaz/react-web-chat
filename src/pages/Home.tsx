@@ -1,17 +1,20 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-tabs */
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { Button, Form } from '../components'
+import { Button, Form, UserBlock, UserBlockSkeleton } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useLogin } from '../hooks/auth/useLogin'
-import { RootState } from '../redux/store'
 import styles from '../style/Page/Home.module.scss'
 import Point from '../assets/point.svg'
 import cn from 'classnames'
+import { useQuery } from 'react-query'
+import { UserService } from '../service/user/user.service'
+import { getSearchUser } from '../types/User.interface'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 
 const Home = (): JSX.Element => {
-  const { auth } = useSelector((state: RootState) => state.authSlice)
+  const { auth } = useTypedSelector((state) => state.authSlice)
+  const [userList, setUserList] = React.useState<getSearchUser>()
   const [emailOrLogin, setEmailOrLogin] = React.useState('')
   const [password, setPassword] = React.useState('')
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
@@ -21,6 +24,22 @@ const Home = (): JSX.Element => {
     setEmailOrLogin('')
     setPassword('')
   }
+
+  const { refetch, isFetching } = useQuery('userList', async () => await UserService.getListUser(), {
+    onSuccess: ({ data }) => {
+      setUserList(data)
+    },
+    onError: (err) => {
+      console.log(err)
+    },
+    enabled: false
+  })
+
+  React.useLayoutEffect(() => {
+    if (auth) {
+      void refetch()
+    }
+  }, [auth, refetch])
 
   if (!auth) {
     return (
@@ -42,50 +61,13 @@ const Home = (): JSX.Element => {
       <div className={styles.inbox}>
         <aside>
           <ul>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
-            <li>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-            </li>
+          {isFetching
+            ? [...new Array(9)].map((_, i) => <li key={i}>
+              <UserBlockSkeleton/>
+          </li>)
+            : userList?.items.map((user) => <li key={user.email}>
+            <UserBlock {...user}/>
+          </li>)}
           </ul>
         </aside>
         <main>

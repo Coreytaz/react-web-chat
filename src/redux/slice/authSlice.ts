@@ -1,16 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { IUser } from '../../types/User.interface'
+import { IUserRedux } from '../../types/User.interface'
 
 interface authSliceProps {
   auth: boolean
-  user: IUser | null
-  accessToken: string
+  user: IUserRedux
 }
 
 const initialState: authSliceProps = {
   auth: false,
-  user: null,
-  accessToken: ''
+  user: {
+    id: '',
+    email: '',
+    login: '',
+    username: '',
+    avatar: null
+  }
 }
 
 export const authSlice = createSlice({
@@ -20,7 +24,6 @@ export const authSlice = createSlice({
     isAuth (state, actions) {
       state.auth = true
       state.user = actions.payload.user
-      state.accessToken = actions.payload.accessToken
     },
     setAvatar (state, actions) {
       if (state.user !== null) {
@@ -29,8 +32,13 @@ export const authSlice = createSlice({
     },
     isClear (state) {
       state.auth = false
-      state.user = null
-      state.accessToken = ''
+      state.user = {
+        id: '',
+        email: '',
+        login: '',
+        username: '',
+        avatar: null
+      }
     },
     updateUser (state, actions) {
       if (state.user !== null) {
@@ -40,6 +48,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { isAuth, isClear, setAvatar, updateUser } = authSlice.actions
+export const authActions = authSlice.actions
 
 export default authSlice.reducer

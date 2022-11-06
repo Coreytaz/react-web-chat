@@ -7,9 +7,11 @@ html[data-theme="dark"] {
     --mainAccentColor-hover: #10744c;
     --mainAccentColor-active: #0b4e33;
     --additionalAccentColor: #3f3e3e;
-    --hover-btn-theme: #616161;;
+    --hover-btn-theme: #616161;
     --linear-gradient-bg1: #5d77ff;
     --linear-gradient-bg2: #6539c1;
+    --skeleton-bg: #a3a3a3;
+    --skeleton-fc: #c3c1c1;
 
     // Fonts
 
@@ -34,6 +36,8 @@ html[data-theme="light"] {
     --hover-btn-theme: #aeb7c21f;
     --linear-gradient-bg1: #ff14ff;
     --linear-gradient-bg2: #8a1c8a;
+    --skeleton-bg: #d9d9d9;
+    --skeleton-fc: #ededed;
 
     // Fonts
 

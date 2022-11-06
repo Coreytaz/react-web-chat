@@ -1,14 +1,14 @@
+/* eslint-disable react/display-name */
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Footer, Header } from '../components'
 import Toast from '../components/Toast/Toast'
-import { RootState } from '../redux/store'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 
 interface LayoutProps {
   children: React.ReactNode
 }
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { toastlist } = useSelector((state: RootState) => state.toastSlice)
+const Layout = React.memo(({ children }: LayoutProps): JSX.Element => {
+  const { toastlist } = useTypedSelector((state) => state.toastSlice)
 
   return (
     <>
@@ -19,6 +19,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Footer />
     </>
   )
-}
+})
 
 export default Layout

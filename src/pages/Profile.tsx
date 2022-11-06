@@ -1,18 +1,18 @@
+import { AxiosError } from 'axios'
 import React from 'react'
 import { useMutation } from 'react-query'
-import { useSelector } from 'react-redux'
 import { Button, DragDropFile, Form, Input } from '../components'
-import { setAvatar, updateUser } from '../redux/slice/authSlice'
-import { setList } from '../redux/slice/toastSlice'
-import { RootState, useAppDispatch } from '../redux/store'
+import { useAction } from '../hooks/useAction'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 import { UserService } from '../service/user/user.service'
 import styles from '../style/Page/Profile.module.scss'
+import { ErrorResData } from '../types/Error.interface'
 
 const Profile = (): JSX.Element => {
-  const { user } = useSelector((state: RootState) => state.authSlice)
+  const { user } = useTypedSelector((state) => state.authSlice)
   const [email, setEmail] = React.useState(user?.email)
   const [userName, setUserName] = React.useState(user?.username)
-  const dispatch = useAppDispatch()
+  const { setAvatar, updateUser, setError, setSuccess } = useAction()
   const formDataRef = React.useRef<FormData>()
 
   React.useEffect(() => {
@@ -21,63 +21,25 @@ const Profile = (): JSX.Element => {
   }, [user?.email, user?.username])
 
   const { mutateAsync: avatarAsync } = useMutation('avatar', async () => await UserService.avatar(formDataRef.current as FormData), {
-    onError: (err: any) => {
-      const res: any = err.response?.data
-      if (Array.isArray(res.message)) {
-        res.message.map((data: any) => dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: data,
-          backgroundColor: '#bd362f'
-        })))
-      } else {
-        dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: res.message,
-          backgroundColor: '#bd362f'
-        }))
-      }
+    onError: (err: AxiosError) => {
+      const { message, error } = err.response?.data as ErrorResData
+      setError({ message, error })
     },
     onSuccess: ({ data }: any) => {
-      dispatch(setAvatar(data.avatar))
-      dispatch(setList({
-        id: Date.now(),
-        title: 'Success',
-        description: data.message,
-        backgroundColor: '#5cb85c'
-      }))
+      setAvatar(data.avatar)
+      setSuccess(data.message)
       formDataRef.current?.delete('avatar')
     }
   })
 
   const { mutateAsync: userAsync } = useMutation('updateUser', async () => await UserService.updateUser({ email, username: userName }), {
-    onError: (err: any) => {
-      const res: any = err.response?.data
-      if (Array.isArray(res.message)) {
-        res.message.map((data: any) => dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: data,
-          backgroundColor: '#bd362f'
-        })))
-      } else {
-        dispatch(setList({
-          id: Date.now(),
-          title: 'Error',
-          description: res.message,
-          backgroundColor: '#bd362f'
-        }))
-      }
+    onError: (err: AxiosError) => {
+      const { message, error } = err.response?.data as ErrorResData
+      setError({ message, error })
     },
     onSuccess: () => {
-      dispatch(updateUser({ email, username: userName }))
-      dispatch(setList({
-        id: Date.now(),
-        title: 'Success',
-        description: 'Данные изменены',
-        backgroundColor: '#5cb85c'
-      }))
+      updateUser({ email, username: userName })
+      setSuccess('Данные изменены')
     }
   })
 

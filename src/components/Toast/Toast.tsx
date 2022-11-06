@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react'
-import { deleteList } from '../../redux/slice/toastSlice'
-import { useAppDispatch } from '../../redux/store'
+import React from 'react'
 import styles from './Toast.module.scss'
+import TostList from './TostList'
 
-interface toastList {
-  id: number
+export interface toastList {
+  id: string
   title: string
   description: string
   backgroundColor: string
@@ -16,40 +15,11 @@ interface ToastProps {
 }
 
 const Toast: React.FC<ToastProps> = ({ position, toastlist }) => {
-  const dispatch = useAppDispatch()
-  const deleteToast = useCallback((id: any): void => {
-    const toastListItem = toastlist.filter(e => e.id !== id)
-    dispatch(deleteList(toastListItem))
-  }, [dispatch, toastlist])
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (toastlist.length > 0) {
-        deleteToast(toastlist[0].id)
-      }
-    }, 3500)
-
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [toastlist, deleteToast])
-
   return (
-    <div className={`${styles.container} ${styles[position]}`}>
+    <div className={`${styles.container}`}>
       {
-        toastlist.map((toast, i) => (
-          <div
-            onClick={() => deleteToast(toast.id)}
-            key={toast.id}
-            className={`${styles.notification} ${styles.toast} ${styles[position]}`}
-            style={{ backgroundColor: toast.backgroundColor }}
-          >
-            <button>X</button>
-            <div>
-              <p className={styles.title}>{toast.title}</p>
-              <p className={styles.description}>{toast.description}</p>
-            </div>
-          </div>
+        toastlist.map((toast) => (
+          <TostList key={toast.id} {...toast} position={position}/>
         ))
       }
     </div>

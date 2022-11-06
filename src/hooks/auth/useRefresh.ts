@@ -1,42 +1,28 @@
 import { AxiosError, AxiosResponse } from 'axios'
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
-import { isAuth } from '../../redux/slice/authSlice'
-import { setList } from '../../redux/slice/toastSlice'
-import { useAppDispatch } from '../../redux/store'
 import { apiSetHeader } from '../../service/api.service'
 import { AuthService } from '../../service/auth.service'
+import { ErrorResData } from '../../types/Error.interface'
+import { IUser } from '../../types/User.interface'
+import { useAction } from '../useAction'
 
 interface useRefreshType {
-  asyncRefresh: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<AxiosResponse<any, any>, Error>>
+  asyncRefresh: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<AxiosResponse<IUser>, Error>>
   isLoading?: boolean
 }
 
 export const useRefresh = (): useRefreshType => {
-  const dispatch = useAppDispatch()
+  const { setError, isAuth } = useAction()
 
   const { refetch: asyncRefresh, isLoading } = useQuery('refresh', async () => await AuthService.refresh(), {
     onSuccess: ({ data }) => {
       localStorage.setItem('token', data.accessToken)
       apiSetHeader('Authorization', `Bearer ${data.accessToken}`)
-      dispatch(isAuth(data))
+      isAuth(data)
     },
     onError: (err: AxiosError) => {
-      const res: any = err.response?.data
-      if (Array.isArray(res.message)) {
-        res.message.map((data: any) => dispatch(setList({
-          id: Date.now(),
-          title: res.error,
-          description: data,
-          backgroundColor: '#bd362f'
-        })))
-      } else {
-        dispatch(setList({
-          id: Date.now(),
-          title: res.error,
-          description: res.message,
-          backgroundColor: '#bd362f'
-        }))
-      }
+      const { message, error } = err.response?.data as ErrorResData
+      setError({ message, error })
     },
     enabled: false
   })
