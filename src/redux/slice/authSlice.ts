@@ -9,7 +9,7 @@ interface authSliceProps {
 const initialState: authSliceProps = {
   auth: false,
   user: {
-    id: '',
+    _id: '',
     email: '',
     login: '',
     username: '',
@@ -33,7 +33,7 @@ export const authSlice = createSlice({
     isClear (state) {
       state.auth = false
       state.user = {
-        id: '',
+        _id: '',
         email: '',
         login: '',
         username: '',

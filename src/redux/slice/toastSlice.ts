@@ -32,7 +32,6 @@ export const toastSlice = createSlice({
       }]
     },
     setError (state, actions) {
-      console.log(actions.payload)
       if (Array.isArray(actions.payload.message)) {
         state.toastlist = [...state.toastlist, actions.payload.message.map((message: string) => ({
           id: generateUUID(),

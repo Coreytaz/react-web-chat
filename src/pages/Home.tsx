@@ -1,16 +1,15 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-tabs */
 import React from 'react'
-import { Button, Form, UserBlock, UserBlockSkeleton } from '../components'
+import { Button, ChatContainer, Form, UserBlock, UserBlockSkeleton } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useLogin } from '../hooks/auth/useLogin'
 import styles from '../style/Page/Home.module.scss'
-import Point from '../assets/point.svg'
-import cn from 'classnames'
 import { useQuery } from 'react-query'
 import { UserService } from '../service/user/user.service'
 import { getSearchUser } from '../types/User.interface'
 import { useTypedSelector } from '../hooks/useTypedSelector'
+import { Link } from 'react-router-dom'
 
 const Home = (): JSX.Element => {
   const { auth } = useTypedSelector((state) => state.authSlice)
@@ -65,88 +64,16 @@ const Home = (): JSX.Element => {
             ? [...new Array(9)].map((_, i) => <li key={i}>
               <UserBlockSkeleton/>
           </li>)
-            : userList?.items.map((user) => <li key={user.email}>
-            <UserBlock {...user}/>
-          </li>)}
+            : userList?.items.map((user) =>
+            <Link to={`/?sel=${user._id}`} key={user.email}>
+              <li>
+              <UserBlock {...user}/>
+              </li>
+            </Link>)}
           </ul>
         </aside>
         <main>
-          <div>
-            <div className={styles.mesage_header}>
-              <div className={styles.message_user}>
-              <img src="https://via.placeholder.com/45" alt="avatar" />
-              <p>Lorem ipsum</p>
-              </div>
-              <div className={styles.message_dropdown}>
-                  <img src={Point} className={styles.dropBtn}/>
-                     <div className={styles.message_dropdown_content}>
-                       <a href="#">Link 1</a>
-                       <a href="#">Link 2</a>
-                       <a href="#">Link 3</a>
-                </div>
-              </div>
-            </div>
-            <div className={styles.message_inner}>
-            <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
-				Hello dude!
-			</div>
-		  </div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello
-			  </div>
-			</div>
-      <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello
-			  </div>
-			</div>
-      <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello
-			  </div>
-			</div>
-      <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae facere magnam laboriosam assumenda aperiam esse obcaecati error odio. Cupiditate, maiores nihil reiciendis provident itaque praesentium eveniet ea nulla? Vel, assumenda.
-			  </div>
-			</div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello dude!
-			  </div>
-			</div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
-				Hello dude!
-			  </div>
-			</div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
-				Hello dude!
-			  </div>
-			</div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__left)}>
-				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Similique, hic fugit suscipit possimus provident aut voluptatum numquam saepe dignissimos dolore perferendis facilis maiores magnam tempora sed impedit unde. Aut, veniam.
-			  </div>
-			</div>
-		  <div className={cn(styles.row, styles.no_gutters)}>
-			  <div className={cn(styles.chat_bubble, styles.chat_bubble__right)}>
-				Hello dude!
-			  </div>
-			</div>
-      </div>
-          </div>
-          <div className={styles.messges_input}>
-            <Input
-              name="message"
-              placeholder="Напишите сообщение..."
-              required
-            />
-            <Button appearance="primary">Отправить</Button>
-          </div>
+          <ChatContainer/>
         </main>
       </div>
     </>

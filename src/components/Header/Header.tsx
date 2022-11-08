@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import style from './Header.module.scss'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useLogout } from '../../hooks/auth/useLogout'
 import { ReactComponent as Exit } from '../../assets/Exit.svg'
 import { ReactComponent as Profile } from '../../assets/Profile.svg'
@@ -19,8 +19,10 @@ const Header = (): JSX.Element => {
   const sortRef = React.useRef<HTMLDivElement>(null)
   const { asyncLogout } = useLogout()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const onLogout = (): void => {
+    navigate('')
     void asyncLogout()
   }
 

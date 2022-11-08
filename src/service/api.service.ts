@@ -17,9 +17,8 @@ if (JWTToken != null) {
 }
 
 api.interceptors.request.use(config => {
-//   if (config.defaults.headers.Authorization != null) {
-//     // Тут пишем редирект если не авторизован
-//   }
+  // if (config.defaults.headers.Authorization != null) {
+  // }
 
   return config
 }, async error => {
