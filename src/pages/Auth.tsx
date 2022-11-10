@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useRegister } from '../hooks/auth/useRegister'
@@ -9,12 +10,14 @@ const Auth = (): JSX.Element => {
   const [password, setPassword] = React.useState('')
   const [login, setLogin] = React.useState('')
   const { registerAsync, isLoading } = useRegister(email, password, login)
+  const navigate = useNavigate()
 
   const onHandleSubmit = (): void => {
     void registerAsync()
     setEmail('')
     setPassword('')
     setLogin('')
+    navigate('/')
   }
 
   return (

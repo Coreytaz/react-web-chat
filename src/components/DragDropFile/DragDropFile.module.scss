@@ -1,4 +1,5 @@
 .drop_area {
+    width: 100%;
     border: 2px dashed var(--font-primary);
     display: flex;
     align-items: center;
@@ -6,10 +7,11 @@
     color: var(--font-primary);
     font-size: 1.3rem;
     padding: 10px 20px;
-    min-width: 410px;
+    max-width: 410px;
 }
 
 .drop_area_active {
+    width: 100%;
     border: 2px dashed var(--font-primary);
     display: flex;
     align-items: center;
@@ -17,7 +19,7 @@
     color: var(--font-primary);
     font-size: 1.3rem;
 
-    min-width: 410px;
+    max-width: 410px;
 }
 
 .input_file {

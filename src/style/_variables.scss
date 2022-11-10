@@ -22,6 +22,14 @@ html[data-theme="dark"] {
     // Container
 
     --container-width: 1395px;
+
+    @media (max-width: 768px) {
+        --font-size: 14px;
+
+        // Container
+
+        --container-width: auto;
+    }
 }
 
 html[data-theme="light"] {
@@ -48,4 +56,12 @@ html[data-theme="light"] {
     // Container
 
     --container-width: 1395px;
+
+    @media (max-width: 768px) {
+        --font-size: 14px;
+
+        // Container
+
+        --container-width: auto;
+    }
 }

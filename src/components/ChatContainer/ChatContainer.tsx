@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react'
-import { Button, Input, UserBlock } from '..'
+import { Button, Input, Loading, UserBlock } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
@@ -16,14 +16,35 @@ import { AxiosError } from 'axios'
 import { ChatService } from '../../service/chat/chat.service'
 import { getAllMessage } from '../../types/Chat.interface'
 import { generateUUID } from '../../utils/generateUUID'
+import socket from '../../service/chat/socket.service'
 
 const ChatContainer = (): JSX.Element => {
   const [input, setInput] = React.useState('')
   const [messages, setMessages] = React.useState<getAllMessage[]>([])
+  const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
   const [selectedUser, setSelectedUser] = React.useState<getUser>(null!)
   const { _id, username } = useTypedSelector((state) => state.authSlice.user)
   const [searchParams] = useSearchParams()
   const postQuery = searchParams.get('sel')
+  const scrollRef = React.useRef<HTMLDivElement>(null!)
+
+  React.useEffect(() => {
+    socket.emit('ADD-USER', _id)
+  }, [_id, selectedUser])
+
+  React.useEffect(() => {
+    socket.on('MESG-RECIEVE', (msg) => {
+      setArriveMes({ fromSelf: false, message: msg })
+    })
+  }, [])
+
+  React.useEffect(() => {
+    arriveMes && setMessages((prev) => [...prev, arriveMes])
+  }, [arriveMes])
+
+  React.useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const { refetch: asyncUser, isFetching } = useQuery('getUser', async () => await UserService.getUser(postQuery), {
     onSuccess: ({ data }) => {
@@ -35,7 +56,7 @@ const ChatContainer = (): JSX.Element => {
     enabled: false
   })
 
-  const { mutateAsync: asyncGetAllMessage } = useMutation('getAllMessages', async () => await ChatService.getAllMessage(_id, selectedUser._id), {
+  const { mutateAsync: asyncGetAllMessage, isLoading } = useMutation('getAllMessages', async () => await ChatService.getAllMessage(_id, selectedUser._id), {
     onError: (err: AxiosError) => {
       console.log(err)
     },
@@ -49,15 +70,6 @@ const ChatContainer = (): JSX.Element => {
       void asyncGetAllMessage()
     }
   }, [asyncGetAllMessage, selectedUser])
-
-  const { mutateAsync: asyncSendMessage, isLoading } = useMutation('SendMessage', async () => await ChatService.sendMessage(input, _id, selectedUser._id), {
-    onError: (err: AxiosError) => {
-      console.log(err)
-    },
-    onSuccess: ({ data }) => {
-      console.log(data)
-    }
-  })
 
   React.useEffect(() => {
     if (postQuery != null) {
@@ -78,7 +90,12 @@ const ChatContainer = (): JSX.Element => {
   }
 
   const onClickSendMessage = (): void => {
-    void asyncSendMessage()
+    socket.emit('SEND-MESG', {
+      to: selectedUser._id,
+      from: _id,
+      message: input
+    })
+    setMessages((prevState) => ([...prevState, { fromSelf: true, message: input }]))
     setInput('')
   }
 
@@ -99,27 +116,37 @@ const ChatContainer = (): JSX.Element => {
               </div>
             </div>
             <div className={styles.message_inner}>
-                {
-                    messages.map((mes) =>
-                    <div key={generateUUID()} className={cn(styles.row, styles.no_gutters)}>
+              {
+                isFetching
+                  ? <Loading/>
+                  : !isLoading && (messages.length
+                      ? messages.map((mes) =>
+                    <div key={generateUUID()} ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
                         <div className={cn(styles.chat_bubble,
                           {
                             [styles.chat_bubble__left]: !mes.fromSelf,
                             [styles.chat_bubble__right]: mes.fromSelf
                           })}>{mes.message}</div>
                     </div>)
-                }
+                      : <div className={styles.welcome}>
+                <img src={Robot} alt="" />
+              <h2>
+              У вас нету сообщений с пользователем, <span>{selectedUser?.username}!</span>
+              </h2>
+              <h4>Чтобы начать разговор напишите снизу сообщение</h4>
+                </div>)}
             </div>
           </div>
           <div className={styles.messges_input}>
             <Input
+              autoComplete='false'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               name="message"
               placeholder="Напишите сообщение..."
               required
             />
-            <Button appearance="primary" disabled={isLoading} onClick={() => onClickSendMessage()}>Отправить</Button>
+            <Button appearance="primary" onClick={() => onClickSendMessage()}>Отправить</Button>
           </div>
     </>
   )
