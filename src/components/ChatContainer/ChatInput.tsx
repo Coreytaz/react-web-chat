@@ -30,7 +30,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ input, setInput, onClickSendMessa
              />
             </div>
             <Input
-              autoComplete='false'
+              autoComplete='off'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               name="message"

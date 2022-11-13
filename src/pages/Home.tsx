@@ -18,7 +18,7 @@ const Home = (): JSX.Element => {
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
+  const from = location.state?.from?.pathname || location.search || '/'
 
   const onHandleSubmit = (): void => {
     void loginAsync()

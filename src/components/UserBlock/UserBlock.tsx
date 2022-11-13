@@ -11,7 +11,7 @@ interface UserBlockProps {
 }
 
 const UserBlock: React.FC<UserBlockProps> = ({ avatar, username, isLoading }) => {
-  if (isLoading) {
+  if (isLoading && avatar === undefined) {
     return (
       <>
       <UserBlockSkeleton/>

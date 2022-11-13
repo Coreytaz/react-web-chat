@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
-import { Button, ChatInput, Input, Loading, UserBlock } from '..'
+import { ChatInput, Loading, UserBlock } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
@@ -49,6 +48,7 @@ const ChatContainer = (): JSX.Element => {
   const { refetch: asyncUser, isFetching } = useQuery('getUser', async () => await UserService.getUser(postQuery), {
     onSuccess: ({ data }) => {
       setSelectedUser(data)
+      void asyncGetAllMessage()
     },
     onError: (err) => {
       console.log(err)
@@ -77,6 +77,16 @@ const ChatContainer = (): JSX.Element => {
     }
   }, [postQuery, asyncUser])
 
+  const onClickSendMessage = (): void => {
+    socket.emit('SEND-MESG', {
+      to: selectedUser._id,
+      from: _id,
+      message: input
+    })
+    setMessages((prevState) => ([...prevState, { fromSelf: true, message: input }]))
+    setInput('')
+  }
+
   if (postQuery === null) {
     return (
         <div className={styles.welcome}>
@@ -89,14 +99,10 @@ const ChatContainer = (): JSX.Element => {
     )
   }
 
-  const onClickSendMessage = (): void => {
-    socket.emit('SEND-MESG', {
-      to: selectedUser._id,
-      from: _id,
-      message: input
-    })
-    setMessages((prevState) => ([...prevState, { fromSelf: true, message: input }]))
-    setInput('')
+  if (isFetching) {
+    return (
+    <Loading/>
+    )
   }
 
   return (
@@ -117,9 +123,9 @@ const ChatContainer = (): JSX.Element => {
             </div>
             <div className={styles.message_inner}>
               {
-                isFetching
+                isLoading
                   ? <Loading/>
-                  : !isLoading && (messages.length
+                  : (messages.length
                       ? messages.map((mes) =>
                     <div key={generateUUID()} ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
                         <div className={cn(styles.chat_bubble,
