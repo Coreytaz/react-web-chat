@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react'
-import { Button, Input, Loading, UserBlock } from '..'
+import { Button, ChatInput, Input, Loading, UserBlock } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
@@ -137,17 +137,7 @@ const ChatContainer = (): JSX.Element => {
                 </div>)}
             </div>
           </div>
-          <div className={styles.messges_input}>
-            <Input
-              autoComplete='false'
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              name="message"
-              placeholder="Напишите сообщение..."
-              required
-            />
-            <Button appearance="primary" onClick={() => onClickSendMessage()}>Отправить</Button>
-          </div>
+          <ChatInput input={input} setInput={setInput} onClickSendMessage={onClickSendMessage}/>
     </>
   )
 }

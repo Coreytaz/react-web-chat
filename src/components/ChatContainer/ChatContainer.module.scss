@@ -154,3 +154,52 @@
     display: flex;
     align-items: center;
 }
+
+.messges_emoji {
+    position: relative;
+    &:hover aside {
+        display: block;
+    }
+    svg {
+        width: 50px;
+        height: 50px;
+    }
+    svg path {
+        display: block;
+        flex-direction: row;
+        fill: var(--mainAccentColor);
+    }
+    & aside {
+        display: none !important;
+        z-index: 2;
+        position: absolute !important;
+        border: 1px solid var(--hover-btn-theme) !important;
+        border-radius: 15px;
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        background-color: var(--additionalAccentColor);
+        ::-webkit-scrollbar {
+            background-color: var(--hover-btn-theme);
+            width: 5px;
+        }
+        & div:nth-child(1) {
+
+        }
+        & div:nth-child(2) {
+            & ul li {
+                & div:nth-child(1) {
+                    background-color: var(--additionalAccentColor);
+                    color: var(--font-primary)
+                }
+            }
+        }
+        & div:nth-child(3) {
+            display: none !important;
+        }
+    }
+}
+
+.messges_emoji:hover aside {
+    display: flex !important;
+}

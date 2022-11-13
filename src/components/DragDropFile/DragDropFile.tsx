@@ -58,7 +58,11 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault()
     const file = e.target.files
+
     if (file != null) {
+      if (!(/\.(jpe?g?|png|)$/).test(file[0].name)) {
+        return
+      }
       formData.append('avatar', file[0])
       const reader = new FileReader()
       formDataRef.current = formData
@@ -90,6 +94,15 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
     void removeAvatar()
   }
 
+  const onRemoveNewAvatar = (): void => {
+    if (avatarRef.current != null) {
+      avatarRef.current.src = avatar as string
+      formData.delete('avatar')
+      formDataRef.current = formData
+      setSelectedAvatar(false)
+    }
+  }
+
   return (
     <>{drag
       ? <div className={styles.drop_area}
@@ -106,15 +119,17 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
       <input type="file" accept=".jpg, .jpeg, .png" onChange={e => onChangeInput(e)}/><span>Выберите файл</span></label><div className={styles.input_file_list}></div>
     </div>
   }
-  {(avatar != null)
+  {selectAvatar
     ? <div className={styles.newAvatar_wrapper}>
+    <img ref={avatarRef} className={styles.newAvatar} alt="avatar" />
+    <span onClick={() => onRemoveNewAvatar()} className={styles.newAvatar_remove}>x</span>
+  </div>
+    : avatar !== null
+      ? <div className={styles.newAvatar_wrapper}>
     <img ref={avatarRef} src={avatarRef.current?.src} className={styles.newAvatar} alt="avatar" />
     <span onClick={() => onRemoveAvatar()} className={styles.newAvatar_remove}>x</span>
   </div>
-    : selectAvatar && <div className={styles.newAvatar_wrapper}>
-    <img ref={avatarRef} className={styles.newAvatar} alt="avatar" />
-    <span onClick={() => onRemoveAvatar()} className={styles.newAvatar_remove}>x</span>
-  </div>}
+      : null}
   </>
   )
 }

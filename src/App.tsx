@@ -14,7 +14,7 @@ import PrivateRoutes from './utils/PrivateRoutes'
 function App (): JSX.Element {
   const { asyncRefresh, isLoading } = useRefresh()
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (localStorage.getItem('token') != null) {
       void asyncRefresh()
     }
