@@ -170,13 +170,13 @@
         fill: var(--mainAccentColor);
     }
     & aside {
-        display: none !important;
+        // display: none !important;
         z-index: 2;
         position: absolute !important;
         border: 1px solid var(--hover-btn-theme) !important;
         border-radius: 15px;
         position: absolute;
-        bottom: 100%;
+        bottom: 40%;
         left: 0;
         background-color: var(--additionalAccentColor);
         ::-webkit-scrollbar {
@@ -200,6 +200,6 @@
     }
 }
 
-.messges_emoji:hover aside {
-    display: flex !important;
-}
+// .messges_emoji:hover aside {
+//     display: flex !important;
+// }

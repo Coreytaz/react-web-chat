@@ -18,7 +18,6 @@ import { generateUUID } from '../../utils/generateUUID'
 import socket from '../../service/chat/socket.service'
 
 const ChatContainer = (): JSX.Element => {
-  const [input, setInput] = React.useState('')
   const [messages, setMessages] = React.useState<getAllMessage[]>([])
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
   const [selectedUser, setSelectedUser] = React.useState<getUser>(null!)
@@ -48,7 +47,6 @@ const ChatContainer = (): JSX.Element => {
   const { refetch: asyncUser, isFetching } = useQuery('getUser', async () => await UserService.getUser(postQuery), {
     onSuccess: ({ data }) => {
       setSelectedUser(data)
-      void asyncGetAllMessage()
     },
     onError: (err) => {
       console.log(err)
@@ -77,14 +75,13 @@ const ChatContainer = (): JSX.Element => {
     }
   }, [postQuery, asyncUser])
 
-  const onClickSendMessage = (): void => {
+  const onClickSendMessage = (msg: string): void => {
     socket.emit('SEND-MESG', {
       to: selectedUser._id,
       from: _id,
-      message: input
+      message: msg
     })
-    setMessages((prevState) => ([...prevState, { fromSelf: true, message: input }]))
-    setInput('')
+    setMessages((prevState) => ([...prevState, { fromSelf: true, message: msg }]))
   }
 
   if (postQuery === null) {
@@ -143,7 +140,7 @@ const ChatContainer = (): JSX.Element => {
                 </div>)}
             </div>
           </div>
-          <ChatInput input={input} setInput={setInput} onClickSendMessage={onClickSendMessage}/>
+          <ChatInput onClickSendMessage={onClickSendMessage}/>
     </>
   )
 }
