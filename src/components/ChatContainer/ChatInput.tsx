@@ -52,7 +52,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Elemen
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}
             </div>
             <Input
-              autoComplete='false'
+              autoComplete='off'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               name="message"
