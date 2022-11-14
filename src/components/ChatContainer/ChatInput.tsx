@@ -26,7 +26,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Elemen
   }
 
   const onSendMesg = (): void => {
-    if (str.current != null) {
+    if (str.current != null && str.current.value.length > 0) {
       onClickSendMessage(str.current?.value)
     }
     str.current.value = ''
