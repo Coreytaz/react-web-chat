@@ -6,7 +6,7 @@ interface ChatEmojiProps {
   onClick: (emojiData: EmojiClickData, event: MouseEvent) => void
 }
 
-const ChatEmoji = React.forwardRef(({ onClick, ...props }: ChatEmojiProps, ref: ForwardedRef<HTMLInputElement>): JSX.Element => {
+const ChatEmoji = React.forwardRef(({ onClick, ...props }: ChatEmojiProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element => {
   return (
     <div ref={ref} {...props}>
     <EmojiPicker

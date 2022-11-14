@@ -15,19 +15,21 @@ type PopupClick = MouseEvent & {
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Element => {
-  const [input, setInput] = React.useState('')
+  const str = React.useRef<HTMLInputElement>(null!)
   const emojiRef = React.useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
-    let message = input
+    let message = str.current.value
     message += emojiData.emoji
-    setInput(message)
+    str.current.value = message
   }
 
   const onSendMesg = (): void => {
-    onClickSendMessage(input)
-    setInput('')
+    if (str.current != null) {
+      onClickSendMessage(str.current?.value)
+    }
+    str.current.value = ''
   }
 
   React.useEffect(() => {
@@ -52,9 +54,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Elemen
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}
             </div>
             <Input
+              ref={str}
               autoComplete='off'
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
               name="message"
               placeholder="Напишите сообщение..."
               required
