@@ -11,7 +11,23 @@
 }
 
 .img {
+    position: relative;
     object-fit: cover;
     width: 45px;
     height: 45px;
+}
+
+.root {
+    position: relative;
+    &::after {
+        content: "";
+        position: absolute;
+        background-color: var(--status-user);
+        border-radius: 50%;
+        right: -3px;
+        bottom: 12%;
+        border: 2px solid var(--additionalAccentColor);
+        width: 15px;
+        height: 15px;
+    }
 }

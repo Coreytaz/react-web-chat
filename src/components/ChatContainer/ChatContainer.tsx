@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
-import { ChatInput, Loading, UserBlock } from '..'
+import { ChatInput, Loading, UserBlock, UserBlockSkeleton } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
@@ -28,7 +28,7 @@ const ChatContainer = (): JSX.Element => {
 
   React.useEffect(() => {
     socket.emit('ADD-USER', _id)
-  }, [_id, selectedUser])
+  }, [_id])
 
   React.useEffect(() => {
     socket.on('MESG-RECIEVE', (msg) => {
@@ -39,10 +39,6 @@ const ChatContainer = (): JSX.Element => {
   React.useEffect(() => {
     arriveMes && setMessages((prev) => [...prev, arriveMes])
   }, [arriveMes])
-
-  React.useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
 
   const { refetch: asyncUser, isFetching } = useQuery('getUser', async () => await UserService.getUser(postQuery), {
     onSuccess: ({ data }) => {
@@ -84,6 +80,10 @@ const ChatContainer = (): JSX.Element => {
     setMessages((prevState) => ([...prevState, { fromSelf: true, message: msg }]))
   }
 
+  React.useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
   if (postQuery === null) {
     return (
         <div className={styles.welcome}>
@@ -107,7 +107,7 @@ const ChatContainer = (): JSX.Element => {
     <div>
         <div className={styles.mesage_header}>
               <div className={styles.message_user}>
-              <UserBlock isLoading={isFetching} avatar={selectedUser?.avatar} username={selectedUser?.username} />
+              {isFetching ? <UserBlockSkeleton/> : <UserBlock _id={selectedUser?._id} avatar={selectedUser?.avatar} username={selectedUser?.username} />}
               </div>
               <div className={styles.message_dropdown}>
                   <img src={Point} className={styles.dropBtn}/>

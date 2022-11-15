@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { AxiosError } from 'axios'
 import React from 'react'
 import { useMutation } from 'react-query'
@@ -45,7 +46,9 @@ const Profile = (): JSX.Element => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    void avatarAsync()
+    if (formDataRef.current?.get('avatar')) {
+      void avatarAsync()
+    }
     if (!(email === user?.email && userName === user?.username)) {
       void userAsync()
     }

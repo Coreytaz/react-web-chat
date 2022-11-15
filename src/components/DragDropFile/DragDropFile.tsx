@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { AxiosError } from 'axios'
 import React from 'react'
 import { useMutation } from 'react-query'
@@ -22,6 +23,7 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
   React.useEffect(() => {
     if (avatarRef.current != null) {
       avatarRef.current.src = avatar as string
+      setSelectedAvatar(false)
     }
   }, [avatar])
 

@@ -75,7 +75,7 @@ const Home = (): JSX.Element => {
             : userList?.items.map((user) =>
             <Link to={`/?sel=${user._id}`} key={user.email}>
               <li>
-              <UserBlock {...user}/>
+              <UserBlock _id={user._id} avatar={user.avatar} username={user.username}/>
               </li>
             </Link>)}
           </ul>
