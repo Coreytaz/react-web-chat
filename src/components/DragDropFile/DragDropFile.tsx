@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { AxiosError } from 'axios'
 import React from 'react'
-import { useMutation } from 'react-query'
-import { useAction } from '../../hooks/useAction'
+import { useRemoveAvatar } from '../../hooks/user/useRemoveAvatar'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import { UserService } from '../../service/user/user.service'
-import { ErrorResData } from '../../types/Error.interface'
 import styles from './DragDropFile.module.scss'
 
 interface DragDropFileProps {
@@ -14,7 +10,6 @@ interface DragDropFileProps {
 
 const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
   const avatar = useTypedSelector((state) => state.authSlice.user?.avatar)
-  const { setSuccess, setAvatar, setError } = useAction()
   const [drag, setDrag] = React.useState(false)
   const [selectAvatar, setSelectedAvatar] = React.useState(false)
   const avatarRef = React.useRef<HTMLImageElement>(null)
@@ -78,16 +73,7 @@ const DragDropFile: React.FC<DragDropFileProps> = ({ formDataRef }) => {
     setSelectedAvatar(true)
   }
 
-  const { mutateAsync: removeAvatar } = useMutation('removeAvatar', async () => await UserService.removeAvatar(), {
-    onError: (err: AxiosError) => {
-      const { message, error } = err.response?.data as ErrorResData
-      setError({ message, error })
-    },
-    onSuccess: ({ data }) => {
-      setAvatar(data.avatar)
-      setSuccess(data.message)
-    }
-  })
+  const { removeAvatar } = useRemoveAvatar()
 
   const onRemoveAvatar = (): void => {
     formData.delete('avatar')

@@ -8,56 +8,39 @@ import Robot from '../../assets/robot.gif'
 import cn from 'classnames'
 import { useSearchParams } from 'react-router-dom'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import { useMutation, useQuery } from 'react-query'
-import { UserService } from '../../service/user/user.service'
-import { getUser } from '../../types/User.interface'
-import { AxiosError } from 'axios'
-import { ChatService } from '../../service/chat/chat.service'
 import { getAllMessage } from '../../types/Chat.interface'
 import { generateUUID } from '../../utils/generateUUID'
 import socket from '../../service/chat/socket.service'
+import { useGetUser } from '../../hooks/user/useGetUser'
+import { useGetAllMessages } from '../../hooks/chat/useGetAllMessages'
 
 const ChatContainer = (): JSX.Element => {
-  const [messages, setMessages] = React.useState<getAllMessage[]>([])
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
-  const [selectedUser, setSelectedUser] = React.useState<getUser>(null!)
   const { _id, username } = useTypedSelector((state) => state.authSlice.user)
   const [searchParams] = useSearchParams()
-  const postQuery = searchParams.get('sel')
+  const userId = searchParams.get('sel')
   const scrollRef = React.useRef<HTMLDivElement>(null!)
+  const { asyncUser, isFetching, selectedUser } = useGetUser(userId!)
+  const { asyncGetAllMessage, isLoading, messages, setMessages } = useGetAllMessages(_id, selectedUser?._id)
 
   React.useEffect(() => {
     socket.emit('ADD-USER', _id)
   }, [_id])
 
   React.useEffect(() => {
-    socket.on('MESG-RECIEVE', (msg) => {
-      setArriveMes({ fromSelf: false, message: msg })
+    socket.on('MESG-RECIEVE', (data) => {
+      if (selectedUser?._id === data.from) {
+        setArriveMes({ fromSelf: false, message: data.message })
+      }
     })
-  }, [])
+    return () => {
+      socket.off('MESG-RECIEVE')
+    }
+  }, [_id, selectedUser?._id])
 
   React.useEffect(() => {
     arriveMes && setMessages((prev) => [...prev, arriveMes])
-  }, [arriveMes])
-
-  const { refetch: asyncUser, isFetching } = useQuery('getUser', async () => await UserService.getUser(postQuery), {
-    onSuccess: ({ data }) => {
-      setSelectedUser(data)
-    },
-    onError: (err) => {
-      console.log(err)
-    },
-    enabled: false
-  })
-
-  const { mutateAsync: asyncGetAllMessage, isLoading } = useMutation('getAllMessages', async () => await ChatService.getAllMessage(_id, selectedUser._id), {
-    onError: (err: AxiosError) => {
-      console.log(err)
-    },
-    onSuccess: ({ data }) => {
-      setMessages(data)
-    }
-  })
+  }, [arriveMes, setMessages])
 
   React.useEffect(() => {
     if (selectedUser) {
@@ -66,10 +49,10 @@ const ChatContainer = (): JSX.Element => {
   }, [asyncGetAllMessage, selectedUser])
 
   React.useEffect(() => {
-    if (postQuery != null) {
+    if (userId != null) {
       void asyncUser()
     }
-  }, [postQuery, asyncUser])
+  }, [userId, asyncUser])
 
   const onClickSendMessage = (msg: string): void => {
     socket.emit('SEND-MESG', {
@@ -84,7 +67,7 @@ const ChatContainer = (): JSX.Element => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (postQuery === null) {
+  if (userId === null) {
     return (
         <div className={styles.welcome}>
         <img src={Robot} alt="" />

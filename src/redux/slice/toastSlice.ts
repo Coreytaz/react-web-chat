@@ -33,7 +33,7 @@ export const toastSlice = createSlice({
     },
     setError (state, actions) {
       if (Array.isArray(actions.payload.message)) {
-        state.toastlist = [...state.toastlist, actions.payload.message.map((message: string) => ({
+        state.toastlist = [...state.toastlist, ...actions.payload.message.map((message: string) => ({
           id: generateUUID(),
           title: actions.payload.error,
           description: message,

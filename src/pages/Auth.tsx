@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useRegister } from '../hooks/auth/useRegister'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 import styles from '../style/Page/Home.module.scss'
 
 const Auth = (): JSX.Element => {
+  const { auth } = useTypedSelector((state) => state.authSlice)
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [login, setLogin] = React.useState('')
@@ -17,8 +19,13 @@ const Auth = (): JSX.Element => {
     setEmail('')
     setPassword('')
     setLogin('')
-    navigate('/')
   }
+
+  React.useEffect(() => {
+    if (auth) {
+      navigate('/')
+    }
+  }, [auth, navigate])
 
   return (
     <Form className={styles.form} onSubmit={e => e.preventDefault()}>

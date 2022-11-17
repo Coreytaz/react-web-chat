@@ -4,21 +4,20 @@ import { Button, ChatContainer, Form, UserBlock, UserBlockSkeleton } from '../co
 import Input from '../components/UI/Input/Input'
 import { useLogin } from '../hooks/auth/useLogin'
 import styles from '../style/Page/Home.module.scss'
-import { useQuery } from 'react-query'
-import { UserService } from '../service/user/user.service'
-import { getSearchUser } from '../types/User.interface'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import socket from '../service/chat/socket.service'
+import { useSearchUsers } from '../hooks/user/useSearchUsers'
 
 const Home = (): JSX.Element => {
   const { auth } = useTypedSelector((state) => state.authSlice)
-  const [userList, setUserList] = React.useState<getSearchUser>()
   const [emailOrLogin, setEmailOrLogin] = React.useState('')
   const [password, setPassword] = React.useState('')
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || location.search || '/'
+  const { refetch, isFetching, userList } = useSearchUsers()
 
   const onHandleSubmit = (): void => {
     void loginAsync()
@@ -26,27 +25,13 @@ const Home = (): JSX.Element => {
     setPassword('')
   }
 
-  const { refetch, isFetching } = useQuery('userList', async () => await UserService.getListUser(), {
-    onSuccess: ({ data }) => {
-      setUserList(data)
-    },
-    onError: (err) => {
-      console.log(err)
-    },
-    enabled: false
-  })
-
   React.useEffect(() => {
     if (auth) {
       navigate(from, { replace: true })
-    }
-  }, [auth, from, navigate])
-
-  React.useLayoutEffect(() => {
-    if (auth) {
       void refetch()
+      socket.connect()
     }
-  }, [auth, refetch])
+  }, [auth, from, navigate, refetch])
 
   if (!auth) {
     return (

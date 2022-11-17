@@ -8,6 +8,7 @@ import { ReactComponent as Profile } from '../../assets/Profile.svg'
 import cn from 'classnames'
 import { UserBlock } from '..'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
+import socket from '../../service/chat/socket.service'
 
 type PopupClick = MouseEvent & {
   path: Node[]
@@ -22,6 +23,7 @@ const Header = (): JSX.Element => {
 
   const onLogout = (): void => {
     void asyncLogout()
+    socket.off()
   }
 
   React.useEffect(() => {
