@@ -6,6 +6,12 @@ export interface SendMessage {
 }
 
 export interface getAllMessage {
+  id: string
   fromSelf: boolean
+  message: string
+}
+
+export interface MessageUpdatePayload {
+  id: string
   message: string
 }

@@ -5,14 +5,15 @@ import { ChatInput, Loading, UserBlock, UserBlockSkeleton } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
-import cn from 'classnames'
 import { useSearchParams } from 'react-router-dom'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import { getAllMessage } from '../../types/Chat.interface'
+import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
 import { generateUUID } from '../../utils/generateUUID'
 import socket from '../../service/chat/socket.service'
 import { useGetUser } from '../../hooks/user/useGetUser'
 import { useGetAllMessages } from '../../hooks/chat/useGetAllMessages'
+import { ReactComponent as Trash } from './Trash.svg'
+import Message from './Message'
 
 const ChatContainer = (): JSX.Element => {
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
@@ -22,21 +23,33 @@ const ChatContainer = (): JSX.Element => {
   const scrollRef = React.useRef<HTMLDivElement>(null!)
   const { asyncUser, isFetching, selectedUser } = useGetUser(userId!)
   const { asyncGetAllMessage, isLoading, messages, setMessages } = useGetAllMessages(_id, selectedUser?._id)
+  const [editingState, setEditingState] = React.useState(false)
+  const [editingMessage, setEditingMessage] = React.useState<MessageUpdatePayload>(null!)
 
   React.useEffect(() => {
     socket.emit('ADD-USER', _id)
   }, [_id])
 
   React.useEffect(() => {
+    socket.on('messages:clear-recieve', () => {
+      void asyncGetAllMessage()
+    })
+  }, [asyncGetAllMessage])
+
+  React.useEffect(() => {
     socket.on('MESG-RECIEVE', (data) => {
       if (selectedUser?._id === data.from) {
-        setArriveMes({ fromSelf: false, message: data.message })
+        setArriveMes({ id: data.id, fromSelf: false, message: data.message })
       }
+    })
+    socket.on('MESG-YOU', (data) => {
+      setMessages((prevState) => ([...prevState, { id: data.id, fromSelf: true, message: data.message }]))
     })
     return () => {
       socket.off('MESG-RECIEVE')
+      socket.off('MESG-YOU')
     }
-  }, [_id, selectedUser?._id])
+  }, [_id, selectedUser?._id, setMessages])
 
   React.useEffect(() => {
     arriveMes && setMessages((prev) => [...prev, arriveMes])
@@ -54,13 +67,59 @@ const ChatContainer = (): JSX.Element => {
     }
   }, [userId, asyncUser])
 
+  const onUpdateMessage = React.useCallback((payload: MessageUpdatePayload) => {
+    const updatedMes = messages.map((mes) => {
+      if (mes.id === payload.id) {
+        return { ...mes, message: payload.message }
+      }
+      return mes
+    })
+    setMessages(updatedMes)
+    socket.emit('message:update', payload)
+    setEditingState(false)
+  }, [messages, setMessages])
+
+  React.useEffect(() => {
+    socket.on('message:update-RECIEVE', ({ updatedMessage }) => {
+      console.log(updatedMessage)
+      const updatedMes = messages.map((mes) => {
+        if (mes.id === updatedMessage._id) {
+          return { ...mes, message: updatedMessage.message }
+        }
+        return mes
+      })
+      setMessages(updatedMes)
+    })
+    return () => {
+      socket.off('message:update-RECIEVE')
+    }
+  }, [messages, setMessages])
+
+  React.useEffect(() => {
+    socket.on('message:delete-RECIEVE', ({ removedMessage }) => {
+      console.log(removedMessage)
+      const updatedMes = messages.filter((mes) => mes.id !== removedMessage._id)
+      setMessages(updatedMes)
+    })
+    return () => {
+      socket.off('message:delete-RECIEVE')
+    }
+  }, [messages, setMessages])
+
   const onClickSendMessage = (msg: string): void => {
     socket.emit('SEND-MESG', {
       to: selectedUser._id,
       from: _id,
       message: msg
     })
-    setMessages((prevState) => ([...prevState, { fromSelf: true, message: msg }]))
+  }
+
+  const onClickClearAllMessages = (): void => {
+    console.log(123)
+    socket.emit('messages:clear', {
+      to: selectedUser._id,
+      from: _id
+    })
   }
 
   React.useEffect(() => {
@@ -90,14 +149,14 @@ const ChatContainer = (): JSX.Element => {
     <div>
         <div className={styles.mesage_header}>
               <div className={styles.message_user}>
-              {isFetching ? <UserBlockSkeleton/> : <UserBlock _id={selectedUser?._id} avatar={selectedUser?.avatar} username={selectedUser?.username} />}
+              {isFetching ? <UserBlockSkeleton/> : <UserBlock {...selectedUser} />}
               </div>
               <div className={styles.message_dropdown}>
                   <img src={Point} className={styles.dropBtn}/>
                      <div className={styles.message_dropdown_content}>
-                       <a href="#">Link 1</a>
-                       <a href="#">Link 2</a>
-                       <a href="#">Link 3</a>
+                       <span onClick={() => onClickClearAllMessages()}>Удалить все сообщения <Trash/></span>
+                       <span>Link 2</span>
+                       <span>Link 3</span>
                 </div>
               </div>
             </div>
@@ -106,14 +165,7 @@ const ChatContainer = (): JSX.Element => {
                 isLoading
                   ? <Loading/>
                   : (messages.length
-                      ? messages.map((mes) =>
-                    <div key={generateUUID()} ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
-                        <div className={cn(styles.chat_bubble,
-                          {
-                            [styles.chat_bubble__left]: !mes.fromSelf,
-                            [styles.chat_bubble__right]: mes.fromSelf
-                          })}>{mes.message}</div>
-                    </div>)
+                      ? messages.map((mes) => <Message key={generateUUID()} setEditingState={setEditingState} setEditingMessage={setEditingMessage} scrollRef={scrollRef} {...mes} />)
                       : <div className={styles.welcome}>
                 <img src={Robot} alt="" />
               <h2>
@@ -123,7 +175,7 @@ const ChatContainer = (): JSX.Element => {
                 </div>)}
             </div>
           </div>
-          <ChatInput onClickSendMessage={onClickSendMessage}/>
+          <ChatInput onUpdateMessage={onUpdateMessage} editingMessage={editingMessage} editingState={editingState} onClickSendMessage={onClickSendMessage}/>
     </>
   )
 }

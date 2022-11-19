@@ -5,16 +5,20 @@ import { Button, Input } from '..'
 import styles from './ChatContainer.module.scss'
 import { ReactComponent as Emoji } from '../../assets/emoji.svg'
 import ChatEmoji from './ChatEmoji'
+import { MessageUpdatePayload } from '../../types/Chat.interface'
 
 interface ChatInputProps {
+  editingState: boolean
+  onUpdateMessage: (payload: MessageUpdatePayload) => void
   onClickSendMessage: (msg: string) => void
+  editingMessage: MessageUpdatePayload
 }
 
 type PopupClick = MouseEvent & {
   path: Node[]
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Element => {
+const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessage, editingState, editingMessage }): JSX.Element => {
   const str = React.useRef<HTMLInputElement>(null!)
   const emojiRef = React.useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
@@ -25,11 +29,21 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage }): JSX.Elemen
     str.current.value = message
   }
 
-  const onSendMesg = (): void => {
-    if (str.current != null && str.current.value.length > 0) {
-      onClickSendMessage(str.current?.value)
+  React.useEffect(() => {
+    if (editingState) {
+      str.current.value = editingMessage?.message
     }
-    str.current.value = ''
+  }, [editingMessage?.message, editingState])
+
+  const onSendMesg = (): void => {
+    if (editingState && str.current != null && str.current.value.length > 0) {
+      editingMessage.message = str.current.value
+      onUpdateMessage(editingMessage)
+      str.current.value = ''
+    } else if (str.current != null && str.current.value.length > 0) {
+      onClickSendMessage(str.current?.value)
+      str.current.value = ''
+    }
   }
 
   React.useEffect(() => {
