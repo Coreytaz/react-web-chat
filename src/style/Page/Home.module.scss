@@ -65,9 +65,18 @@
         }
     }
     @media (max-width: 768px) {
+        overflow: scroll;
         width: 100%;
         min-height: 75px;
         height: 75px;
+        overflow-x: hidden;
+        scrollbar-width: none; /*mozilla*/
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        & ul {
+            height: auto;
+        }
     }
 }
 
