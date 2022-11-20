@@ -40,9 +40,11 @@ const ChatContainer = (): JSX.Element => {
 
   React.useEffect(() => {
     if (selectedUser._id) {
+      setMessages([])
+      setPage(0)
       void asyncGetAllMessage()
     }
-  }, [selectedUser])
+  }, [userId, selectedUser])
 
   React.useEffect(() => {
     socket.on('messages:clear-recieve', () => {
