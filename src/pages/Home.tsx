@@ -28,10 +28,15 @@ const Home = (): JSX.Element => {
   React.useEffect(() => {
     if (auth) {
       navigate(from, { replace: true })
-      void refetch()
       socket.connect()
     }
-  }, [auth, from, navigate, refetch])
+  }, [auth, from, navigate])
+
+  React.useEffect(() => {
+    if (auth) {
+      void refetch()
+    }
+  }, [auth, refetch])
 
   if (!auth) {
     return (

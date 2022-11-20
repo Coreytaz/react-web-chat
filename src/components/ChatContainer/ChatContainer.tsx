@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
@@ -5,30 +6,43 @@ import { ChatInput, Loading, UserBlock, UserBlockSkeleton } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
-import { useSearchParams } from 'react-router-dom'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
 import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
-import { generateUUID } from '../../utils/generateUUID'
 import socket from '../../service/chat/socket.service'
 import { useGetUser } from '../../hooks/user/useGetUser'
 import { useGetAllMessages } from '../../hooks/chat/useGetAllMessages'
 import { ReactComponent as Trash } from './Trash.svg'
-import Message from './Message'
+import MessageContainer from './MessageContainer'
+import { useAction } from '../../hooks/useAction'
 
 const ChatContainer = (): JSX.Element => {
+  const { asyncUser, isFetching, userId } = useGetUser()
+  const { setMessages } = useAction()
+  const [page, setPage] = React.useState(1)
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
   const { _id, username } = useTypedSelector((state) => state.authSlice.user)
-  const [searchParams] = useSearchParams()
-  const userId = searchParams.get('sel')
-  const scrollRef = React.useRef<HTMLDivElement>(null!)
-  const { asyncUser, isFetching, selectedUser } = useGetUser(userId!)
-  const { asyncGetAllMessage, isLoading, messages, setMessages } = useGetAllMessages(_id, selectedUser?._id)
+  const { selectedUser, messages } = useTypedSelector((state) => state.selectedUserSlice)
+  const { asyncGetAllMessage, isLoading } = useGetAllMessages(_id, selectedUser._id, page, setPage)
   const [editingState, setEditingState] = React.useState(false)
   const [editingMessage, setEditingMessage] = React.useState<MessageUpdatePayload>(null!)
 
   React.useEffect(() => {
     socket.emit('ADD-USER', _id)
   }, [_id])
+
+  React.useEffect(() => {
+    if (userId != null) {
+      void asyncUser()
+      setPage(0)
+      setMessages([])
+    }
+  }, [userId, asyncUser])
+
+  React.useEffect(() => {
+    if (selectedUser._id) {
+      void asyncGetAllMessage()
+    }
+  }, [selectedUser])
 
   React.useEffect(() => {
     socket.on('messages:clear-recieve', () => {
@@ -43,7 +57,7 @@ const ChatContainer = (): JSX.Element => {
       }
     })
     socket.on('MESG-YOU', (data) => {
-      setMessages((prevState) => ([...prevState, { id: data.id, fromSelf: true, message: data.message }]))
+      setMessages([...messages, { id: data.id, fromSelf: true, message: data.message }])
     })
     return () => {
       socket.off('MESG-RECIEVE')
@@ -52,20 +66,8 @@ const ChatContainer = (): JSX.Element => {
   }, [_id, selectedUser?._id, setMessages])
 
   React.useEffect(() => {
-    arriveMes && setMessages((prev) => [...prev, arriveMes])
+    arriveMes && setMessages([...messages, arriveMes])
   }, [arriveMes, setMessages])
-
-  React.useEffect(() => {
-    if (selectedUser) {
-      void asyncGetAllMessage()
-    }
-  }, [asyncGetAllMessage, selectedUser])
-
-  React.useEffect(() => {
-    if (userId != null) {
-      void asyncUser()
-    }
-  }, [userId, asyncUser])
 
   const onUpdateMessage = React.useCallback((payload: MessageUpdatePayload) => {
     const updatedMes = messages.map((mes) => {
@@ -115,16 +117,11 @@ const ChatContainer = (): JSX.Element => {
   }
 
   const onClickClearAllMessages = (): void => {
-    console.log(123)
     socket.emit('messages:clear', {
       to: selectedUser._id,
       from: _id
     })
   }
-
-  React.useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
 
   if (userId === null) {
     return (
@@ -160,20 +157,12 @@ const ChatContainer = (): JSX.Element => {
                 </div>
               </div>
             </div>
-            <div className={styles.message_inner}>
-              {
-                isLoading
-                  ? <Loading/>
-                  : (messages.length
-                      ? messages.map((mes) => <Message key={generateUUID()} setEditingState={setEditingState} setEditingMessage={setEditingMessage} scrollRef={scrollRef} {...mes} />)
-                      : <div className={styles.welcome}>
-                <img src={Robot} alt="" />
-              <h2>
-              У вас нету сообщений с пользователем, <span>{selectedUser?.username}!</span>
-              </h2>
-              <h4>Чтобы начать разговор напишите снизу сообщение</h4>
-                </div>)}
-            </div>
+            <MessageContainer
+            isLoading={isLoading}
+            setEditingState={setEditingState}
+            setEditingMessage={setEditingMessage}
+            asyncGetAllMessage={asyncGetAllMessage}
+            />
           </div>
           <ChatInput onUpdateMessage={onUpdateMessage} editingMessage={editingMessage} editingState={editingState} onClickSendMessage={onClickSendMessage}/>
     </>
