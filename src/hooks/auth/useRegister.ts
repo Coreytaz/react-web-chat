@@ -3,6 +3,7 @@ import { UseMutateAsyncFunction, useMutation } from 'react-query'
 import { AuthService } from '../../service/auth.service'
 import { ErrorResData } from '../../types/Error.interface'
 import { IUser } from '../../types/User.interface'
+import { setCookie } from '../../utils/cookie'
 import { useAction } from '../useAction'
 
 interface useRegisterType {
@@ -19,7 +20,7 @@ export const useRegister = (email: string, password: string, login: string): use
       setError({ message, error })
     },
     onSuccess: ({ data }) => {
-      localStorage.setItem('token', data.accessToken)
+      setCookie('tokenIncd', 'true')
       isAuth({ ...data })
       setSuccess('Вы зарегистрировались!')
     }

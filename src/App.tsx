@@ -10,12 +10,13 @@ import { useRefresh } from './hooks/auth/useRefresh'
 import Profile from './pages/Profile'
 import { Loading } from './components'
 import PrivateRoutes from './utils/PrivateRoutes'
+import { getCookie } from './utils/cookie'
 
 function App (): JSX.Element {
   const { asyncRefresh, isLoading } = useRefresh()
 
   React.useEffect(() => {
-    if (localStorage.getItem('token') != null) {
+    if (getCookie('tokenIncd')) {
       void asyncRefresh()
     }
   }, [asyncRefresh])

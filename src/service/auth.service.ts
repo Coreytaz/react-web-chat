@@ -12,10 +12,10 @@ export const AuthService = {
   },
 
   async refresh (): Promise<AxiosResponse<IUser>> {
-    return await api.get('auth/refresh')
+    return await api.get('auth/refresh', { withCredentials: true })
   },
 
   async logout (): Promise<AxiosResponse<void>> {
-    return await api.get('auth/logout')
+    return await api.get('auth/logout', { withCredentials: true })
   }
 }

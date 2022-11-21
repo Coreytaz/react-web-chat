@@ -1,9 +1,9 @@
 import { AxiosError, AxiosResponse } from 'axios'
 import { UseMutateAsyncFunction, useMutation } from 'react-query'
-import { apiSetHeader } from '../../service/api.service'
 import { AuthService } from '../../service/auth.service'
 import { ErrorResData } from '../../types/Error.interface'
 import { IUser } from '../../types/User.interface'
+import { setCookie } from '../../utils/cookie'
 import { useAction } from '../useAction'
 
 interface useLoginType {
@@ -20,8 +20,7 @@ export const useLogin = (emailOrLogin: string, password: string): useLoginType =
       setError({ message, error })
     },
     onSuccess: ({ data }) => {
-      localStorage.setItem('token', data.accessToken)
-      apiSetHeader('Authorization', `Bearer ${data.accessToken}`)
+      setCookie('tokenIncd', 'true')
       isAuth(data)
       setSuccess('Вы вошли в систему!')
     }

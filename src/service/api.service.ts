@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-const JWTToken = localStorage.getItem('token')
-
 const api = axios.create({
   baseURL: 'http://localhost:5000/api'
 })
@@ -12,14 +10,10 @@ export function apiSetHeader (name: string, value: string): void {
   }
 };
 
-if (JWTToken != null) {
-  apiSetHeader('Authorization', `Bearer ${JWTToken}`)
-}
-
 api.interceptors.request.use(config => {
   // if (config.defaults.headers.Authorization != null) {
   // }
-
+  config.withCredentials = true
   return config
 }, async error => {
   return await Promise.reject(error)

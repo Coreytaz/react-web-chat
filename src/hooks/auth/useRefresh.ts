@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios'
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
-import { apiSetHeader } from '../../service/api.service'
 import { AuthService } from '../../service/auth.service'
 import { IUser } from '../../types/User.interface'
+import { setCookie } from '../../utils/cookie'
 import { useAction } from '../useAction'
 
 interface useRefreshType {
@@ -15,8 +15,7 @@ export const useRefresh = (): useRefreshType => {
 
   const { refetch: asyncRefresh, isLoading } = useQuery('refresh', async () => await AuthService.refresh(), {
     onSuccess: ({ data }) => {
-      localStorage.setItem('token', data.accessToken)
-      apiSetHeader('Authorization', `Bearer ${data.accessToken}`)
+      setCookie('tokenIncd', 'true')
       isAuth(data)
     },
     enabled: false,

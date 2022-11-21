@@ -2,6 +2,7 @@ import { AxiosError, AxiosResponse } from 'axios'
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
 import { AuthService } from '../../service/auth.service'
 import { ErrorResData } from '../../types/Error.interface'
+import { delСookie } from '../../utils/cookie'
 import { useAction } from '../useAction'
 
 interface useRefreshType {
@@ -14,7 +15,7 @@ export const useLogout = (): useRefreshType => {
 
   const { refetch: asyncLogout, isLoading } = useQuery('logout', async () => await AuthService.logout(), {
     onSuccess: () => {
-      localStorage.removeItem('token')
+      delСookie('tokenIncd')
       isClear()
       setSuccess('Вы вышли из сессии!')
     },
