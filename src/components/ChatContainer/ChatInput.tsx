@@ -4,6 +4,7 @@ import React from 'react'
 import { Button, Input } from '..'
 import styles from './ChatContainer.module.scss'
 import { ReactComponent as Emoji } from '../../assets/emoji.svg'
+import { ReactComponent as Close } from '../../assets/close.svg'
 import ChatEmoji from './ChatEmoji'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
 
@@ -12,13 +13,14 @@ interface ChatInputProps {
   onUpdateMessage: (payload: MessageUpdatePayload) => void
   onClickSendMessage: (msg: string) => void
   editingMessage: MessageUpdatePayload
+  setEditingState: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type PopupClick = MouseEvent & {
   path: Node[]
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessage, editingState, editingMessage }): JSX.Element => {
+const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessage, editingState, editingMessage, setEditingState }): JSX.Element => {
   const str = React.useRef<HTMLInputElement>(null!)
   const emojiRef = React.useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
@@ -32,6 +34,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessa
   React.useEffect(() => {
     if (editingState) {
       str.current.value = editingMessage?.message
+    } else {
+      str.current.value = ''
     }
   }, [editingMessage?.message, editingState])
 
@@ -63,6 +67,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessa
 
   return (
     <div className={styles.messges_input}>
+      {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
             <div className={styles.messges_emoji}>
             <Emoji onMouseEnter={() => setShowEmojiPicker(true)}/>
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}

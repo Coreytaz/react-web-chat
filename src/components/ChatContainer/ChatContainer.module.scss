@@ -14,6 +14,7 @@
 }
 
 .message_inner {
+    position: relative;
     padding: 10px 0 10px 0;
     overflow: scroll;
     height: calc(100% - 60px);
@@ -170,6 +171,7 @@
 }
 
 .messges_input {
+    position: relative;
     padding: 10px;
     & div {
         border-radius: 15px;
@@ -177,6 +179,25 @@
     gap: 0 10px;
     display: flex;
     align-items: center;
+    & .mesg_editing {
+        margin: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        top: -17px;
+        position: absolute;
+        & svg {
+            cursor: pointer;
+            path {
+                fill: var(--font-primary);
+            }
+        }
+    }
+}
+
+.mesage_wrapper:has(+ .messges_input > .mesg_editing) > .message_inner {
+    height: calc(100% - 90px);
 }
 
 .messges_emoji {

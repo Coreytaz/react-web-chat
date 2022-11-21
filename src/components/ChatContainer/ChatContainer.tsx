@@ -6,6 +6,7 @@ import { ChatInput, Loading, UserBlock, UserBlockSkeleton } from '..'
 import styles from './ChatContainer.module.scss'
 import Point from '../../assets/point.svg'
 import Robot from '../../assets/robot.gif'
+
 import { useTypedSelector } from '../../hooks/useTypedSelector'
 import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
 import socket from '../../service/chat/socket.service'
@@ -145,7 +146,7 @@ const ChatContainer = (): JSX.Element => {
 
   return (
     <>
-    <div>
+    <div className={styles.mesage_wrapper}>
         <div className={styles.mesage_header}>
               <div className={styles.message_user}>
               {isFetching ? <UserBlockSkeleton/> : <UserBlock {...selectedUser} />}
@@ -166,7 +167,7 @@ const ChatContainer = (): JSX.Element => {
             asyncGetAllMessage={asyncGetAllMessage}
             />
           </div>
-          <ChatInput onUpdateMessage={onUpdateMessage} editingMessage={editingMessage} editingState={editingState} onClickSendMessage={onClickSendMessage}/>
+          <ChatInput onUpdateMessage={onUpdateMessage} setEditingState={setEditingState} editingMessage={editingMessage} editingState={editingState} onClickSendMessage={onClickSendMessage}/>
     </>
   )
 }
