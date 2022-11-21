@@ -69,7 +69,7 @@ const ChatContainer = (): JSX.Element => {
 
   React.useEffect(() => {
     arriveMes && setMessages([...messages, arriveMes])
-  }, [arriveMes, setMessages])
+  }, [arriveMes])
 
   const onUpdateMessage = React.useCallback((payload: MessageUpdatePayload) => {
     const updatedMes = messages.map((mes) => {
