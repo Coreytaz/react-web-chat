@@ -73,6 +73,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onClickSendMessage, onUpdateMessa
               name="message"
               placeholder="Напишите сообщение..."
               required
+              onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
             />
             <Button appearance="primary" onClick={onSendMesg}>Отправить</Button>
     </div>
