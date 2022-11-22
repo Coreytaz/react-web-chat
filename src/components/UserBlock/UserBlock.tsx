@@ -20,11 +20,12 @@ const UserBlock: React.FC<UserBlockProps> = ({ _id, avatar, username }) => {
 
   React.useEffect(() => {
     socket.on('ADD-USER-STATUS', (data: String[]) => {
-      setOnline(data)
+      setUser(data)
     })
-    return () => {
-      socket.off('ADD-USER-STATUS')
-    }
+  }, [])
+
+  const setUser = React.useCallback((data: String[]): void => {
+    setOnline(data)
   }, [])
 
   return (

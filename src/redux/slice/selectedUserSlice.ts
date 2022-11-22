@@ -28,6 +28,14 @@ export const selectedUserSlice = createSlice({
     setMessages (state, actions) {
       state.messages = actions.payload
     },
+    updateMessages (state, actions) {
+      state.messages = state.messages.map((mes) => {
+        if (mes.id === actions.payload.id) {
+          return { ...mes, message: actions.payload.message }
+        }
+        return mes
+      })
+    },
     setLazyMessages (state, actions) {
       state.lazyMessage = actions.payload
     }

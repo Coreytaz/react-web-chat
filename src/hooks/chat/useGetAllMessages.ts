@@ -12,8 +12,8 @@ interface useLoginType {
 }
 
 export const useGetAllMessages = (from: string, to: string, page: number, setPage: React.Dispatch<React.SetStateAction<number>>): useLoginType => {
-  const { setMessages, setLazyMessages } = useAction()
   const { messages } = useTypedSelector((state) => state.selectedUserSlice)
+  const { setMessages, setLazyMessages } = useAction()
   const limit = 30
 
   const { mutateAsync: asyncGetAllMessage, isLoading } = useMutation(['getAllMessages', page], async () => await ChatService.getAllMessage(from, to, page, limit), {

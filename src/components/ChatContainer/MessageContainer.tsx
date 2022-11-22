@@ -42,7 +42,7 @@ const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage,
     if (isMounted.current) {
       scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [scrollRef.current])
+  }, [lazyMessage])
 
   return (
     <div className={styles.message_inner}>
