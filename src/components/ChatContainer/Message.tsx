@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { ReactComponent as Pencel } from './Pencel.svg'
 import { ReactComponent as Trash } from './Trash.svg'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
-import { useChat } from '../../hooks/useChat'
+import { useAction } from '../../hooks/useAction'
 
 interface MessageProps {
   id: string
@@ -17,7 +17,7 @@ interface MessageProps {
 }
 
 const Message = ({ id, scrollRef, fromSelf, message, setEditingState, setEditingMessage }: MessageProps): JSX.Element => {
-  const { chatActions } = useChat()
+  const { onRemoveMes } = useAction()
 
   return (
     <div ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
@@ -25,7 +25,7 @@ const Message = ({ id, scrollRef, fromSelf, message, setEditingState, setEditing
           setEditingState(true)
           setEditingMessage({ id, message })
         }} />}
-        {fromSelf && <Trash onClick={() => chatActions.onRemoveMes(id)} />}
+        {fromSelf && <Trash onClick={() => onRemoveMes(id)} />}
         <div className={cn(styles.chat_bubble,
           {
             [styles.chat_bubble__left]: !fromSelf,

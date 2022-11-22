@@ -3,24 +3,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from 'react'
 import socket from '../service/chat/socket.service'
-import { getAllMessage, MessageUpdatePayload } from '../types/Chat.interface'
+import { getAllMessage } from '../types/Chat.interface'
 import { useAction } from './useAction'
 import { useTypedSelector } from './useTypedSelector'
 
-interface useChatProps {
-  chatActions: {
-    onClickSendMessage: (msg: string) => void
-    onUpdateMessage: (payload: MessageUpdatePayload) => void
-    onRemoveMes: (payload: string) => void
-    onClickClearAllMessages: () => void
-  }
-}
-
-export const useChat = (): useChatProps => {
+export const useChat = (): void => {
   const { _id } = useTypedSelector((state) => state.authSlice.user)
   const { selectedUser, messages } = useTypedSelector((state) => state.selectedUserSlice)
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
-  const { setMessages } = useAction()
+  const { setMessages, setOnline } = useAction()
+
+  React.useEffect(() => {
+    socket.on('ADD-USER-STATUS', (data: String[]) => {
+      setOnline(data)
+    })
+  }, [setOnline])
 
   React.useEffect(() => {
     socket.on('MESG-RECIEVE', (data) => {
@@ -32,6 +29,15 @@ export const useChat = (): useChatProps => {
       socket.off('MESG-RECIEVE')
     }
   }, [_id, selectedUser?._id, setMessages])
+
+  React.useEffect(() => {
+    socket.on('MESG-YOU', (data) => {
+      setMessages([...messages, { id: data.id, fromSelf: true, message: data.message }])
+    })
+    return () => {
+      socket.off('MESG-YOU')
+    }
+  }, [messages, setMessages])
 
   React.useEffect(() => {
     arriveMes && setMessages([...messages, arriveMes])
@@ -67,39 +73,4 @@ export const useChat = (): useChatProps => {
       console.log(clearAllmsg)
     })
   }, [messages, setMessages])
-
-  const onClickSendMessage = React.useCallback((msg: string) => {
-    socket.emit('SEND-MESG', {
-      to: selectedUser._id,
-      from: _id,
-      message: msg
-    })
-  }, [])
-
-  const onUpdateMessage = React.useCallback((payload: MessageUpdatePayload) => {
-    socket.emit('message:update', payload)
-  }, [])
-
-  const onRemoveMes = React.useCallback((payload: string) => {
-    socket.emit('message:delete', payload)
-  }, [])
-
-  const onClickClearAllMessages = React.useCallback((): void => {
-    socket.emit('messages:clear', {
-      to: selectedUser._id,
-      from: _id
-    })
-  }, [])
-
-  const chatActions = React.useMemo(
-    () => ({
-      onClickSendMessage,
-      onUpdateMessage,
-      onRemoveMes,
-      onClickClearAllMessages
-    }),
-    []
-  )
-
-  return { chatActions }
 }

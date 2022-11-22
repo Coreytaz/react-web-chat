@@ -13,16 +13,18 @@ import MessageContainer from './MessageContainer'
 import { useAction } from '../../hooks/useAction'
 import MessageHeader from './MessageHeader'
 import { useGetUser } from '../../hooks/user/useGetUser'
+import { useChat } from '../../hooks/useChat'
 
 const ChatContainer = (): JSX.Element => {
   const { asyncUser, isFetching, userId } = useGetUser()
   const { setMessages } = useAction()
   const [page, setPage] = React.useState(0)
   const { _id, username } = useTypedSelector((state) => state.authSlice.user)
-  const { selectedUser, messages } = useTypedSelector((state) => state.selectedUserSlice)
+  const { selectedUser } = useTypedSelector((state) => state.selectedUserSlice)
   const { asyncGetAllMessage, isLoading } = useGetAllMessages(_id, selectedUser._id, page, setPage)
   const [editingState, setEditingState] = React.useState(false)
   const [editingMessage, setEditingMessage] = React.useState<MessageUpdatePayload>(null!)
+  useChat()
 
   React.useEffect(() => {
     socket.emit('ADD-USER', _id)
@@ -44,15 +46,6 @@ const ChatContainer = (): JSX.Element => {
       setMessages([])
     }
   }, [selectedUser._id])
-
-  React.useEffect(() => {
-    socket.on('MESG-YOU', (data) => {
-      setMessages([...messages, { id: data.id, fromSelf: true, message: data.message }])
-    })
-    return () => {
-      socket.off('MESG-YOU')
-    }
-  }, [messages, setMessages])
 
   if (userId === null) {
     return (

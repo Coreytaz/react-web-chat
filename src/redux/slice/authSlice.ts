@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { IUserRedux } from '../../types/User.interface'
 
-interface authSliceProps {
+export interface authSliceProps {
   auth: boolean
   user: IUserRedux
 }

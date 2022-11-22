@@ -1,6 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { getAllMessage } from '../../types/Chat.interface'
+/* eslint-disable no-debugger */
+/* eslint-disable @typescript-eslint/return-await */
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import socket from '../../service/chat/socket.service'
+import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
 import { getUser } from '../../types/User.interface'
+import { authSliceProps } from './authSlice'
 
 interface selectedUserSliceProps {
   selectedUser: getUser
@@ -18,8 +22,47 @@ const initialState: selectedUserSliceProps = {
   lazyMessage: []
 }
 
+export const onClickSendMessage = createAsyncThunk<any, string, { state: { selectedUserSlice: selectedUserSliceProps, authSlice: authSliceProps } }>(
+  'selectedUser/send-message',
+  async function (msg, { getState }) {
+    const selectedUser = getState().selectedUserSlice.selectedUser
+    const _id = getState().authSlice.user._id
+    return await socket.emit('SEND-MESG', {
+      to: selectedUser?._id,
+      from: _id,
+      message: msg
+    })
+  }
+)
+
+export const onUpdateMessage = createAsyncThunk<any, MessageUpdatePayload>(
+  'selectedUser/update-message',
+  async function (payload) {
+    socket.emit('message:update', payload)
+  }
+)
+
+export const onRemoveMes = createAsyncThunk<any, string>(
+  'selectedUser/remove-message',
+  async function (payload) {
+    socket.emit('message:delete', payload)
+  }
+)
+
+export const onClickClearAllMessages = createAsyncThunk<any, undefined, { state: { selectedUserSlice: selectedUserSliceProps, authSlice: authSliceProps } }>(
+  'selectedUser/remove-message',
+  async function (_, { getState }) {
+    const selectedUser = getState().selectedUserSlice.selectedUser
+    const _id = getState().authSlice.user._id
+    socket.emit('messages:clear', {
+      to: selectedUser._id,
+      from: _id
+    })
+  }
+)
+
 export const selectedUserSlice = createSlice({
-  name: 'selectedUser',
+  name: 'selectUser',
   initialState,
   reducers: {
     selectUser (state, actions) {

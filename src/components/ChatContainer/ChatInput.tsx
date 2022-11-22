@@ -7,7 +7,7 @@ import { ReactComponent as Emoji } from '../../assets/emoji.svg'
 import { ReactComponent as Close } from '../../assets/close.svg'
 import ChatEmoji from './ChatEmoji'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
-import { useChat } from '../../hooks/useChat'
+import { useAction } from '../../hooks/useAction'
 
 interface ChatInputProps {
   editingState: boolean
@@ -23,7 +23,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
   const str = React.useRef<HTMLInputElement>(null!)
   const emojiRef = React.useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
-  const { chatActions } = useChat()
+  const { onClickSendMessage, onUpdateMessage } = useAction()
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
     let message = str.current.value
@@ -42,11 +42,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
   const onSendMesg = (): void => {
     if (editingState && str.current != null && str.current.value.length > 0) {
       editingMessage.message = str.current.value
-      chatActions.onUpdateMessage(editingMessage)
+      onUpdateMessage(editingMessage)
       setEditingState(false)
       str.current.value = ''
     } else if (str.current != null && str.current.value.length > 0) {
-      chatActions.onClickSendMessage(str.current?.value)
+      onClickSendMessage(str.current?.value)
       str.current.value = ''
     }
   }

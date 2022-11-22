@@ -6,11 +6,11 @@ import styles from './ChatContainer.module.scss'
 import { ReactComponent as Trash } from './Trash.svg'
 import Point from '../../assets/point.svg'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import { useChat } from '../../hooks/useChat'
+import { useAction } from '../../hooks/useAction'
 
 const MessageHeader: React.FC = () => {
   const { selectedUser } = useTypedSelector((state) => state.selectedUserSlice)
-  const { chatActions } = useChat()
+  const { onClickClearAllMessages } = useAction()
 
   return (
     <div className={styles.mesage_header}>
@@ -20,7 +20,7 @@ const MessageHeader: React.FC = () => {
               <div className={styles.message_dropdown}>
                   <img src={Point} className={styles.dropBtn}/>
                      <div className={styles.message_dropdown_content}>
-                       <span onClick={() => chatActions.onClickClearAllMessages()}>Удалить все сообщения <Trash/></span>
+                       <span onClick={() => onClickClearAllMessages()}>Удалить все сообщения <Trash/></span>
                        <span>Link 2</span>
                        <span>Link 3</span>
                 </div>

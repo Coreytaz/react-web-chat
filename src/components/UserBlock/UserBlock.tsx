@@ -2,9 +2,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import Avatar from '../../assets/defaultAvatar.jpg'
-import { useAction } from '../../hooks/useAction'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import socket from '../../service/chat/socket.service'
 import styles from './UserBlock.module.scss'
 
 interface UserBlockProps {
@@ -15,18 +13,7 @@ interface UserBlockProps {
 }
 
 const UserBlock: React.FC<UserBlockProps> = ({ _id, avatar, username }) => {
-  const { setOnline } = useAction()
   const { userOnline } = useTypedSelector((state) => state.userSlice)
-
-  React.useEffect(() => {
-    socket.on('ADD-USER-STATUS', (data: String[]) => {
-      setUser(data)
-    })
-  }, [])
-
-  const setUser = React.useCallback((data: String[]): void => {
-    setOnline(data)
-  }, [])
 
   return (
     <>
