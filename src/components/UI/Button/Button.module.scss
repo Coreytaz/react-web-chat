@@ -1,4 +1,5 @@
 button {
+    cursor: pointer;
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -18,7 +19,11 @@ button {
 }
 
 .primary {
-    color: var(--white);
+    color: var(--white) !important;
+
+    & a {
+        color: inherit;
+    }
     background-color: var(--mainAccentColor);
     border-color: var(--mainAccentColor);
     &:hover {
@@ -33,8 +38,8 @@ button {
         border-color: var(--mainAccentColor-active);
     }
     &:disabled {
+        cursor: auto;
         background-color: var(--mainAccentColor-active);
         border-color: var(--mainAccentColor-active);
-
     }
 }

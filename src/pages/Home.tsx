@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
 import { Button, ChatContainer, Form, UserBlock, UserBlockSkeleton } from '../components'
@@ -7,7 +8,8 @@ import styles from '../style/Page/Home.module.scss'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import socket from '../service/chat/socket.service'
-import { useSearchUsers } from '../hooks/user/useSearchUsers'
+import { useAction } from '../hooks/useAction'
+import { useGetFriends } from '../hooks/user/useGetFriends'
 
 const Home = (): JSX.Element => {
   const { auth } = useTypedSelector((state) => state.authSlice)
@@ -17,7 +19,8 @@ const Home = (): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || location.search || '/'
-  const { refetch, isFetching, userList } = useSearchUsers()
+  const { asyncFriendsUser, isFetching, friendsList } = useGetFriends()
+  const { onSendReguesFriend, onAcceptReguesFriend } = useAction()
 
   const onHandleSubmit = (): void => {
     void loginAsync()
@@ -34,9 +37,25 @@ const Home = (): JSX.Element => {
 
   React.useEffect(() => {
     if (auth) {
-      void refetch()
+      void asyncFriendsUser()
     }
-  }, [auth, refetch])
+  }, [auth, asyncFriendsUser])
+
+  React.useEffect(() => {
+    if (auth) {
+      socket.on('reguest:user-recieve', ({ request }) => {
+        onSendReguesFriend(request.sender)
+      })
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (auth) {
+      socket.on('accept:user-recieve', ({ request }) => {
+        onAcceptReguesFriend(request.taker)
+      })
+    }
+  }, [])
 
   if (!auth) {
     return (
@@ -62,8 +81,8 @@ const Home = (): JSX.Element => {
             ? [...new Array(9)].map((_, i) => <li key={i}>
               <UserBlockSkeleton/>
           </li>)
-            : userList?.items.map((user) =>
-            <Link to={`/?sel=${user._id}`} key={user.email}>
+            : friendsList?.map((user) =>
+            <Link to={`/?sel=${user._id}`} key={user._id}>
               <li>
               <UserBlock _id={user._id} avatar={user.avatar} username={user.username}/>
               </li>

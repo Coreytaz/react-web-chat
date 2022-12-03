@@ -3,7 +3,7 @@ import { bindActionCreators } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
 import { authActions } from '../redux/slice/authSlice'
 import { onClickClearAllMessages, onClickSendMessage, onRemoveMes, onUpdateMessage, selectedUserActions } from '../redux/slice/selectedUserSlice'
-import { toastActions } from '../redux/slice/toastSlice'
+import { onAcceptReguesFriend, onSendReguesFriend, toastActions } from '../redux/slice/toastSlice'
 import { userActions } from '../redux/slice/userSlice'
 
 const allActions = {
@@ -14,7 +14,9 @@ const allActions = {
   onClickSendMessage,
   onUpdateMessage,
   onRemoveMes,
-  onClickClearAllMessages
+  onClickClearAllMessages,
+  onSendReguesFriend,
+  onAcceptReguesFriend
 }
 
 export const useAction = () => {

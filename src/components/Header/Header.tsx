@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useLogout } from '../../hooks/auth/useLogout'
 import { ReactComponent as Exit } from '../../assets/Exit.svg'
 import { ReactComponent as Profile } from '../../assets/Profile.svg'
+import { ReactComponent as Friends } from '../../assets/friends.svg'
 import cn from 'classnames'
 import { UserBlock } from '..'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
@@ -73,6 +74,7 @@ const Header = (): JSX.Element => {
                     </div>
                         {popup && <div className={style.message_dropdown_content}>
                        <Link to="/profile"><Profile/> Профиль</Link>
+                       <Link to="/friends"><Friends/> Друзья</Link>
                        <a onClick={() => onLogout()}><Exit/> Выход</a>
                     </div>}
                     </div> }

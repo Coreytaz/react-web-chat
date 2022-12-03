@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { UserService } from '../../service/user/user.service'
 import { generateUUID } from '../../utils/generateUUID'
 
 interface toastSliceProps {
@@ -15,6 +16,30 @@ interface toastList {
 const initialState: toastSliceProps = {
   toastlist: []
 }
+
+export const onSendReguesFriend = createAsyncThunk<any, string>(
+  'toast/send-ReguesFriend',
+  async function (userId, { dispatch }) {
+    try {
+      const { data } = await UserService.getUser(userId)
+      dispatch(toastActions.setSuccess(`Вам приглашение в друзья от :${data.username}`))
+    } catch (error) {
+      dispatch(toastActions.setError(error))
+    }
+  }
+)
+
+export const onAcceptReguesFriend = createAsyncThunk<any, string>(
+  'toast/accept-ReguesFriend',
+  async function (userId, { dispatch }) {
+    try {
+      const { data } = await UserService.getUser(userId)
+      dispatch(toastActions.setSuccess(`Пользователь ${data.username} принял приглашение в друзья!`))
+    } catch (error) {
+      dispatch(toastActions.setError(error))
+    }
+  }
+)
 
 export const toastSlice = createSlice({
   name: 'toast',

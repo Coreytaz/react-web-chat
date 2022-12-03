@@ -21,5 +21,13 @@ export const UserService = {
 
   async getUser (_id: string | null): Promise<AxiosResponse<getUser>> {
     return await api.get('user/getUser', { params: { _id } })
+  },
+
+  async getReguestUser (): Promise<AxiosResponse<getUser[]>> {
+    return await api.get('user/getReguestUser')
+  },
+
+  async getFriends (): Promise<AxiosResponse<getUser[]>> {
+    return await api.get('user/getFriends')
   }
 }

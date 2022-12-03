@@ -22,8 +22,8 @@ export interface getSearchUser {
   items: Array<{
     _id: string
     avatar: string | null
-    email: string
     username: string
+    friends?: boolean
   }>
   total: number
 }

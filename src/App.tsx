@@ -11,6 +11,8 @@ import Profile from './pages/Profile'
 import { Loading } from './components'
 import PrivateRoutes from './utils/PrivateRoutes'
 import { getCookie } from './utils/cookie'
+import Friends from './pages/Friends'
+import Search from './pages/Search'
 
 function App (): JSX.Element {
   const { asyncRefresh, isLoading } = useRefresh()
@@ -28,6 +30,8 @@ function App (): JSX.Element {
         : <Routes>
         <Route element={<PrivateRoutes/>}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/friends" element={<Friends />} />
+          <Route path="/search" element={<Search />} />
         </Route>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />

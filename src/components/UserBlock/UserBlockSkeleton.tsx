@@ -2,7 +2,7 @@ import React from 'react'
 import ContentLoader, { IContentLoaderProps } from 'react-content-loader'
 import styles from './UserBlock.module.scss'
 
-const UserBlockSkeleton = (props: JSX.IntrinsicAttributes & IContentLoaderProps): JSX.Element => {
+const UserBlockSkeleton: React.FC = (props: JSX.IntrinsicAttributes & IContentLoaderProps) => {
   return (
     <ContentLoader
     className={styles.skeleton}

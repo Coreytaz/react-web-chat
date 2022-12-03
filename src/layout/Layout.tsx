@@ -14,7 +14,8 @@ const Layout = React.memo(({ children }: LayoutProps): JSX.Element => {
     <>
       <Header />
       <Toast position="top-right" toastlist={toastlist} />
-      <div className="container">{children}
+      <div className="container">
+        {children}
       </div>
       <Footer />
     </>

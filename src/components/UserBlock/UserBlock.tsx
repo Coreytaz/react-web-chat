@@ -22,7 +22,7 @@ const UserBlock: React.FC<UserBlockProps> = ({ _id, avatar, username }) => {
     <img className={styles.img} src={avatar !== null ? avatar : Avatar} alt="avatar" />
     </span>
       : <img className={styles.img} src={avatar !== null ? avatar : Avatar} alt="avatar" />}
-    <p>{username}</p>
+        <p className={styles.username}>{username}</p>
     </>
   )
 }
