@@ -2,6 +2,7 @@
 import { AxiosResponse } from 'axios'
 import React from 'react'
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
+import { useSearchParams } from 'react-router-dom'
 import { UserService } from '../../service/user/user.service'
 import { getSearchUser } from '../../types/User.interface'
 
@@ -11,10 +12,12 @@ interface useSearchUsersType {
   userList: getSearchUser
 }
 
-export const useSearchUsers = (username?: string, email?: string): useSearchUsersType => {
+export const useSearchUsers = (): useSearchUsersType => {
+  const [searchParams] = useSearchParams()
+  const username = searchParams.get('username') ?? ''
   const [userList, setUserList] = React.useState<getSearchUser>(null!)
 
-  const { refetch, isFetching } = useQuery('userList', async () => await UserService.getListUser(username, email), {
+  const { refetch, isFetching } = useQuery('userList', async () => await UserService.getListUser(username), {
     onSuccess: ({ data }) => {
       setUserList(data)
     },

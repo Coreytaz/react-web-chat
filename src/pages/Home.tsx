@@ -18,7 +18,7 @@ const Home = (): JSX.Element => {
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || location.search || '/'
+  const from = location.search || location.state?.from?.pathname
   const { asyncFriendsUser, isFetching, friendsList } = useGetFriends()
   const { onSendReguesFriend, onAcceptReguesFriend } = useAction()
 
