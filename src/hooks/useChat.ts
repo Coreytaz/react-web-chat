@@ -16,7 +16,7 @@ export const useChat = (): void => {
   React.useEffect(() => {
     socket.on('MESG-RECIEVE', (data) => {
       if (selectedUser?._id === data.from) {
-        setArriveMes({ id: data.id, fromSelf: false, message: data.message })
+        setArriveMes({ id: data.id, fromSelf: false, message: data.message, ...data })
       }
     })
     return () => {
@@ -26,7 +26,7 @@ export const useChat = (): void => {
 
   React.useEffect(() => {
     socket.on('MESG-YOU', (data) => {
-      setMessages([...messages, { id: data.id, fromSelf: true, message: data.message }])
+      setMessages([...messages, { id: data.id, fromSelf: true, message: data.message, ...data }])
     })
     return () => {
       socket.off('MESG-YOU')
@@ -41,7 +41,8 @@ export const useChat = (): void => {
     socket.on('message:update-RECIEVE', ({ updatedMessage }) => {
       const updatedMes = messages.map((mes) => {
         if (mes.id === updatedMessage._id) {
-          return { ...mes, message: updatedMessage.message }
+          console.log(updatedMessage)
+          return { ...mes, message: updatedMessage.message, updatedAt: updatedMessage.updatedAt }
         }
         return mes
       })

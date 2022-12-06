@@ -9,6 +9,8 @@ export interface getAllMessage {
   id: string
   fromSelf: boolean
   message: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface MessageUpdatePayload {
