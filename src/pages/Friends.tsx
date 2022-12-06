@@ -7,14 +7,18 @@ import { useReguestUser } from '../hooks/user/useReguestUser'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import socket from '../service/chat/socket.service'
 import styles from '../style/Page/Friends.module.scss'
+import { ReactComponent as Close } from '../assets/close.svg'
 
 const Friends: React.FC = () => {
   const { _id } = useTypedSelector((state) => state.authSlice.user)
+  const [search, setSearch] = React.useState<string>('')
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const usernameQuery = searchParams.get('username') ?? ''
   const section = searchParams.get('section')
   const { isLoadingRegUser, reguest, setReguest } = useReguestUser()
   const { isFetching: isLoadingFriends, friendsList } = useGetFriends(true)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   const onAcceptToFriends = (id: string): void => {
     socket.emit('accept:user', {
@@ -23,6 +27,12 @@ const Friends: React.FC = () => {
       accept: 1
     })
     setReguest((prev) => [...prev.filter((user) => user._id !== id)])
+  }
+
+  const onClearSearch = (): void => {
+    setSearchParams()
+    setSearch('')
+    inputRef.current?.focus()
   }
 
   if (section === 'requests' && reguest.length > 0) {
@@ -75,7 +85,13 @@ const Friends: React.FC = () => {
                 <Button appearance='primary'><Link to={'/search'}>Найти друзей</Link></Button>
             </div>
             <div className={styles.search__friends}>
-                <Input name="Поиск" placeholder="Поиск друзей" required />
+                <Input name="Поиск" value={search} onChange={(e) => {
+                  setSearch(e.target.value)
+                  setSearchParams({ username: e.target.value })
+                }} placeholder="Поиск друзей" required ref={inputRef} autoComplete={'off'}/>
+                {search && (
+                <Close className={styles.closeSearch} onClick={onClearSearch}/>
+                )}
             </div>
             <div className={styles.friends__list}>
               {
@@ -84,7 +100,7 @@ const Friends: React.FC = () => {
                 <div className={styles.friends__user} key={i}>
                   <UserBlockReqSkeleton/>
                 </div>)
-                  : friendsList?.map((friends, i) => <div className={styles.friends__user} key={friends._id}>
+                  : friendsList?.filter((friend) => friend.username.includes(usernameQuery)).map((friends, i) => <div className={styles.friends__user} key={friends._id}>
                   <UserBlock {...friends}/>
                 </div>)
               }

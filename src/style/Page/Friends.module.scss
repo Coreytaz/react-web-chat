@@ -150,6 +150,7 @@
 }
 
 .search__friends {
+    position: relative;
     width: 100%;
     padding: 0 20px;
     & div {
@@ -188,5 +189,17 @@
     }
     &::-webkit-scrollbar {
         width: 6px;
+    }
+}
+
+.closeSearch {
+    cursor: pointer;
+    color: var(--font-primary);
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    &:hover {
+        transform: translateY(-50%) scale(1.2);
     }
 }

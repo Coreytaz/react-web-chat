@@ -7,12 +7,15 @@ import useDebounce from '../hooks/useDebounce'
 import { useSearchUsers } from '../hooks/user/useSearchUsers'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import socket from '../service/chat/socket.service'
+import { ReactComponent as Close } from '../assets/close.svg'
 import styles from '../style/Page/Search.module.scss'
+import { off } from 'process'
 
 const Search: React.FC = () => {
   const navigate = useNavigate()
   const [_, setSearchParams] = useSearchParams()
   const [search, setSearch] = React.useState<string>('')
+  const inputRef = React.useRef<HTMLInputElement>(null)
   const { refetch, isFetching, userList } = useSearchUsers()
   const { _id } = useTypedSelector((state) => state.authSlice.user)
   const debouncedValue = useDebounce<string>(search, 500)
@@ -29,17 +32,26 @@ const Search: React.FC = () => {
     e.currentTarget.disabled = true
   }
 
+  const onClearSearch = (): void => {
+    setSearchParams()
+    setSearch('')
+    inputRef.current?.focus()
+  }
+
   return (
     <div className={styles.friend__block}>
             <div className={styles.friend__header}>
-                <span onClick={() => navigate(-1)}>Назад</span>
+                <span onClick={() => navigate('/friends')}>Назад</span>
                 <h3>Все пользователя {userList?.total}</h3>
             </div>
             <div className={styles.search__friends}>
                 <Input name="Поиск" value={search} onChange={(e) => {
                   setSearch(e.target.value)
                   setSearchParams({ username: e.target.value })
-                }} placeholder="Введите запрос" required />
+                }} placeholder="Введите запрос" required ref={inputRef} autoComplete={'off'}/>
+                {search && (
+                <Close className={styles.closeSearch} onClick={onClearSearch}/>
+                )}
             </div>
             <div className={styles.friends__list}>
             {isFetching
