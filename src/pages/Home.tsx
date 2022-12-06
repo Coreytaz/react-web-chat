@@ -1,3 +1,5 @@
+/* eslint-disable react/display-name */
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
@@ -11,8 +13,9 @@ import socket from '../service/chat/socket.service'
 import { useAction } from '../hooks/useAction'
 import { useGetFriends } from '../hooks/user/useGetFriends'
 
-const Home = (): JSX.Element => {
+const Home: React.FC = React.memo(() => {
   const { auth } = useTypedSelector((state) => state.authSlice)
+  const { userOnline } = useTypedSelector((state) => state.userSlice)
   const [emailOrLogin, setEmailOrLogin] = React.useState('')
   const [password, setPassword] = React.useState('')
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
@@ -20,13 +23,25 @@ const Home = (): JSX.Element => {
   const location = useLocation()
   const from = location.search || location.state?.from?.pathname
   const { asyncFriendsUser, isFetching, friendsList } = useGetFriends()
-  const { onSendReguesFriend, onAcceptReguesFriend } = useAction()
+  const { onSendReguesFriend, onAcceptReguesFriend, setOnline } = useAction()
 
   const onHandleSubmit = (): void => {
     void loginAsync()
     setEmailOrLogin('')
     setPassword('')
   }
+
+  React.useEffect(() => {
+    socket.on('ADD-USER-STATUS', (data: String[]) => {
+      const is_same = (userOnline.length === data.length) && userOnline.every(el => data.includes(el))
+      if (!is_same) {
+        setOnline(data)
+      }
+    })
+    return () => {
+      socket.off('ADD-USER-STATUS')
+    }
+  }, [setOnline])
 
   React.useEffect(() => {
     if (auth) {
@@ -95,6 +110,6 @@ const Home = (): JSX.Element => {
       </div>
     </>
   )
-}
+})
 
 export default Home

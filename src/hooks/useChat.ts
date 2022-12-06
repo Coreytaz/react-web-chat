@@ -11,13 +11,7 @@ export const useChat = (): void => {
   const { _id } = useTypedSelector((state) => state.authSlice.user)
   const { selectedUser, messages } = useTypedSelector((state) => state.selectedUserSlice)
   const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
-  const { setMessages, setOnline } = useAction()
-
-  React.useEffect(() => {
-    socket.on('ADD-USER-STATUS', (data: String[]) => {
-      setOnline(data)
-    })
-  }, [setOnline])
+  const { setMessages } = useAction()
 
   React.useEffect(() => {
     socket.on('MESG-RECIEVE', (data) => {

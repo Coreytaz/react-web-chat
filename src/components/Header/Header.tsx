@@ -24,7 +24,7 @@ const Header = (): JSX.Element => {
 
   const onLogout = (): void => {
     void asyncLogout()
-    socket.off()
+    socket.disconnect()
   }
 
   React.useEffect(() => {
