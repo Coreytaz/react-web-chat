@@ -19,6 +19,7 @@ const Friends: React.FC = () => {
   const { isLoadingRegUser, reguest, setReguest } = useReguestUser()
   const { isFetching: isLoadingFriends, friendsList } = useGetFriends(true)
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const filterFriends = friendsList?.filter((friend) => friend.username.includes(usernameQuery))
 
   const onAcceptToFriends = (id: string): void => {
     socket.emit('accept:user', {
@@ -81,8 +82,8 @@ const Friends: React.FC = () => {
         </div>}
         <div className={styles.friend__block}>
             <div className={styles.friend__header}>
-                <h3>Все друзья: {friendsList?.length}</h3>
-                <Button appearance='primary'><Link to={'/search'}>Найти друзей</Link></Button>
+                <h3>Все друзья: {filterFriends?.length}</h3>
+                <Link to={'/search'}><Button appearance='primary'>Найти друзей</Button></Link>
             </div>
             <div className={styles.search__friends}>
                 <Input name="Поиск" value={search} onChange={(e) => {
@@ -100,9 +101,24 @@ const Friends: React.FC = () => {
                 <div className={styles.friends__user} key={i}>
                   <UserBlockReqSkeleton/>
                 </div>)
-                  : friendsList?.filter((friend) => friend.username.includes(usernameQuery)).map((friends, i) => <div className={styles.friends__user} key={friends._id}>
-                  <UserBlock {...friends}/>
-                </div>)
+                  : friendsList.length > 0
+                    ? filterFriends.length > 0
+                      ? filterFriends.map((friends, i) =>
+                    <div className={styles.friends__user} key={friends._id}>
+                      <UserBlock {...friends}/>
+                    </div>)
+                      : <h2 style={{ textAlign: 'center' }}>
+                <span>😔</span>
+                <br />
+                Не удалось найти друзей
+              </h2>
+                    : (<h2 style={{ textAlign: 'center' }}>
+                <span>😔</span>
+                <br />
+                У вас нет друзей
+                <br/>
+                <Link to={'/search'}><Button appearance='primary'>Найти друзей</Button></Link>
+              </h2>)
               }
             </div>
         </div>
