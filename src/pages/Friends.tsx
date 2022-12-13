@@ -105,7 +105,12 @@ const Friends: React.FC = () => {
                     ? filterFriends.length > 0
                       ? filterFriends.map((friends, i) =>
                     <div className={styles.friends__user} key={friends._id}>
+                      <div>
                       <UserBlock {...friends}/>
+                      </div>
+                      <Link to={`/?sel=${friends._id}`}>
+                        <Button appearance='primary'>Написать сообщение</Button>
+                      </Link>
                     </div>)
                       : <h2 style={{ textAlign: 'center' }}>
                 <span>😔</span>
