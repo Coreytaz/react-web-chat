@@ -58,14 +58,15 @@ const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage,
                       scrollRef={scrollRef}
                       {...mes} />
                       )}</>)
-                : <div className={styles.welcome}>
+                : !isLoading
+                    ? <div className={styles.welcome}>
                 <img src={Robot} alt="" />
               <h2>
               У вас нету сообщений с пользователем, <span>{selectedUser?.username}!</span>
               </h2>
               <h4>Чтобы начать разговор напишите снизу сообщение</h4>
                 </div>
-              }
+                    : null}
             </div>
   )
 }
