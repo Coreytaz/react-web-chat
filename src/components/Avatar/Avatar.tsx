@@ -19,7 +19,7 @@ const Avatar: React.FC<AvatarProps> = ({ _id, avatar, username }) => {
     )
   } else {
     const { color, colorLighten } = generateAvatarFromHash(_id)
-    const firstChar = username[0]?.toUpperCase()
+    const firstChar = username.split(' ').map((char) => char.charAt(0).toUpperCase()).slice(0, 2).join('')
     return (
           <div
             style={{
