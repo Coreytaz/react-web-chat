@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
+import { useEffect } from 'react'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import { Routes, Route } from 'react-router-dom'
@@ -17,7 +17,7 @@ import Search from './pages/Search'
 function App (): JSX.Element {
   const { asyncRefresh, isLoading } = useRefresh()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (getCookie('tokenIncd')) {
       void asyncRefresh()
     }

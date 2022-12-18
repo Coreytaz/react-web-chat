@@ -12,15 +12,17 @@ import { UseMutateAsyncFunction } from 'react-query'
 import { AxiosError, AxiosResponse } from 'axios'
 import useOnScreen from '../../hooks/useScroll'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
+import AudioMessage from './AudioMessage'
 
 interface MessageContainerProps {
   isLoading: boolean | undefined
   setEditingState: React.Dispatch<React.SetStateAction<boolean>>
   setEditingMessage: React.Dispatch<React.SetStateAction<MessageUpdatePayload>>
   asyncGetAllMessage: UseMutateAsyncFunction<AxiosResponse<getAllMessage[], any>, AxiosError<unknown, any>, void, unknown>
+  editingState: boolean
 }
 
-const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage, isLoading, setEditingState, setEditingMessage }) => {
+const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage, isLoading, setEditingState, setEditingMessage, editingState }) => {
   const { selectedUser, messages, lazyMessage } = useTypedSelector((state) => state.selectedUserSlice)
   const childRef = React.useRef<HTMLDivElement>(null!)
   const isOnScreen = useOnScreen(childRef)
@@ -56,8 +58,11 @@ const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage,
                       setEditingState={setEditingState}
                       setEditingMessage={setEditingMessage}
                       scrollRef={scrollRef}
+                      editingState={editingState}
                       {...mes} />
-                      )}</>)
+                      )}
+                      <AudioMessage/>
+                      </>)
                 : !isLoading
                     ? <div className={styles.welcome}>
                 <img src={Robot} alt="" />

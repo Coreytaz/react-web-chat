@@ -2,27 +2,25 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
-import { Button, ChatContainer, Form, UserBlock, UserBlockSkeleton } from '../components'
+import { FC, memo, useEffect, useState } from 'react'
+import { AsideFriends, Button, ChatContainer, Form } from '../components'
 import Input from '../components/UI/Input/Input'
 import { useLogin } from '../hooks/auth/useLogin'
 import styles from '../style/Page/Home.module.scss'
 import { useTypedSelector } from '../hooks/useTypedSelector'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import socket from '../service/chat/socket.service'
 import { useAction } from '../hooks/useAction'
-import { useGetFriends } from '../hooks/user/useGetFriends'
 
-const Home: React.FC = React.memo(() => {
+const Home: FC = memo(() => {
   const { auth } = useTypedSelector((state) => state.authSlice)
   const { userOnline } = useTypedSelector((state) => state.userSlice)
-  const [emailOrLogin, setEmailOrLogin] = React.useState('')
-  const [password, setPassword] = React.useState('')
+  const [emailOrLogin, setEmailOrLogin] = useState('')
+  const [password, setPassword] = useState('')
   const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.search || location.state?.from?.pathname
-  const { asyncFriendsUser, isFetching, friendsList } = useGetFriends()
   const { onSendReguesFriend, onAcceptReguesFriend, setOnline } = useAction()
 
   const onHandleSubmit = (): void => {
@@ -31,7 +29,7 @@ const Home: React.FC = React.memo(() => {
     setPassword('')
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     socket.on('ADD-USER-STATUS', (data: String[]) => {
       const is_same = (userOnline.length === data.length) && userOnline.every(el => data.includes(el))
       if (!is_same) {
@@ -43,20 +41,14 @@ const Home: React.FC = React.memo(() => {
     }
   }, [setOnline])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (auth) {
       navigate(from, { replace: true })
       socket.connect()
     }
   }, [auth, from, navigate])
 
-  React.useEffect(() => {
-    if (auth) {
-      void asyncFriendsUser()
-    }
-  }, [auth, asyncFriendsUser])
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (auth) {
       socket.on('reguest:user-recieve', ({ request }) => {
         onSendReguesFriend(request.sender)
@@ -64,7 +56,7 @@ const Home: React.FC = React.memo(() => {
     }
   }, [])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (auth) {
       socket.on('accept:user-recieve', ({ request }) => {
         onAcceptReguesFriend(request.taker)
@@ -90,20 +82,7 @@ const Home: React.FC = React.memo(() => {
   return (
     <>
       <div className={styles.inbox}>
-        <aside className={styles.aside}>
-          <ul>
-          {isFetching
-            ? [...new Array(9)].map((_, i) => <li key={i}>
-              <UserBlockSkeleton/>
-          </li>)
-            : friendsList?.map((user) =>
-            <Link to={`/?sel=${user._id}`} key={user._id}>
-              <li>
-              <UserBlock _id={user._id} avatar={user.avatar} username={user.username}/>
-              </li>
-            </Link>)}
-          </ul>
-        </aside>
+        <AsideFriends/>
         <main>
           <ChatContainer/>
         </main>

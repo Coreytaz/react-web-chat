@@ -18,18 +18,19 @@ interface MessageProps {
   updatedAt: Date
   setEditingState: React.Dispatch<React.SetStateAction<boolean>>
   setEditingMessage: React.Dispatch<React.SetStateAction<MessageUpdatePayload>>
+  editingState: boolean
 }
 
-const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, setEditingState, setEditingMessage, createdAt, updatedAt }) => {
+const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, setEditingState, editingState, setEditingMessage, createdAt, updatedAt }) => {
   const { onRemoveMes } = useAction()
   const canEdit = new Date(new Date(createdAt).valueOf() + 24 * 60 * 60 * 1000) > new Date()
   return (
     <div ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
-        {canEdit && fromSelf && <Pencel onClick={() => {
+        {!editingState && canEdit && fromSelf && <Pencel className={styles.toggleSvg} onClick={() => {
           setEditingState(true)
           setEditingMessage({ id, message })
         }} />}
-        {fromSelf && <Trash onClick={() => onRemoveMes(id)} />}
+        {!editingState && fromSelf && <Trash className={styles.toggleSvg} onClick={() => onRemoveMes(id)} />}
         <div className={cn(styles.chat_bubble,
           {
             [styles.chat_bubble__left]: !fromSelf,

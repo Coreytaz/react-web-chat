@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { Button, DragDropFile, Form, Input } from '../components'
 import { useAvatar } from '../hooks/user/useAvatar'
 import { useUpdateUser } from '../hooks/user/useUpdateUser'
@@ -8,11 +8,11 @@ import styles from '../style/Page/Profile.module.scss'
 
 const Profile = (): JSX.Element => {
   const { user } = useTypedSelector((state) => state.authSlice)
-  const [email, setEmail] = React.useState(user?.email)
-  const [userName, setUserName] = React.useState(user?.username)
-  const formDataRef = React.useRef<FormData>()
+  const [email, setEmail] = useState(user?.email)
+  const [userName, setUserName] = useState(user?.username)
+  const formDataRef = useRef<FormData>()
 
-  React.useEffect(() => {
+  useEffect(() => {
     setEmail(user?.email)
     setUserName(user?.username)
   }, [user?.email, user?.username])
@@ -21,7 +21,7 @@ const Profile = (): JSX.Element => {
 
   const { userAsync } = useUpdateUser(email, userName)
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (formDataRef.current?.get('avatar')) {
       void avatarAsync()

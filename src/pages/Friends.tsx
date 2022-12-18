@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
+import { FC, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Input, UserBlock, UserBlockReqSkeleton } from '../components'
 import { useGetFriends } from '../hooks/user/useGetFriends'
@@ -9,16 +9,16 @@ import socket from '../service/chat/socket.service'
 import styles from '../style/Page/Friends.module.scss'
 import { ReactComponent as Close } from '../assets/close.svg'
 
-const Friends: React.FC = () => {
+const Friends: FC = () => {
   const { _id } = useTypedSelector((state) => state.authSlice.user)
-  const [search, setSearch] = React.useState<string>('')
+  const [search, setSearch] = useState<string>('')
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const usernameQuery = searchParams.get('username') ?? ''
   const section = searchParams.get('section')
   const { isLoadingRegUser, reguest, setReguest } = useReguestUser()
   const { isFetching: isLoadingFriends, friendsList } = useGetFriends(true)
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const filterFriends = friendsList?.filter((friend) => friend.username.includes(usernameQuery))
 
   const onAcceptToFriends = (id: string): void => {

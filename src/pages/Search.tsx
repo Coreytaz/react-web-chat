@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
+import { FC, useEffect, useRef, useState, MouseEvent } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Input, UserBlock, UserBlockReqSkeleton } from '../components'
 import useDebounce from '../hooks/useDebounce'
@@ -11,20 +11,20 @@ import { ReactComponent as Close } from '../assets/close.svg'
 import styles from '../style/Page/Search.module.scss'
 import { off } from 'process'
 
-const Search: React.FC = () => {
+const Search: FC = () => {
   const navigate = useNavigate()
   const [_, setSearchParams] = useSearchParams()
-  const [search, setSearch] = React.useState<string>('')
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const [search, setSearch] = useState<string>('')
+  const inputRef = useRef<HTMLInputElement>(null)
   const { refetch, isFetching, userList } = useSearchUsers()
   const { _id } = useTypedSelector((state) => state.authSlice.user)
   const debouncedValue = useDebounce<string>(search, 500)
 
-  React.useEffect(() => {
+  useEffect(() => {
     void refetch()
   }, [debouncedValue, refetch])
 
-  const onClickRequestToFriends = (e: React.MouseEvent<HTMLButtonElement>, id: string): void => {
+  const onClickRequestToFriends = (e: MouseEvent<HTMLButtonElement>, id: string): void => {
     socket.emit('reguest:user', {
       sender: _id,
       taker: id

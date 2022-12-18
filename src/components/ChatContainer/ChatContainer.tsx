@@ -74,6 +74,7 @@ const ChatContainer = (): JSX.Element => {
         setEditingState={setEditingState}
         setEditingMessage={setEditingMessage}
         asyncGetAllMessage={asyncGetAllMessage}
+        editingState={editingState}
       />
     </div>
     <ChatInput

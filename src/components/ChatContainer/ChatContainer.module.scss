@@ -161,17 +161,19 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    svg path {
+    .toggleSvg {
         display: none;
-        fill: var(--font-primary);
+        & path {
+            fill: var(--font-primary);
+        }
     }
 }
 
-.row:has(svg) {
+.row:has(.toggleSvg) {
     cursor: pointer;
 }
 
-.row:hover svg path {
+.row:hover .toggleSvg {
     display: block;
 }
 
@@ -258,7 +260,7 @@
 }
 
 .time {
-    width: 80px;
+    width: 82px;
     position: absolute;
     color: var(--font-primary);
     font-size: 0.6rem;
@@ -276,5 +278,118 @@
     }
     &__right {
         left: -45px;
+    }
+}
+
+.messges_record {
+    cursor: pointer;
+    width: 50px;
+    fill: var(--mainAccentColor);
+    &:hover {
+        fill: var(--mainAccentColor-hover);
+    }
+    &_status {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        justify-content: center;
+        color: #f56b6b;
+        &_bubble {
+            display: inline-block;
+            position: relative;
+            height: 10px;
+            width: 10px;
+            background-color: #f56b6b;
+            border-radius: 30px;
+            margin-right: 8px;
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 10px;
+                width: 10px;
+                background-color: rgba(245, 107, 107, 0.5);
+                border-radius: 30px;
+                animation: wave-animation 1s ease-in-out infinite;
+                transition: transform 0.15s ease-in-out;
+                transform: scale(1);
+            }
+        }
+        &_close {
+            cursor: pointer;
+            width: 50px;
+            height: 40px;
+            fill: var(--mainAccentColor);
+            &:hover {
+                fill: var(--mainAccentColor-hover);
+            }
+        }
+    }
+}
+
+.messges_send {
+    cursor: pointer;
+    width: 50px;
+    height: 40px;
+    fill: var(--mainAccentColor);
+    &:hover {
+        fill: var(--mainAccentColor-hover);
+    }
+}
+
+.message__audio {
+    audio {
+        display: none;
+    }
+    &_info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        gap: 0 10px;
+    }
+    &_btn {
+        button {
+            transform: scaleX(-1);
+            display: flex;
+            cursor: pointer;
+            border: 0;
+            height: 28px;
+            border-radius: 30px;
+            background: var(--mainAccentColor-hover);
+        }
+        svg {
+            height: 13px;
+            width: 13px;
+            position: relative;
+        }
+    }
+    &_duration {
+        color: #fff;
+        font-weight: 500;
+        opacity: 0.8;
+        font-size: 12px;
+    }
+    &_progress {
+        border-radius: 9px;
+        left: 0;
+        top: 0;
+        position: absolute;
+        background-color: var(--mainAccentColor-voice);
+        height: 100%;
+        transition: width 0.3s linear;
+    }
+}
+
+@keyframes wave-animation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
     }
 }

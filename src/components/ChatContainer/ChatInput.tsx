@@ -1,10 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmojiClickData } from 'emoji-picker-react'
-import React from 'react'
-import { Button, Input } from '..'
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Input } from '..'
 import styles from './ChatContainer.module.scss'
 import { ReactComponent as Emoji } from '../../assets/emoji.svg'
 import { ReactComponent as Close } from '../../assets/close.svg'
+import { ReactComponent as Audio } from '../../assets/audio.svg'
+import { ReactComponent as Send } from '../../assets/send.svg'
 import ChatEmoji from './ChatEmoji'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
@@ -12,17 +15,18 @@ import { useAction } from '../../hooks/useAction'
 interface ChatInputProps {
   editingState: boolean
   editingMessage: MessageUpdatePayload
-  setEditingState: React.Dispatch<React.SetStateAction<boolean>>
+  setEditingState: Dispatch<SetStateAction<boolean>>
 }
 
 type PopupClick = MouseEvent & {
   path: Node[]
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, setEditingState }): JSX.Element => {
-  const str = React.useRef<HTMLInputElement>(null!)
-  const emojiRef = React.useRef(null!)
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
+const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditingState }): JSX.Element => {
+  const str = useRef<HTMLInputElement>(null!)
+  const emojiRef = useRef(null!)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [isRendering, setIsRendering] = useState(false)
   const { onClickSendMessage, onUpdateMessage } = useAction()
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
@@ -31,11 +35,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
     str.current.value = message
   }
 
-  React.useEffect(() => {
-    if (editingState) {
-      str.current.value = editingMessage?.message
+  useEffect(() => {
+    if (isRendering) {
+      setIsRendering(false)
     } else {
-      str.current.value = ''
+      if (editingState) {
+        str.current.value = editingMessage?.message
+      } else {
+        str.current.value = ''
+      }
     }
   }, [editingMessage?.message, editingState])
 
@@ -51,7 +59,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
       const _event = event as PopupClick
       if ((emojiRef.current != null) && !_event.path.includes(emojiRef.current)) {
@@ -69,7 +77,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
   return (
     <div className={styles.messges_input}>
       {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
-            <div className={styles.messges_emoji}>
+            {!isRendering
+              ? <><div className={styles.messges_emoji}>
             <Emoji onMouseEnter={() => setShowEmojiPicker(true)}/>
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}
             </div>
@@ -81,7 +90,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ editingState, editingMessage, set
               required
               onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
             />
-            <Button appearance="primary" onClick={onSendMesg}>Отправить</Button>
+            {!editingState && <Audio className={styles.messges_record} onClick={() => setIsRendering(true)}/>}
+            </>
+              : <><Close className={styles.messges_record_status_close} onClick={() => setIsRendering(false)}/>
+              <div className={styles.messges_record_status}>
+              <i className={styles.messges_record_status_bubble}></i>
+              Recording...
+            </div>
+            </>}
+            <Send className={styles.messges_send} onClick={onSendMesg}/>
     </div>
   )
 }

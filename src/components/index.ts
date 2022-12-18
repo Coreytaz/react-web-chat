@@ -12,3 +12,4 @@ export { default as UserBlockReqSkeleton } from './UserBlock/UserBlockReqSkeleto
 export { default as ChatContainer } from './ChatContainer/ChatContainer'
 export { default as ChatInput } from './ChatContainer/ChatInput'
 export { default as Avatar } from './Avatar/Avatar'
+export { default as AsideFriends } from './AsideFriends/AsideFriends'

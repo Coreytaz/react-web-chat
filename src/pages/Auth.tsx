@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Form } from '../components'
 import Input from '../components/UI/Input/Input'
@@ -8,9 +8,9 @@ import styles from '../style/Page/Home.module.scss'
 
 const Auth = (): JSX.Element => {
   const { auth } = useTypedSelector((state) => state.authSlice)
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [login, setLogin] = React.useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [login, setLogin] = useState('')
   const { registerAsync, isLoading } = useRegister(email, password, login)
   const navigate = useNavigate()
 
@@ -21,7 +21,7 @@ const Auth = (): JSX.Element => {
     setLogin('')
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (auth) {
       navigate('/')
     }
