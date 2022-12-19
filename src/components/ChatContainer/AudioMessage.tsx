@@ -41,7 +41,9 @@ const AudioMessage: FC<{ audioSrc: string, fromSelf: boolean, editingState: bool
           audioElem.current.currentTime = 1e101
           audioElem.current.ontimeupdate = function () {
             this.ontimeupdate = () => {
-              setCurrentTime(audioElem.current?.duration)
+              const duration = (audioElem?.current && audioElem?.current.duration) || 0
+              setCurrentTime(audioElem.current.currentTime)
+              setProgress((audioElem.current.currentTime / duration) * 100)
             }
             audioElem.current.currentTime = 0
           }
@@ -71,11 +73,6 @@ const AudioMessage: FC<{ audioSrc: string, fromSelf: boolean, editingState: bool
       },
       false
     )
-    audioElem?.current.addEventListener('timeupdate', () => {
-      const duration = (audioElem?.current && audioElem?.current.duration) || 0
-      setCurrentTime(audioElem.current.currentTime)
-      setProgress((audioElem.current.currentTime / duration) * 100)
-    })
   }, [])
 
   return (
