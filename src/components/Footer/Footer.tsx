@@ -1,9 +1,9 @@
-import React from 'react'
+import { FC } from 'react'
 import { ThemeButton } from '..'
 import { useTheme } from '../../hooks/useTheme'
 import styles from './Footer.module.scss'
 
-const Footer = (): JSX.Element => {
+const Footer: FC = () => {
   const { theme, setTheme } = useTheme()
 
   const changeTheme = (): void => {

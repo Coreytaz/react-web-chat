@@ -12,7 +12,6 @@ import { UseMutateAsyncFunction } from 'react-query'
 import { AxiosError, AxiosResponse } from 'axios'
 import useOnScreen from '../../hooks/useScroll'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import AudioMessage from './AudioMessage'
 
 interface MessageContainerProps {
   isLoading: boolean | undefined
@@ -61,7 +60,6 @@ const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage,
                       editingState={editingState}
                       {...mes} />
                       )}
-                      <AudioMessage/>
                       </>)
                 : !isLoading
                     ? <div className={styles.welcome}>

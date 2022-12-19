@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmojiClickData } from 'emoji-picker-react'
@@ -11,6 +12,7 @@ import { ReactComponent as Send } from '../../assets/send.svg'
 import ChatEmoji from './ChatEmoji'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
+import { useRecorder } from '../../hooks/useRecorder'
 
 interface ChatInputProps {
   editingState: boolean
@@ -24,10 +26,11 @@ type PopupClick = MouseEvent & {
 
 const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditingState }): JSX.Element => {
   const str = useRef<HTMLInputElement>(null!)
+  const [edit, setEdit] = useState(editingMessage?.message)
   const emojiRef = useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [isRendering, setIsRendering] = useState(false)
   const { onClickSendMessage, onUpdateMessage } = useAction()
+  const { onRecord, mediaRecorder, isRecording, onHideRecording, setIsRecording } = useRecorder()
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
     let message = str.current.value
@@ -36,8 +39,9 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   }
 
   useEffect(() => {
-    if (isRendering) {
-      setIsRendering(false)
+    if (isRecording) {
+      setIsRecording(false)
+      setEdit(editingMessage?.message)
     } else {
       if (editingState) {
         str.current.value = editingMessage?.message
@@ -47,8 +51,16 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
     }
   }, [editingMessage?.message, editingState])
 
+  useEffect(() => {
+    if (edit) {
+      str.current.value = edit
+    }
+  }, [edit])
+
   const onSendMesg = (): void => {
-    if (editingState && str.current != null && str.current.value.length > 0) {
+    if (isRecording) {
+      mediaRecorder.stop()
+    } else if (editingState && str.current != null && str.current.value.length > 0) {
       editingMessage.message = str.current.value
       onUpdateMessage(editingMessage)
       setEditingState(false)
@@ -77,7 +89,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   return (
     <div className={styles.messges_input}>
       {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
-            {!isRendering
+            {!isRecording
               ? <><div className={styles.messges_emoji}>
             <Emoji onMouseEnter={() => setShowEmojiPicker(true)}/>
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}
@@ -90,12 +102,12 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
               required
               onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
             />
-            {!editingState && <Audio className={styles.messges_record} onClick={() => setIsRendering(true)}/>}
+            {!editingState && <Audio className={styles.messges_record} onClick={() => onRecord()}/>}
             </>
-              : <><Close className={styles.messges_record_status_close} onClick={() => setIsRendering(false)}/>
+              : <><Close className={styles.messges_record_status_close} onClick={() => onHideRecording()}/>
               <div className={styles.messges_record_status}>
               <i className={styles.messges_record_status_bubble}></i>
-              Recording...
+              <span>Recording...</span>
             </div>
             </>}
             <Send className={styles.messges_send} onClick={onSendMesg}/>

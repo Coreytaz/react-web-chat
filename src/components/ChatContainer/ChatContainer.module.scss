@@ -116,6 +116,7 @@
         min-width: 100px;
         margin: 16px 5px 8px 20px;
         background: var(--hover-btn-theme);
+        z-index: 1;
         .edit {
             position: absolute;
             color: var(--font-primary);
@@ -124,6 +125,8 @@
             right: -45px;
         }
         &:after {
+            position: absolute;
+            z-index: -1;
             left: 8px;
             border-right-color: var(--hover-btn-theme);
             border-left: 0;
@@ -180,6 +183,13 @@
 .row:has(.chat_bubble__right) {
     & svg {
         transform: scaleX(-1);
+    }
+}
+
+.row:has(.chat_bubble__left) {
+    & button {
+        transform: scaleX(1);
+        background: var(--additionalAccentColor);
     }
 }
 
@@ -293,7 +303,12 @@
         align-items: center;
         flex: 1;
         justify-content: center;
-        color: #f56b6b;
+        span {
+            font-size: 1.5rem;
+            color: #f56b6b;
+            clip-path: inset(0 1.4ch 0 0);
+            animation: threePoint 1s ease-in-out infinite;
+        }
         &_bubble {
             display: inline-block;
             position: relative;
@@ -391,5 +406,11 @@
     }
     100% {
         transform: scale(1);
+    }
+}
+
+@keyframes threePoint {
+    to {
+        clip-path: inset(0 -1ch 0 0);
     }
 }

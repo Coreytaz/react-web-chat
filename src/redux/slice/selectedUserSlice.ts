@@ -27,10 +27,24 @@ export const onClickSendMessage = createAsyncThunk<any, string, { state: { selec
   async function (msg, { getState }) {
     const selectedUser = getState().selectedUserSlice.selectedUser
     const _id = getState().authSlice.user._id
-    return await socket.emit('SEND-MESG', {
+    await socket.emit('SEND-MESG', {
       to: selectedUser?._id,
       from: _id,
       message: msg
+    })
+  }
+)
+
+export const onClickSendRecordMessage = createAsyncThunk<any, string, { state: { selectedUserSlice: selectedUserSliceProps, authSlice: authSliceProps } }>(
+  'selectedUser/send-recordMessage',
+  async function (msg, { getState }) {
+    const selectedUser = getState().selectedUserSlice.selectedUser
+    const _id = getState().authSlice.user._id
+    await socket.emit('SEND-MESG', {
+      to: selectedUser?._id,
+      from: _id,
+      message: null,
+      voiceMessage: msg
     })
   }
 )

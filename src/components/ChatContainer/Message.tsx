@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-self-compare */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React from 'react'
@@ -8,6 +9,7 @@ import { ReactComponent as Trash } from './Trash.svg'
 import { MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
 import { formatTime } from '../../utils/formatTime'
+import AudioMessage from './AudioMessage'
 
 interface MessageProps {
   id: string
@@ -16,14 +18,18 @@ interface MessageProps {
   message: string
   createdAt: Date
   updatedAt: Date
+  voiceMessage?: string
   setEditingState: React.Dispatch<React.SetStateAction<boolean>>
   setEditingMessage: React.Dispatch<React.SetStateAction<MessageUpdatePayload>>
   editingState: boolean
 }
 
-const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, setEditingState, editingState, setEditingMessage, createdAt, updatedAt }) => {
+const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, setEditingState, editingState, setEditingMessage, createdAt, updatedAt, voiceMessage }) => {
   const { onRemoveMes } = useAction()
   const canEdit = new Date(new Date(createdAt).valueOf() + 24 * 60 * 60 * 1000) > new Date()
+  if (voiceMessage !== null) {
+    return <AudioMessage audioSrc={voiceMessage!} fromSelf={fromSelf} editingState={editingState} id={id} createdAt={createdAt}/>
+  }
   return (
     <div ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
         {!editingState && canEdit && fromSelf && <Pencel className={styles.toggleSvg} onClick={() => {

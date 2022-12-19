@@ -11,6 +11,7 @@ export interface getAllMessage {
   message: string
   createdAt: Date
   updatedAt: Date
+  voiceMessage?: string
 }
 
 export interface MessageUpdatePayload {
