@@ -190,6 +190,17 @@
     & button {
         transform: scaleX(1);
         background: var(--additionalAccentColor);
+        & svg path {
+            fill: var(--font-primary);
+        }
+    }
+    & .message__audio_info {
+        div svg path {
+            fill: var(--font-primary);
+        }
+        span {
+            color: var(--font-primary);
+        }
     }
 }
 
