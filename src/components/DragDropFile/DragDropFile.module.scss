@@ -95,6 +95,19 @@ main:has(.file) {
     gap: 0 15px;
     & .file {
         position: relative;
+        background-color: var(--hover-btn-theme);
+        width: 60px;
+        height: 60px;
+        & .Loading_wrapper {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        & span {
+            font-size: 0.7rem;
+        }
         & svg {
             cursor: pointer;
             transition: display 0.3s ease;
@@ -104,6 +117,12 @@ main:has(.file) {
             fill: var(--mainAccentColor);
             top: 50%;
             transform: translateY(-50%);
+        }
+        & .Loading {
+            cursor: default;
+            display: block;
+            position: static;
+            animation: loadingCircle 1s infinite linear;
         }
         & .Trash {
             right: 20%;
@@ -124,7 +143,7 @@ main:has(.file) {
             object-fit: cover;
         }
         &:hover {
-            & svg {
+            &:has(img) svg {
                 display: block;
             }
             & img {
@@ -137,4 +156,13 @@ main:has(.file) {
 .inner_file {
     display: flex;
     flex-direction: column-reverse;
+}
+
+@keyframes loadingCircle {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

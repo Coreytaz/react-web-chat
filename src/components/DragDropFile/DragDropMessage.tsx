@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import styles from './DragDropFile.module.scss'
 import { ReactComponent as Trash } from '../ChatContainer/Trash.svg'
 import { ReactComponent as Eye } from '../../assets/eye.svg'
+import { ReactComponent as Loading } from './Loading.svg'
 import { Modal } from '..'
 import { ChatService } from '../../service/chat/chat.service'
 
@@ -106,7 +107,13 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
             attachments.map((file: any) => {
               return (
                     <div className={styles.file} key={file.id}>
-                        {file.src ? <img src={file.src} alt={file.name} /> : <span>загрузка</span>}
+                          {file.status === 'uploading' &&
+                          <div className={styles.Loading_wrapper}>
+                            <Loading className={styles.Loading} />
+                            <span>Загрузка</span>
+                          </div>
+                          }
+                          {file.status === 'done' && <img src={file.src} alt={file.name} />}
                         <Trash className={styles.Trash} onClick={async () => await removePreview(file.id, file.src)}/>
                         <Eye className={styles.eye} onClick={() => handlePreview(file)}/>
                     </div>
