@@ -234,8 +234,8 @@
     }
 }
 
-.mesage_wrapper:has(+ .messges_input > .mesg_editing) > .message_inner {
-    height: calc(100% - 90px);
+main:has(.mesg_editing) {
+    grid-template-rows: calc(100% - 95px) 95px;
 }
 
 .messges_emoji {

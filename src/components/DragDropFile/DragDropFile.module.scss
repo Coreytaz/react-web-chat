@@ -66,3 +66,75 @@
         position: relative;
     }
 }
+
+main:has(.file) {
+    grid-template-rows: calc(100% - 140px) 140px;
+}
+
+.DragDropMessage {
+    width: 100%;
+    &__active {
+        min-height: 54px;
+        border: 2px dashed var(--font-primary);
+        text-align: center;
+        border-radius: 0 0 15px 15px;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+        color: var(--font-primary);
+        font-size: 1.2rem;
+        padding: 5px 20px;
+        margin: 10px;
+    }
+}
+
+.files {
+    padding: 0 10px;
+    display: flex;
+    gap: 0 15px;
+    & .file {
+        position: relative;
+        & svg {
+            cursor: pointer;
+            transition: display 0.3s ease;
+            display: none;
+            width: 15px;
+            position: absolute;
+            fill: var(--mainAccentColor);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        & .Trash {
+            right: 20%;
+            &:hover {
+                filter: brightness(150%);
+            }
+        }
+        & .eye {
+            left: 20%;
+            &:hover {
+                filter: brightness(150%);
+            }
+        }
+        & img {
+            transition: filter 0.3s ease;
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        &:hover {
+            & svg {
+                display: block;
+            }
+            & img {
+                filter: brightness(70%);
+            }
+        }
+    }
+}
+
+.inner_file {
+    display: flex;
+    flex-direction: column-reverse;
+}

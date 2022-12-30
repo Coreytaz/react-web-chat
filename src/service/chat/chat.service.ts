@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { AxiosResponse } from 'axios'
 import { getAllMessage } from '../../types/Chat.interface'
 import api from '../api.service'
@@ -14,5 +15,17 @@ export const ChatService = {
         'Content-Type': 'multipart/form-data'
       }
     })
+  },
+  async uploadFile (file: File): Promise<AxiosResponse<void>> {
+    const formData = new FormData()
+    formData.append('file', file)
+    return await api.post('chat/file', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  async removeFile (fileId: string): Promise<AxiosResponse<void>> {
+    return await api.delete(fileId)
   }
 }

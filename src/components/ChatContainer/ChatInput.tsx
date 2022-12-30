@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EmojiClickData } from 'emoji-picker-react'
 import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
-import { Input } from '..'
+import { DragDropMessage, Input } from '..'
 import styles from './ChatContainer.module.scss'
 import { ReactComponent as Emoji } from '../../assets/emoji.svg'
 import { ReactComponent as Close } from '../../assets/close.svg'
@@ -87,6 +87,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   }, [])
 
   return (
+    <DragDropMessage>
     <div className={styles.messges_input}>
       {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
             {!isRecording
@@ -112,6 +113,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
             </>}
             <Send className={styles.messges_send} onClick={onSendMesg}/>
     </div>
+    </DragDropMessage>
   )
 }
 

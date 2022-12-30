@@ -1,0 +1,42 @@
+.modal_window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--additionalAccentColor);
+    border-radius: 15px;
+    padding: 10px;
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    z-index: 1000;
+    & img {
+        display: block;
+        max-width: calc(90vw - 40px);
+        max-height: calc(90vh - 30px);
+        object-fit: cover;
+    }
+}
+
+.modal_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal_close {
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 30px;
+    height: 30px;
+    fill: var(--mainAccentColor);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+        filter: brightness(50%);
+    }
+}
