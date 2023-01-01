@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/return-await */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import socket from '../../service/chat/socket.service'
-import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
+import { attachment, getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
 import { getUser } from '../../types/User.interface'
 import { authSliceProps } from './authSlice'
 
@@ -22,15 +22,16 @@ const initialState: selectedUserSliceProps = {
   lazyMessage: []
 }
 
-export const onClickSendMessage = createAsyncThunk<any, string, { state: { selectedUserSlice: selectedUserSliceProps, authSlice: authSliceProps } }>(
+export const onClickSendMessage = createAsyncThunk<any, { msg: string, attachments: attachment[] }, { state: { selectedUserSlice: selectedUserSliceProps, authSlice: authSliceProps } }>(
   'selectedUser/send-message',
-  async function (msg, { getState }) {
+  async function (item, { getState }) {
     const selectedUser = getState().selectedUserSlice.selectedUser
     const _id = getState().authSlice.user._id
-    await socket.emit('SEND-MESG', {
+    socket.emit('SEND-MESG', {
       to: selectedUser?._id,
       from: _id,
-      message: msg
+      message: item.msg,
+      attachments: item.attachments
     })
   }
 )
@@ -40,11 +41,12 @@ export const onClickSendRecordMessage = createAsyncThunk<any, string, { state: {
   async function (msg, { getState }) {
     const selectedUser = getState().selectedUserSlice.selectedUser
     const _id = getState().authSlice.user._id
-    await socket.emit('SEND-MESG', {
+    socket.emit('SEND-MESG', {
       to: selectedUser?._id,
       from: _id,
       message: null,
-      voiceMessage: msg
+      voiceMessage: msg,
+      attachment: []
     })
   }
 )

@@ -12,6 +12,14 @@ export interface getAllMessage {
   createdAt: Date
   updatedAt: Date
   voiceMessage?: string
+  attachments?: attachment[]
+}
+
+export interface attachment {
+  id: string
+  url: string
+  status: string
+  name: string
 }
 
 export interface MessageUpdatePayload {

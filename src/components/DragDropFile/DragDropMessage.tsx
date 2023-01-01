@@ -10,10 +10,11 @@ import { ChatService } from '../../service/chat/chat.service'
 
 interface DragDropMessageProps {
   children: React.ReactNode
+  attachments: any
+  setAttachments: (attachments: any) => void
 }
 
-const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
-  const [attachments, setAttachments] = useState([] as any)
+const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setAttachments }) => {
   const [drag, setDrag] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
@@ -22,7 +23,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
     if (attachments.length > 10) {
       setAttachments(attachments.slice(0, 10))
     }
-  }, [attachments])
+  }, [attachments, setAttachments])
 
   const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
@@ -60,7 +61,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
         if (file.id === id) {
           return {
             ...file,
-            src: data,
+            url: data,
             status: 'done'
           }
         }
@@ -71,13 +72,13 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
   }
 
   const handlePreview = (file: any): void => {
-    setPreviewImage(file.src)
+    setPreviewImage(file.url)
     setPreviewOpen(true)
   }
 
-  const removePreview = async (id: string, src: string): Promise<void> => {
+  const removePreview = async (id: string, url: string): Promise<void> => {
     setAttachments(attachments.filter((file: any) => file.id !== id))
-    await ChatService.removeFile(src)
+    await ChatService.removeFile(url)
   }
 
   return (
@@ -113,7 +114,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children }) => {
                             <span>Загрузка</span>
                           </div>
                           }
-                          {file.status === 'done' && <img src={file.src} alt={file.name} />}
+                          {file.status === 'done' && <img src={file.url} alt={file.name} />}
                         <Trash className={styles.Trash} onClick={async () => await removePreview(file.id, file.src)}/>
                         <Eye className={styles.eye} onClick={() => handlePreview(file)}/>
                     </div>

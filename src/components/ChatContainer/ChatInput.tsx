@@ -10,7 +10,7 @@ import { ReactComponent as Close } from '../../assets/close.svg'
 import { ReactComponent as Audio } from '../../assets/audio.svg'
 import { ReactComponent as Send } from '../../assets/send.svg'
 import ChatEmoji from './ChatEmoji'
-import { MessageUpdatePayload } from '../../types/Chat.interface'
+import { attachment, MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
 import { useRecorder } from '../../hooks/useRecorder'
 
@@ -30,6 +30,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   const emojiRef = useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const { onClickSendMessage, onUpdateMessage } = useAction()
+  const [attachments, setAttachments] = useState<attachment[]>([])
   const { onRecord, mediaRecorder, isRecording, onHideRecording, setIsRecording } = useRecorder()
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
@@ -66,7 +67,9 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
       setEditingState(false)
       str.current.value = ''
     } else if (str.current != null && str.current.value.length > 0) {
-      onClickSendMessage(str.current?.value)
+      const item = { msg: str.current.value, attachments }
+      onClickSendMessage(item)
+      setAttachments([])
       str.current.value = ''
     }
   }
@@ -87,7 +90,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   }, [])
 
   return (
-    <DragDropMessage>
+    <DragDropMessage attachments={attachments} setAttachments={setAttachments}>
     <div className={styles.messges_input}>
       {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
             {!isRecording
