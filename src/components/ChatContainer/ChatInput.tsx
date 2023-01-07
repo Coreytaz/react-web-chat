@@ -25,7 +25,7 @@ type PopupClick = MouseEvent & {
 }
 
 const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditingState }): JSX.Element => {
-  const str = useRef<HTMLInputElement>(null!)
+  const [input, setInput] = useState('')
   const [edit, setEdit] = useState(editingMessage?.message)
   const emojiRef = useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
@@ -34,9 +34,9 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   const { onRecord, mediaRecorder, isRecording, onHideRecording, setIsRecording } = useRecorder()
 
   const onClick = (emojiData: EmojiClickData, event: MouseEvent): void => {
-    let message = str.current.value
+    let message = input
     message += emojiData.emoji
-    str.current.value = message
+    setInput(message)
   }
 
   useEffect(() => {
@@ -45,10 +45,10 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
       setEdit(editingMessage?.message)
     } else {
       if (editingState) {
-        str.current.value = editingMessage?.message
+        setInput(editingMessage?.message)
         setAttachments(editingMessage.attachments!)
       } else {
-        str.current.value = ''
+        setInput('')
         setAttachments([])
       }
     }
@@ -56,25 +56,24 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
 
   useEffect(() => {
     if (edit) {
-      str.current.value = edit
+      setInput(edit)
     }
   }, [edit])
 
   const onSendMesg = (): void => {
-    console.log(editingState)
     if (isRecording) {
       mediaRecorder.stop()
-    } else if (editingState && (attachments.length > 0 || (str.current != null && str.current.value.length > 0))) {
-      editingMessage.message = str.current.value
+    } else if (editingState && (attachments.length > 0 || input.length > 0)) {
+      editingMessage.message = input
       editingMessage.attachments = attachments
       onUpdateMessage(editingMessage)
       setEditingState(false)
-      str.current.value = ''
-    } else if ((str.current != null && str.current.value.length > 0) || (attachments.length > 0)) {
-      const item = { msg: str.current.value, attachments }
+      setInput('')
+    } else if (input.length > 0 || attachments.length > 0) {
+      const item = { msg: input, attachments }
       onClickSendMessage(item)
       setAttachments([])
-      str.current.value = ''
+      setInput('')
     }
   }
 
@@ -107,14 +106,14 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
             {showEmojiPicker && <ChatEmoji ref={emojiRef} onClick={onClick}/>}
             </div>
             <Input
-              ref={str}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               autoComplete='off'
               name="message"
               placeholder="Напишите сообщение..."
               required
               onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
             />
-            {!(attachments.length > 0) && !editingState && <Audio className={styles.messges_record} onClick={() => onRecord()}/>}
             </>
               : <><Close className={styles.messges_record_status_close} onClick={() => onHideRecording()}/>
               <div className={styles.messges_record_status}>
@@ -122,7 +121,8 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
               <span>Recording...</span>
             </div>
             </>}
-            <Send className={styles.messges_send} onClick={onSendMesg}/>
+            {!(isRecording || (attachments.length > 0) || editingState || (input.length > 0)) ? <Audio className={styles.messges_record} onClick={() => onRecord()}/> : null}
+            {(attachments.length > 0 || input.length > 0 || isRecording) ? <Send className={styles.messges_send} onClick={onSendMesg}/> : null}
     </div>
     </DragDropMessage>
   )

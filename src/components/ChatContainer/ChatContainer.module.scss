@@ -305,6 +305,7 @@ main:has(.mesg_editing) {
     cursor: pointer;
     width: 50px;
     fill: var(--mainAccentColor);
+    animation: reverse 0.2s im-zoom-hide;
     &:hover {
         fill: var(--mainAccentColor-hover);
     }
@@ -358,6 +359,7 @@ main:has(.mesg_editing) {
     width: 50px;
     height: 40px;
     fill: var(--mainAccentColor);
+    animation: reverse 0.2s im-zoom-hide;
     &:hover {
         fill: var(--mainAccentColor-hover);
     }
@@ -562,5 +564,28 @@ main:has(.mesg_editing) {
 @keyframes threePoint {
     to {
         clip-path: inset(0 -1ch 0 0);
+    }
+}
+
+@keyframes im-zoom-hide {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+    49% {
+        opacity: 1;
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+    }
+    50% {
+        opacity: 0;
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: scale(0.1);
+        transform: scale(0.1);
     }
 }

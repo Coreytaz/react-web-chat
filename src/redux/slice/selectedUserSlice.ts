@@ -54,7 +54,6 @@ export const onClickSendRecordMessage = createAsyncThunk<any, string, { state: {
 export const onUpdateMessage = createAsyncThunk<any, MessageUpdatePayload>(
   'selectedUser/update-message',
   async function (payload) {
-    console.log(payload)
     socket.emit('message:update', payload)
   }
 )

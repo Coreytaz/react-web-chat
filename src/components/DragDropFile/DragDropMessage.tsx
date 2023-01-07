@@ -27,19 +27,14 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
 
   const dragLeaveHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
-    console.log(123)
     setDrag(false)
   }
 
-  const onDropHandler = async (e: React.DragEvent<HTMLDivElement>): Promise<void> => {
+  const onDropHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
     const file = [...e.dataTransfer.files]
-    if (attachments.length > 9 || file.length > 9) {
-      setDrag(false)
-      return
-    }
     for (let i = 0; i < file.length; i++) {
-      if (!(/\.(jpe?g?|png|)$/).test(file[i].name)) {
+      if (!(/\.(jpe?g?|png|)$/).test(file[i].name) || attachments.length > 9 || file.length > 9) {
         setDrag(false)
         return
       }
@@ -52,17 +47,18 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
           status: 'uploading'
         }
       ])
-      const { data } = await ChatService.uploadFile(file[i])
-      setAttachments((uploaded: any) => uploaded.map((file: any) => {
-        if (file.id === id) {
-          return {
-            ...file,
-            url: data,
-            status: 'done'
+      void ChatService.uploadFile(file[i]).then((res) => {
+        setAttachments((uploaded: any) => uploaded.map((file: any) => {
+          if (file.id === id) {
+            return {
+              ...file,
+              url: res.data,
+              status: 'done'
+            }
           }
-        }
-        return file
-      }))
+          return file
+        }))
+      })
     }
     setDrag(false)
   }
@@ -87,7 +83,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
             onDragStart={e => dragStartHandler(e)}
             onDragLeave={e => dragLeaveHandler(e)}
             onDragOver={e => dragStartHandler(e)}
-            onDrop={async e => await onDropHandler(e)}
+            onDrop={async e => onDropHandler(e)}
           ><span>Отпустите файл, чтобы загрузить его</span>
           </div>
         )
@@ -96,7 +92,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
             onDragStart={e => dragStartHandler(e)}
             onDragLeave={e => dragLeaveHandler(e)}
             onDragOver={e => dragStartHandler(e)}
-            onDrop={async e => await onDropHandler(e)}
+            onDrop={async e => onDropHandler(e)}
           >{children}
           </div>
         )
