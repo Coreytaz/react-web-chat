@@ -25,4 +25,5 @@ export interface attachment {
 export interface MessageUpdatePayload {
   id: string
   message: string
+  attachments?: attachment[]
 }

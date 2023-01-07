@@ -38,6 +38,9 @@ const AudioMessage: FC<{ audioSrc: string, fromSelf: boolean, editingState: bool
       'loadedmetadata',
       function () {
         if (audioElem.current?.duration === Infinity) {
+          setTimeout(function () {
+            setCurrentTime(audioElem?.current?.duration || 0)
+          }, 100)
           audioElem.current.currentTime = 1e101
           audioElem.current.ontimeupdate = function () {
             this.ontimeupdate = () => {

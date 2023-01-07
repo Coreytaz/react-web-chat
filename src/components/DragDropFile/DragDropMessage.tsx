@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import styles from './DragDropFile.module.scss'
 import { ReactComponent as Trash } from '../ChatContainer/Trash.svg'
 import { ReactComponent as Eye } from '../../assets/eye.svg'
@@ -12,18 +12,13 @@ interface DragDropMessageProps {
   children: React.ReactNode
   attachments: any
   setAttachments: (attachments: any) => void
+  disabled?: boolean
 }
 
-const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setAttachments }) => {
+const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setAttachments, disabled }) => {
   const [drag, setDrag] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
-
-  useEffect(() => {
-    if (attachments.length > 10) {
-      setAttachments(attachments.slice(0, 10))
-    }
-  }, [attachments, setAttachments])
 
   const dragStartHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
@@ -32,6 +27,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
 
   const dragLeaveHandler = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault()
+    console.log(123)
     setDrag(false)
   }
 
@@ -81,6 +77,8 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
     await ChatService.removeFile(url)
   }
 
+  if (disabled) return children as JSX.Element
+
   return (
     <div className={styles.inner_file}>
     {drag
@@ -115,7 +113,7 @@ const DragDropMessage: FC<DragDropMessageProps> = ({ children, attachments, setA
                           </div>
                           }
                           {file.status === 'done' && <img src={file.url} alt={file.name} />}
-                        <Trash className={styles.Trash} onClick={async () => await removePreview(file.id, file.src)}/>
+                        <Trash className={styles.Trash} onClick={async () => await removePreview(file.id, file.url)}/>
                         <Eye className={styles.eye} onClick={() => handlePreview(file)}/>
                     </div>
               )

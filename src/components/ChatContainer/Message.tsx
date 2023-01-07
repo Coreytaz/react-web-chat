@@ -45,7 +45,7 @@ const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, set
     <div ref={scrollRef} className={cn(styles.row, styles.no_gutters)}>
         {!editingState && canEdit && fromSelf && <Pencel className={styles.toggleSvg} onClick={() => {
           setEditingState(true)
-          setEditingMessage({ id, message })
+          setEditingMessage({ id, message, attachments })
         }} />}
         {!editingState && fromSelf && <Trash className={styles.toggleSvg} onClick={() => onRemoveMes(id)} />}
         <div className={cn(styles.chat_bubble,

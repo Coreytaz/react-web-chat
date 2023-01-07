@@ -68,7 +68,7 @@
 }
 
 main:has(.file) {
-    grid-template-rows: calc(100% - 140px) 140px;
+    grid-template-rows: calc(100% - 165px) 165px !important;
 }
 
 .DragDropMessage {
@@ -156,6 +156,7 @@ main:has(.file) {
 .inner_file {
     display: flex;
     flex-direction: column-reverse;
+    justify-content: space-between;
 }
 
 @keyframes loadingCircle {

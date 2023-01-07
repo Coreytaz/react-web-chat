@@ -46,8 +46,10 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
     } else {
       if (editingState) {
         str.current.value = editingMessage?.message
+        setAttachments(editingMessage.attachments!)
       } else {
         str.current.value = ''
+        setAttachments([])
       }
     }
   }, [editingMessage?.message, editingState])
@@ -59,14 +61,16 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   }, [edit])
 
   const onSendMesg = (): void => {
+    console.log(editingState)
     if (isRecording) {
       mediaRecorder.stop()
-    } else if (editingState && str.current != null && str.current.value.length > 0) {
+    } else if (editingState && (attachments.length > 0 || (str.current != null && str.current.value.length > 0))) {
       editingMessage.message = str.current.value
+      editingMessage.attachments = attachments
       onUpdateMessage(editingMessage)
       setEditingState(false)
       str.current.value = ''
-    } else if (str.current != null && str.current.value.length > 0) {
+    } else if ((str.current != null && str.current.value.length > 0) || (attachments.length > 0)) {
       const item = { msg: str.current.value, attachments }
       onClickSendMessage(item)
       setAttachments([])
@@ -90,9 +94,13 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   }, [])
 
   return (
-    <DragDropMessage attachments={attachments} setAttachments={setAttachments}>
+    <DragDropMessage attachments={attachments} setAttachments={setAttachments} disabled={isRecording}>
+      {editingState &&
+      <span className={styles.mesg_editing}>
+        <span>Редактирование сообщения {editingMessage?.message}
+        </span> <Close onClick={() => setEditingState(false)}/>
+      </span>}
     <div className={styles.messges_input}>
-      {editingState && <span className={styles.mesg_editing}><span>Редактирование сообщения {editingMessage?.message}</span> <Close onClick={() => setEditingState(false)}/></span>}
             {!isRecording
               ? <><div className={styles.messges_emoji}>
             <Emoji onMouseEnter={() => setShowEmojiPicker(true)}/>
@@ -106,7 +114,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
               required
               onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
             />
-            {!editingState && <Audio className={styles.messges_record} onClick={() => onRecord()}/>}
+            {!(attachments.length > 0) && !editingState && <Audio className={styles.messges_record} onClick={() => onRecord()}/>}
             </>
               : <><Close className={styles.messges_record_status_close} onClick={() => onHideRecording()}/>
               <div className={styles.messges_record_status}>

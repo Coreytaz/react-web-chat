@@ -218,19 +218,18 @@
     gap: 0 10px;
     display: flex;
     align-items: center;
-    & .mesg_editing {
-        margin: 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        top: -17px;
-        position: absolute;
-        & svg {
-            cursor: pointer;
-            path {
-                fill: var(--font-primary);
-            }
+}
+
+.mesg_editing {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    & svg {
+        cursor: pointer;
+        path {
+            fill: var(--font-primary);
         }
     }
 }
