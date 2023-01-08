@@ -41,7 +41,6 @@ export const useChat = (): void => {
     socket.on('message:update-RECIEVE', ({ updatedMessage }) => {
       const updatedMes = messages.map((mes) => {
         if (mes.id === updatedMessage._id) {
-          console.log(mes, updatedMessage)
           return { ...mes, message: updatedMessage.message, updatedAt: updatedMessage.updatedAt, attachments: updatedMessage.attachments }
         }
         return mes
@@ -55,8 +54,7 @@ export const useChat = (): void => {
 
   React.useEffect(() => {
     socket.on('message:delete-RECIEVE', ({ removedMessage }) => {
-      const updatedMes = messages.filter((mes) => mes.id !== removedMessage._id)
-      setMessages(updatedMes)
+      setMessages(messages.filter((mes) => mes.id !== removedMessage._id))
     })
     return () => {
       socket.off('message:delete-RECIEVE')

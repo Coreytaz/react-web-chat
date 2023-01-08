@@ -58,9 +58,11 @@ export const onUpdateMessage = createAsyncThunk<any, MessageUpdatePayload>(
   }
 )
 
-export const onRemoveMes = createAsyncThunk<any, string>(
+export const onRemoveMes = createAsyncThunk<any, string, { state: { selectedUserSlice: selectedUserSliceProps } }>(
   'selectedUser/remove-message',
-  async function (payload) {
+  async function (payload, { dispatch, getState }) {
+    const messages = getState().selectedUserSlice.messages
+    dispatch(selectedUserActions.setMessages(messages.filter((mes) => mes.id !== payload)))
     socket.emit('message:delete', payload)
   }
 )

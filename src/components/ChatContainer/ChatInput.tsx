@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -9,6 +10,7 @@ import { ReactComponent as Emoji } from '../../assets/emoji.svg'
 import { ReactComponent as Close } from '../../assets/close.svg'
 import { ReactComponent as Audio } from '../../assets/audio.svg'
 import { ReactComponent as Send } from '../../assets/send.svg'
+import { ReactComponent as Trash } from './Trash.svg'
 import ChatEmoji from './ChatEmoji'
 import { attachment, MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
@@ -29,7 +31,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
   const [edit, setEdit] = useState(editingMessage?.message)
   const emojiRef = useRef(null!)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const { onClickSendMessage, onUpdateMessage } = useAction()
+  const { onClickSendMessage, onUpdateMessage, onRemoveMes } = useAction()
   const [attachments, setAttachments] = useState<attachment[]>([])
   const { onRecord, mediaRecorder, isRecording, onHideRecording, setIsRecording } = useRecorder()
 
@@ -64,6 +66,10 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
     if (isRecording) {
       mediaRecorder.stop()
     } else if (editingState && (attachments.length > 0 || input.length > 0)) {
+      if (editingMessage.message === input && editingMessage.attachments === attachments) {
+        setEditingState(false)
+        return
+      }
       editingMessage.message = input
       editingMessage.attachments = attachments
       onUpdateMessage(editingMessage)
@@ -75,6 +81,13 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
       setAttachments([])
       setInput('')
     }
+  }
+
+  const onDeleteMsg = (id: string): void => {
+    onRemoveMes(id)
+    setEditingState(false)
+    setAttachments([])
+    setInput('')
   }
 
   useEffect(() => {
@@ -112,7 +125,7 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
               name="message"
               placeholder="Напишите сообщение..."
               required
-              onKeyDown={(e) => { e.code === 'Enter' && onSendMesg() }}
+              onKeyDown={(e) => { e.code === 'Enter' ? editingState ? onDeleteMsg(editingMessage.id) : onSendMesg() : null }}
             />
             </>
               : <><Close className={styles.messges_record_status_close} onClick={() => onHideRecording()}/>
@@ -123,6 +136,9 @@ const ChatInput: FC<ChatInputProps> = ({ editingState, editingMessage, setEditin
             </>}
             {!(isRecording || (attachments.length > 0) || editingState || (input.length > 0)) ? <Audio className={styles.messges_record} onClick={() => onRecord()}/> : null}
             {(attachments.length > 0 || input.length > 0 || isRecording) ? <Send className={styles.messges_send} onClick={onSendMesg}/> : null}
+            {editingState && attachments.length === 0 && input.length === 0
+              ? <Trash className={styles.messges_del} onClick={() => onDeleteMsg(editingMessage.id)} />
+              : null}
     </div>
     </DragDropMessage>
   )

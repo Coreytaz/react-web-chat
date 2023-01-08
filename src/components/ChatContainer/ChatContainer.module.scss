@@ -364,6 +364,16 @@ main:has(.mesg_editing) {
         fill: var(--mainAccentColor-hover);
     }
 }
+.messges_del {
+    cursor: pointer;
+    width: 50px;
+    height: 40px;
+    fill: var(--mainAccentColor);
+    animation: reverse 0.2s im-zoom-hide;
+    &:hover {
+        fill: var(--mainAccentColor-hover);
+    }
+}
 
 .message__audio {
     audio {
