@@ -8,6 +8,7 @@ import styles from './ChatContainer.module.scss'
 import cn from 'classnames'
 import { ReactComponent as Pencel } from './Pencel.svg'
 import { ReactComponent as Trash } from './Trash.svg'
+import { ReactComponent as Arrow } from '../../assets/arrow.svg'
 import { attachment, MessageUpdatePayload } from '../../types/Chat.interface'
 import { useAction } from '../../hooks/useAction'
 import { formatTime } from '../../utils/formatTime'
@@ -70,7 +71,9 @@ const Message: React.FC<MessageProps> = ({ id, scrollRef, fromSelf, message, set
           </div>
     </div>
     <Modal open={previewOpen} onClose={() => setPreviewOpen(!previewOpen)}>
-      <img src={previewImage} alt="Image" />
+      {attachments?.length! > 0 && <div className={styles.arrow_wrap}><Arrow className={cn(styles.arrow, styles.arrow_left)}/></div>}
+        <img src={previewImage} alt="Image" />
+      {attachments?.length! > 0 && <div className={styles.arrow_wrap}><Arrow className={cn(styles.arrow, styles.arrow_right)}/></div>}
     </Modal>
 </>
   )

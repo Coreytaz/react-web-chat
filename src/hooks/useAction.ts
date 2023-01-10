@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { useMemo } from 'react'
 import { bindActionCreators } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
 import { authActions } from '../redux/slice/authSlice'
@@ -22,5 +23,5 @@ const allActions = {
 
 export const useAction = () => {
   const dispatch = useDispatch()
-  return bindActionCreators(allActions, dispatch)
+  return useMemo(() => bindActionCreators(allActions, dispatch), [dispatch])
 }

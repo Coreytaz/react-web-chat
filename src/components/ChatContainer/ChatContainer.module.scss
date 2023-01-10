@@ -559,6 +559,38 @@ main:has(.mesg_editing) {
     }
 }
 
+.arrow {
+    &_wrap {
+        display: flex;
+        align-items: center;
+        top: 0;
+        position: absolute;
+        height: 100%;
+        left: 0;
+        transition: background-color 0.3s ease;
+        &:has(.arrow_right) {
+            right: 0;
+            left: unset;
+        }
+        &:hover {
+            cursor: pointer;
+            background-color: #0000001f;
+            .arrow {
+                filter: brightness(50%);
+            }
+        }
+    }
+    fill: var(--mainAccentColor);
+    transition: all 0.3s ease;
+    &_left {
+        margin-left: 15px;
+    }
+    &_right {
+        margin-right: 15px;
+        transform: rotate(180deg);
+    }
+}
+
 @keyframes wave-animation {
     0% {
         transform: scale(1);
