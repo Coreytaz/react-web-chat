@@ -26,6 +26,6 @@ export const ChatService = {
     })
   },
   async removeFile (fileId: string): Promise<AxiosResponse<void>> {
-    return await api.delete(fileId)
+    return await api.delete(`/chat/file/${fileId.split('/').at(-1)}`)
   }
 }
