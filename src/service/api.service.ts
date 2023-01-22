@@ -18,7 +18,7 @@ export function apiSetHeader (name: string, value: string): void {
 api.interceptors.request.use(config => {
   // if (config.defaults.headers.Authorization != null) {
   // }
-  config.withCredentials = true
+  config.withCredentials = false
   return config
 }, async error => {
   return await Promise.reject(error)
