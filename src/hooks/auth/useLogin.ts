@@ -21,7 +21,6 @@ export const useLogin = (emailOrLogin: string, password: string): useLoginType =
     },
     onSuccess: ({ data }) => {
       setCookie('tokenIncd', 'true')
-      setCookie('token', data.accessToken)
       isAuth(data)
       setSuccess('Вы вошли в систему!')
     }
