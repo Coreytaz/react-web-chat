@@ -1,30 +1,26 @@
-import { AxiosError, AxiosResponse } from 'axios'
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
+import { clearPrivateQueries } from '../../service/query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AuthService } from '../../service/auth.service'
-import { ErrorResData } from '../../types/Error.interface'
-import { delСookie } from '../../utils/cookie'
+import socket from '../../service/chat/socket.service'
 import { useAction } from '../useAction'
-
-interface useRefreshType {
-  asyncLogout: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<AxiosResponse<void>, Error>>
-  isLoading?: boolean
-}
-
-export const useLogout = (): useRefreshType => {
-  const { setError, setSuccess, isClear } = useAction()
-
-  const { refetch: asyncLogout, isLoading } = useQuery('logout', async () => await AuthService.logout(), {
-    onSuccess: () => {
+import { delСookie } from '../../utils/cookie'
+import { errorMessage } from '../../utils/errors'
+export const useLogout = () => {
+  const { isClear, setOnline, clearToasts, setSuccess, setError } = useAction()
+  const client = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: () => AuthService.logout(),
+    onError: (error) => setError(errorMessage(error)),
+    onSuccess: async () => {
+      socket.disconnect()
+      await clearPrivateQueries(client)
+      client.setQueryData(['session'], null)
       delСookie('tokenIncd')
       isClear()
+      setOnline([])
+      clearToasts()
       setSuccess('Вы вышли из сессии!')
-    },
-    onError: (err: AxiosError) => {
-      const { message, error } = err.response?.data as ErrorResData
-      setError({ message, error })
-    },
-    enabled: false
+    }
   })
-
-  return { asyncLogout, isLoading }
+  return { asyncLogout: () => mutation.mutate(), isLoading: mutation.isPending }
 }

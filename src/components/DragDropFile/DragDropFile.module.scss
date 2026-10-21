@@ -1,169 +1,183 @@
 .drop_area {
-    width: 100%;
-    border: 2px dashed var(--font-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--font-primary);
-    font-size: 1.3rem;
-    padding: 10px 20px;
-    max-width: 410px;
+  width: 100%;
+  border: 2px dashed var(--font-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--font-primary);
+  font-size: 1.3rem;
+  padding: 10px 20px;
+  max-width: 410px;
 }
 
 .drop_area_active {
-    width: 100%;
-    border: 2px dashed var(--font-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--font-primary);
-    font-size: 1.3rem;
+  width: 100%;
+  border: 2px dashed var(--font-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--font-primary);
+  font-size: 1.3rem;
 
-    max-width: 410px;
+  max-width: 410px;
 }
 
 .input_file {
-    position: relative;
-    width: 100%;
-    padding: 10px 20px;
-    text-align: center;
+  position: relative;
+  width: 100%;
+  padding: 10px 20px;
+  text-align: center;
 }
 .input_file span {
-    color: var(--font-primary);
+  color: var(--font-primary);
 }
-.input_file input[type="file"] {
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-    display: block;
-    width: 0;
-    height: 0;
+.input_file input[type='file'] {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  display: block;
+  width: 0;
+  height: 0;
 }
 
 .newAvatar {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  &_remove {
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    top: 5px;
+    right: 5px;
+    background: #ff0202;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
     border-radius: 50%;
-    &_remove {
-        cursor: pointer;
-        color: #fff;
-        text-decoration: none;
-        display: inline-block;
-        position: absolute;
-        padding: 0;
-        margin: 0;
-        top: 5px;
-        right: 5px;
-        background: #ff0202;
-        width: 16px;
-        height: 16px;
-        text-align: center;
-        line-height: 16px;
-        border-radius: 50%;
-    }
-    &_wrapper {
-        position: relative;
-    }
+  }
+  &_wrapper {
+    position: relative;
+  }
 }
 
 main:has(.file) {
-    grid-template-rows: calc(100% - 165px) 165px !important;
+  grid-template-rows: calc(100% - 165px) 165px !important;
 }
 
 .DragDropMessage {
-    width: 100%;
-    &__active {
-        min-height: 54px;
-        border: 2px dashed var(--font-primary);
-        text-align: center;
-        border-radius: 0 0 15px 15px;
-        display: flex;
-        flex-direction: column-reverse;
-        justify-content: center;
-        align-items: center;
-        color: var(--font-primary);
-        font-size: 1.2rem;
-        padding: 5px 20px;
-        margin: 10px;
-    }
+  width: 100%;
+  &__active {
+    min-height: 54px;
+    border: 2px dashed var(--font-primary);
+    text-align: center;
+    border-radius: 0 0 15px 15px;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    color: var(--font-primary);
+    font-size: 1.2rem;
+    padding: 5px 20px;
+    margin: 10px;
+  }
 }
 
 .files {
-    padding: 0 10px;
-    display: flex;
-    gap: 0 15px;
-    & .file {
-        position: relative;
-        background-color: var(--hover-btn-theme);
-        width: 60px;
-        height: 60px;
-        & .Loading_wrapper {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
-        }
-        & span {
-            font-size: 0.7rem;
-        }
-        & svg {
-            cursor: pointer;
-            transition: display 0.3s ease;
-            display: none;
-            width: 15px;
-            position: absolute;
-            fill: var(--mainAccentColor);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        & .Loading {
-            cursor: default;
-            display: block;
-            position: static;
-            animation: loadingCircle 1s infinite linear;
-        }
-        & .Trash {
-            right: 20%;
-            &:hover {
-                filter: brightness(150%);
-            }
-        }
-        & .eye {
-            left: 20%;
-            &:hover {
-                filter: brightness(150%);
-            }
-        }
-        & img {
-            transition: filter 0.3s ease;
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-        }
-        &:hover {
-            &:has(img) svg {
-                display: block;
-            }
-            & img {
-                filter: brightness(70%);
-            }
-        }
+  padding: 0 10px;
+  display: flex;
+  gap: 0 15px;
+  & .file {
+    position: relative;
+    background-color: var(--hover-btn-theme);
+    width: 60px;
+    height: 60px;
+    & .Loading_wrapper {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
+    & span {
+      font-size: 0.7rem;
+    }
+    & svg {
+      cursor: pointer;
+      transition: display 0.3s ease;
+      display: none;
+      width: 15px;
+      position: absolute;
+      fill: var(--mainAccentColor);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    & .Loading {
+      cursor: default;
+      display: block;
+      position: static;
+      animation: loadingCircle 1s infinite linear;
+    }
+    & .Trash {
+      right: 20%;
+      &:hover {
+        filter: brightness(150%);
+      }
+    }
+    & .eye {
+      left: 20%;
+      &:hover {
+        filter: brightness(150%);
+      }
+    }
+    & img {
+      transition: filter 0.3s ease;
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+    &:hover {
+      &:has(img) svg {
+        display: block;
+      }
+      & img {
+        filter: brightness(70%);
+      }
+    }
+  }
 }
 
 .inner_file {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
 }
 
 @keyframes loadingCircle {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.files {
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.files .file {
+  flex-shrink: 0;
+}
+.files .file .Trash {
+  display: block;
+  top: 0;
+  right: 0;
+  transform: none;
 }

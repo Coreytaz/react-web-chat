@@ -1,49 +1,54 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { FormEvent, useEffect, useRef, useState } from 'react'
-import { Button, DragDropFile, Form, Input } from '../components'
+import { useRef, useState } from 'react'
+import Button from '../components/UI/Button/Button'
+import DragDropFile from '../components/DragDropFile/DragDropFile'
+import Input from '../components/UI/Input/Input'
 import { useAvatar } from '../hooks/user/useAvatar'
 import { useUpdateUser } from '../hooks/user/useUpdateUser'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import styles from '../style/Page/Profile.module.scss'
-
-const Profile = (): JSX.Element => {
-  const { user } = useTypedSelector((state) => state.authSlice)
-  const [email, setEmail] = useState(user?.email)
-  const [userName, setUserName] = useState(user?.username)
-  const formDataRef = useRef<FormData>()
-
-  useEffect(() => {
-    setEmail(user?.email)
-    setUserName(user?.username)
-  }, [user?.email, user?.username])
-
-  const { avatarAsync } = useAvatar(formDataRef)
-
-  const { userAsync } = useUpdateUser(email, userName)
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault()
-    if (formDataRef.current?.get('avatar')) {
-      void avatarAsync()
-    }
-    if (!(email === user?.email && userName === user?.username)) {
-      void userAsync()
-    }
-  }
-
+export default function Profile() {
+  const user = useTypedSelector((s) => s.authSlice.user)
+  const [email, setEmail] = useState(user.email)
+  const [username, setUsername] = useState(user.username)
+  const form = useRef<FormData | undefined>(undefined)
+  const avatar = useAvatar(form)
+  const update = useUpdateUser(email, username)
+  const busy = avatar.isPending || update.isPending
   return (
-    <>
-    <Form className={styles.form} onSubmit={e => onSubmit(e)} encType='multipart/form-data'>
-        <h2 className={styles.title}>Профиль: {user?.username}</h2>
-        <div className={styles.inputs}>
-          <Input name="Почта" value={email} onChange={(e => setEmail(e.target.value))} placeholder="Почта" required/>
-          <Input name="Имя пользователя" value={userName} onChange={(e => setUserName(e.target.value))} placeholder="Имя пользователя" required/>
-          <DragDropFile formDataRef={formDataRef}/>
-            <Button appearance="primary" type="submit">Обновить</Button>
-        </ div>
-    </Form>
-    </>
+    <form
+      className={styles.form}
+      encType="multipart/form-data"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (busy) return
+        if (form.current?.has('avatar')) avatar.avatarAsync()
+        if (email !== user.email || username !== user.username) update.userAsync()
+      }}
+    >
+      <h2 className={styles.title}>Профиль: {user.username}</h2>
+      <div className={styles.inputs}>
+        <Input
+          name="Почта"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Почта"
+          required
+          disabled={busy}
+        />
+        <Input
+          name="Имя пользователя"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Имя пользователя"
+          required
+          disabled={busy}
+        />
+        <DragDropFile formDataRef={form} disabled={busy} />
+        <Button appearance="primary" type="submit" disabled={busy}>
+          Обновить
+        </Button>
+      </div>
+    </form>
   )
 }
-
-export default Profile

@@ -1,35 +1,23 @@
-export interface IUser {
+export interface SessionUser {
   _id: string
   email: string
   login: string
   username: string
   avatar: string | null
-  accessToken: string
 }
-
-export interface IUserRedux extends Omit<IUser,
-'accessToken'
-> {
-
+export interface AuthResponse {
+  user: SessionUser
 }
-
 export interface ChangeAvatar {
   message: string
-  avatar: string
+  avatar: string | null
 }
-
-export interface getSearchUser {
-  items: Array<{
-    _id: string
-    avatar: string | null
-    username: string
-    friends?: boolean
-  }>
-  total: number
-}
-
-export interface getUser {
+export interface PublicUser {
   _id: string
   username: string
   avatar: string | null
+}
+export interface UserSearchResult {
+  items: (PublicUser & { friends?: boolean })[]
+  total: number
 }

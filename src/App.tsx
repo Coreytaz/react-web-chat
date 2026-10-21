@@ -1,45 +1,49 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { useEffect } from 'react'
-import Home from './pages/Home'
-import NotFound from './pages/NotFound'
+import { lazy, Suspense } from 'react'
+import { useSessionExpiry } from './hooks/auth/useSessionExpiry'
 import { Routes, Route } from 'react-router-dom'
-import './style/index.scss'
 import Layout from './layout/Layout'
-import Auth from './pages/Auth'
-import { useRefresh } from './hooks/auth/useRefresh'
-import Profile from './pages/Profile'
-import { Loading } from './components'
 import PrivateRoutes from './utils/PrivateRoutes'
-import { getCookie } from './utils/cookie'
-import Friends from './pages/Friends'
-import Search from './pages/Search'
+import Loading from './components/Loading/Loading'
+import { useRefresh } from './hooks/auth/useRefresh'
+import { useChat } from './hooks/useChat'
+const Home = lazy(() => import('./pages/Home'))
+const Auth = lazy(() => import('./pages/Auth'))
+const Friends = lazy(() => import('./pages/Friends'))
+const Search = lazy(() => import('./pages/Search'))
+const Profile = lazy(() => import('./pages/Profile'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
-function App (): JSX.Element {
-  const { asyncRefresh, isLoading } = useRefresh()
-
-  useEffect(() => {
-    if (getCookie('tokenIncd')) {
-      void asyncRefresh()
-    }
-  }, [asyncRefresh])
-
+export default function App() {
+  const session = useRefresh()
+  useChat()
+  useSessionExpiry()
+  if (session.isLoading)
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    )
+  if (session.isError)
+    return (
+      <Layout>
+        <p role="alert">Не удалось проверить сессию. Проверьте подключение.</p>
+        <button onClick={() => void session.refetch()}>Повторить</button>
+      </Layout>
+    )
   return (
-    <Layout>{
-      isLoading
-        ? <Loading/>
-        : <Routes>
-        <Route element={<PrivateRoutes/>}>
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route path="/search" element={<Search />} />
-        </Route>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/*" element={<NotFound />} />
+    <Layout>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route element={<PrivateRoutes />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/friends" element={<Friends />} />
+            <Route path="/search" element={<Search />} />
+          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      }
+      </Suspense>
     </Layout>
   )
 }
-
-export default App

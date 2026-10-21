@@ -1,71 +1,71 @@
-html[data-theme="dark"] {
-    // Color
-    --white: #fff;
-    --primary-color: #1b1b1d;
-    --font-primary: #ffffff;
-    --mainAccentColor: #0ebe78;
-    --mainAccentColor-hover: #10744c;
-    --mainAccentColor-voice: #0fa33b;
-    --mainAccentColor-active: #0b4e33;
-    --additionalAccentColor: #3f3e3e;
-    --hover-btn-theme: #616161;
-    --linear-gradient-bg1: #5d77ff;
-    --linear-gradient-bg2: #6539c1;
-    --skeleton-bg: #a3a3a3;
-    --skeleton-fc: #c3c1c1;
-    --status-user: #4bb34b;
+html[data-theme='dark'] {
+  // Color
+  --white: #fff;
+  --primary-color: #1b1b1d;
+  --font-primary: #ffffff;
+  --mainAccentColor: #0ebe78;
+  --mainAccentColor-hover: #10744c;
+  --mainAccentColor-voice: #0fa33b;
+  --mainAccentColor-active: #0b4e33;
+  --additionalAccentColor: #3f3e3e;
+  --hover-btn-theme: #616161;
+  --linear-gradient-bg1: #5d77ff;
+  --linear-gradient-bg2: #6539c1;
+  --skeleton-bg: #a3a3a3;
+  --skeleton-fc: #c3c1c1;
+  --status-user: #4bb34b;
 
-    // Fonts
+  // Fonts
 
-    --main-font-family: "Roboto", sans-serif;
+  --main-font-family: 'Roboto', sans-serif;
 
-    --font-size: 16px;
+  --font-size: 16px;
+
+  // Container
+
+  --container-width: 1395px;
+
+  @media (max-width: 768px) {
+    --font-size: 14px;
 
     // Container
 
-    --container-width: 1395px;
-
-    @media (max-width: 768px) {
-        --font-size: 14px;
-
-        // Container
-
-        --container-width: auto;
-    }
+    --container-width: auto;
+  }
 }
 
-html[data-theme="light"] {
-    // Color
-    --white: #ffffff;
-    --primary-color: #e9e9e9;
-    --font-primary: #181717;
-    --mainAccentColor: #0062d1;
-    --mainAccentColor-voice: #418fff;
-    --mainAccentColor-hover: #102774;
-    --mainAccentColor-active: #09194d;
-    --additionalAccentColor: #ffffff;
-    --hover-btn-theme: #eeeeee;
-    --linear-gradient-bg1: #ff14ff;
-    --linear-gradient-bg2: #8a1c8a;
-    --skeleton-bg: #d9d9d9;
-    --skeleton-fc: #ededed;
-    --status-user: #4bb34b;
+html[data-theme='light'] {
+  // Color
+  --white: #ffffff;
+  --primary-color: #e9e9e9;
+  --font-primary: #181717;
+  --mainAccentColor: #0062d1;
+  --mainAccentColor-voice: #418fff;
+  --mainAccentColor-hover: #102774;
+  --mainAccentColor-active: #09194d;
+  --additionalAccentColor: #ffffff;
+  --hover-btn-theme: #eeeeee;
+  --linear-gradient-bg1: #ff14ff;
+  --linear-gradient-bg2: #8a1c8a;
+  --skeleton-bg: #d9d9d9;
+  --skeleton-fc: #ededed;
+  --status-user: #4bb34b;
 
-    // Fonts
+  // Fonts
 
-    --main-font-family: "Roboto", sans-serif;
+  --main-font-family: 'Roboto', sans-serif;
 
-    --font-size: 16px;
+  --font-size: 16px;
+
+  // Container
+
+  --container-width: 1395px;
+
+  @media (max-width: 768px) {
+    --font-size: 14px;
 
     // Container
 
-    --container-width: 1395px;
-
-    @media (max-width: 768px) {
-        --font-size: 14px;
-
-        // Container
-
-        --container-width: auto;
-    }
+    --container-width: auto;
+  }
 }

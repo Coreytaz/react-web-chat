@@ -1,118 +1,133 @@
 header {
-    background-color: var(--additionalAccentColor);
+  background-color: var(--additionalAccentColor);
 }
 
 .header__inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
 }
 
 .logo {
-    //cursor: pointer;
-    display: flex;
-    gap: 10px;
-    color: var(--font-primary);
+  //cursor: pointer;
+  display: flex;
+  gap: 10px;
+  color: var(--font-primary);
+  transition: color 0.3s ease-in-out;
+  & h2 {
     transition: color 0.3s ease-in-out;
-    & h2 {
-        transition: color 0.3s ease-in-out;
-    }
-    &:hover h2 {
-        color: var(--mainAccentColor);
-        & span {
-            color: var(--font-primary);
-        }
-    }
+  }
+  &:hover h2 {
+    color: var(--mainAccentColor);
     & span {
-        transition: color 0.3s ease-in-out;
-        color: var(--mainAccentColor);
+      color: var(--font-primary);
     }
+  }
+  & span {
+    transition: color 0.3s ease-in-out;
+    color: var(--mainAccentColor);
+  }
 }
 
 .name {
-    cursor: pointer;
-    transition: color 0.3s ease-in-out;
-    &:hover {
-        color: var(--mainAccentColor);
-    }
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  &:hover {
+    color: var(--mainAccentColor);
+  }
 }
 
-.nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 10px;
-    & li a {
-        font-size: 1.24rem;
-        transition: color 0.3s ease-in-out;
-        cursor: pointer;
-        &:hover {
-            color: var(--mainAccentColor);
-        }
+.nav > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+  & > li > a {
+    font-size: 1.24rem;
+    transition: color 0.3s ease-in-out;
+    cursor: pointer;
+    &:hover {
+      color: var(--mainAccentColor);
     }
+  }
 }
 
 .user {
-    cursor: pointer;
-    padding: 7px 20px;
-    display: flex;
-    align-items: center;
-    gap: 0 15px;
-    transition: background-color 0.3s ease-in-out;
-    & img {
-        width: 45px;
-        height: 45px;
-        object-fit: cover;
-        border-radius: 50%;
-    }
-    &:hover {
-        background-color: var(--hover-btn-theme);
-    }
+  cursor: pointer;
+  padding: 7px 20px;
+  display: flex;
+  align-items: center;
+  gap: 0 15px;
+  transition: background-color 0.3s ease-in-out;
+  & img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  &:hover {
+    background-color: var(--hover-btn-theme);
+  }
 }
 
 .message_dropdown {
-    position: relative;
-    display: inline-block;
-    &.active {
-        background-color: var(--hover-btn-theme);
-    }
-    &_content {
-        overflow: hidden;
-        border: 1px solid var(--hover-btn-theme);
-        border-radius: 0 0 15px 15px;
-        position: absolute;
-        right: 0;
-        background-color: var(--additionalAccentColor);
-
-        min-width: 150px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        & a {
-            cursor: pointer;
-            gap: 0 10px;
-            display: flex;
-            align-items: center;
-            color: var(--font-primary);
-            padding: 12px 16px;
-            text-decoration: none;
-            &:hover {
-                background-color: var(--hover-btn-theme);
-            }
-            & svg path {
-                display: block;
-                flex-direction: row;
-                fill: var(--mainAccentColor);
-                stroke: var(--mainAccentColor);
-            }
-        }
-    }
+  position: relative;
 }
-
-.dropBtn {
-    opacity: 0.7;
-    width: 35px;
+.user {
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--font-primary);
+  font: inherit;
+  max-width: min(260px, 55vw);
+  text-align: left;
+  &:focus-visible {
+    outline: 2px solid var(--mainAccentColor);
+  }
+}
+.message_dropdown.active > .user {
+  background: var(--hover-btn-theme);
+}
+.message_dropdown_content {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  max-width: calc(100vw - 40px);
+  padding: 4px;
+  border: 1px solid var(--hover-btn-theme);
+  border-radius: 12px;
+  background: var(--additionalAccentColor);
+  box-shadow: 0 8px 24px #0003;
+  z-index: 50;
+  > a,
+  > button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--font-primary);
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
     cursor: pointer;
-    &:hover {
-        opacity: 1;
+    &:hover,
+    &:focus-visible {
+      background: var(--hover-btn-theme);
     }
+    > svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      fill: var(--mainAccentColor);
+    }
+    > svg path {
+      fill: var(--mainAccentColor);
+      stroke: var(--mainAccentColor);
+    }
+  }
 }

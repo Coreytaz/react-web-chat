@@ -1,9 +1,8 @@
-import { FC } from 'react'
-import { ThemeButton } from '..'
+import ThemeButton from '../UI/ThemeButton/ThemeButton'
 import { useTheme } from '../../hooks/useTheme'
 import styles from './Footer.module.scss'
 
-const Footer: FC = () => {
+export default function Footer() {
   const { theme, setTheme } = useTheme()
 
   const changeTheme = (): void => {
@@ -16,9 +15,11 @@ const Footer: FC = () => {
   return (
     <footer className={styles.footer}>
       <h3>Copyright © УрФУ, 2022</h3>
-      <ThemeButton appearance={theme === 'light' ? 'light' : 'dark'} onClick={changeTheme}/>
+      <ThemeButton
+        aria-label="Переключить тему"
+        appearance={theme === 'light' ? 'light' : 'dark'}
+        onClick={changeTheme}
+      />
     </footer>
   )
 }
-
-export default Footer

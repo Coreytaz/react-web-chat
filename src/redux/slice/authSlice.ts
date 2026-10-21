@@ -1,53 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { IUserRedux } from '../../types/User.interface'
-
-export interface authSliceProps {
-  auth: boolean
-  user: IUserRedux
-}
-
-const initialState: authSliceProps = {
-  auth: false,
-  user: {
-    _id: '',
-    email: '',
-    login: '',
-    username: '',
-    avatar: null
-  }
-}
-
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { AuthResponse, SessionUser } from '../../types/User.interface'
+const emptyUser: SessionUser = { _id: '', email: '', login: '', username: '', avatar: null }
+const initialState = { auth: false, user: emptyUser }
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    isAuth (state, actions) {
+    isAuth(state, action: PayloadAction<AuthResponse>) {
       state.auth = true
-      state.user = actions.payload.user
+      state.user = action.payload.user
     },
-    setAvatar (state, actions) {
-      if (state.user !== null) {
-        state.user.avatar = actions.payload
-      }
+    setAvatar(state, action: PayloadAction<string | null>) {
+      state.user.avatar = action.payload
     },
-    isClear (state) {
-      state.auth = false
-      state.user = {
-        _id: '',
-        email: '',
-        login: '',
-        username: '',
-        avatar: null
-      }
+    isClear() {
+      return initialState
     },
-    updateUser (state, actions) {
-      if (state.user !== null) {
-        state.user = { ...state.user, ...actions.payload }
-      }
+    updateUser(state, action: PayloadAction<Partial<SessionUser>>) {
+      Object.assign(state.user, action.payload)
     }
   }
 })
-
 export const authActions = authSlice.actions
-
 export default authSlice.reducer

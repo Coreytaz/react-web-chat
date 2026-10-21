@@ -1,26 +1,34 @@
-import { AxiosResponse } from 'axios'
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import axios from 'axios'
 import { AuthService } from '../../service/auth.service'
-import { IUser } from '../../types/User.interface'
-import { setCookie } from '../../utils/cookie'
 import { useAction } from '../useAction'
-
-interface useRefreshType {
-  asyncRefresh: <TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<AxiosResponse<IUser>, unknown>>
-  isLoading?: boolean
-}
-
-export const useRefresh = (): useRefreshType => {
-  const { isAuth } = useAction()
-
-  const { refetch: asyncRefresh, isLoading } = useQuery('refresh', async () => await AuthService.refresh(), {
-    onSuccess: ({ data }) => {
-      setCookie('tokenIncd', 'true')
-      isAuth(data)
+import { useTypedSelector } from '../useTypedSelector'
+import { delСookie, setCookie } from '../../utils/cookie'
+export const useRefresh = () => {
+  const { isAuth, isClear } = useAction()
+  const auth = useTypedSelector((s) => s.authSlice.auth)
+  const query = useQuery({
+    queryKey: ['session'],
+    queryFn: async ({ signal }) => {
+      try {
+        return (await AuthService.refresh(signal)).data
+      } catch (error) {
+        if (axios.isAxiosError(error) && [401, 403].includes(error.response?.status || 0))
+          return null
+        throw error
+      }
     },
-    enabled: false,
-    retry: false
+    staleTime: Infinity
   })
-
-  return { asyncRefresh, isLoading }
+  useEffect(() => {
+    if (query.data) {
+      isAuth(query.data)
+      setCookie('tokenIncd', 'true')
+    } else if (query.data === null) {
+      isClear()
+      delСookie('tokenIncd')
+    }
+  }, [query.data, isAuth, isClear])
+  return { ...query, isLoading: query.isPending || (!!query.data && !auth) }
 }

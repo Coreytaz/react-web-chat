@@ -1,33 +1,36 @@
-import { AxiosError, AxiosResponse } from 'axios'
-import React from 'react'
-import { UseMutateAsyncFunction, useMutation } from 'react-query'
+import { useMemo } from 'react'
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChatService } from '../../service/chat/chat.service'
-import { getAllMessage } from '../../types/Chat.interface'
-import { useAction } from '../useAction'
-import { useTypedSelector } from '../useTypedSelector'
-
-interface useLoginType {
-  asyncGetAllMessage: UseMutateAsyncFunction<AxiosResponse<getAllMessage[]>, AxiosError<unknown>, void, unknown>
-  isLoading?: boolean
-}
-
-export const useGetAllMessages = (from: string, to: string, page: number, setPage: React.Dispatch<React.SetStateAction<number>>): useLoginType => {
-  const { messages } = useTypedSelector((state) => state.selectedUserSlice)
-  const { setMessages, setLazyMessages } = useAction()
-  const limit = 30
-
-  const { mutateAsync: asyncGetAllMessage, isLoading } = useMutation(['getAllMessages', page], async () => await ChatService.getAllMessage(from, to, page, limit), {
-    onError: (err: AxiosError) => {
-      console.log(err)
-    },
-    onSuccess: ({ data }) => {
-      if (data.length > 0) {
-        setMessages([...data, ...messages])
-        setPage((prev) => prev + 1)
-      }
-      setLazyMessages(data)
-    }
+import { keys } from '../../service/query'
+import {
+  emptyEvents,
+  eventKey,
+  mergeMessages,
+  type MessageEvents
+} from '../../service/chat/message-cache'
+export const useGetAllMessages = (from: string, to: string) => {
+  const client = useQueryClient()
+  const eventQuery = useQuery({
+    queryKey: eventKey(from, to),
+    queryFn: emptyEvents,
+    enabled: false,
+    initialData: emptyEvents
   })
-
-  return { asyncGetAllMessage, isLoading }
+  const query = useInfiniteQuery({
+    queryKey: keys.messages(from, to),
+    initialPageParam: 0,
+    enabled: !!from && !!to,
+    queryFn: async ({ pageParam, signal }) => {
+      const revision = client.getQueryData<MessageEvents>(eventKey(from, to))?.revision ?? 0
+      const { data } = await ChatService.getAllMessage(from, to, pageParam, 30, signal)
+      return { messages: data, revision, page: pageParam }
+    },
+    getNextPageParam: (last) => (last.messages.length === 30 ? last.page + 1 : undefined)
+  })
+  const pages = query.data?.pages
+  const messages = useMemo(
+    () => mergeMessages(pages ?? [], eventQuery.data),
+    [pages, eventQuery.data]
+  )
+  return { ...query, messages }
 }

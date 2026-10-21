@@ -1,33 +1,20 @@
-import { AxiosResponse } from 'axios'
-import { ChangeAvatar, getSearchUser, getUser, IUser } from '../../types/User.interface'
+import type {
+  ChangeAvatar,
+  UserSearchResult,
+  PublicUser,
+  AuthResponse
+} from '../../types/User.interface'
 import api from '../api.service'
-
 export const UserService = {
-  async avatar (file: FormData): Promise<AxiosResponse<ChangeAvatar> | null> {
-    return await api.post('user/avatar', file)
-  },
-
-  async removeAvatar (): Promise<AxiosResponse<ChangeAvatar>> {
-    return await api.delete('user/avatar')
-  },
-
-  async updateUser (user: { email: string, username: string }): Promise<AxiosResponse<IUser> | null> {
-    return await api.patch('user/me', user)
-  },
-
-  async getListUser (username?: string, email?: string): Promise<AxiosResponse<getSearchUser>> {
-    return await api.get('user/search', { params: { username, email } })
-  },
-
-  async getUser (_id: string | null): Promise<AxiosResponse<getUser>> {
-    return await api.get('user/getUser', { params: { _id } })
-  },
-
-  async getReguestUser (): Promise<AxiosResponse<getUser[]>> {
-    return await api.get('user/getReguestUser')
-  },
-
-  async getFriends (): Promise<AxiosResponse<getUser[]>> {
-    return await api.get('user/getFriends')
-  }
+  avatar: (file: FormData) => api.postForm<ChangeAvatar>('user/avatar', file),
+  removeAvatar: () => api.delete<ChangeAvatar>('user/avatar'),
+  updateUser: (user: { email: string; username: string }) =>
+    api.patch<AuthResponse>('user/me', user),
+  getListUser: (username = '', signal?: AbortSignal) =>
+    api.get<UserSearchResult>('user/search', { params: { username }, signal }),
+  getUser: (_id: string, signal?: AbortSignal) =>
+    api.get<PublicUser>('user/getUser', { params: { _id }, signal }),
+  getReguestUser: (signal?: AbortSignal) =>
+    api.get<PublicUser[]>('user/getReguestUser', { signal }),
+  getFriends: (signal?: AbortSignal) => api.get<PublicUser[]>('user/getFriends', { signal })
 }

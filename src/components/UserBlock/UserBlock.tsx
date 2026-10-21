@@ -1,28 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
-import { Avatar } from '..'
+import { memo } from 'react'
+import Avatar from '../Avatar/Avatar'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
+import type { PublicUser } from '../../types/User.interface'
 import styles from './UserBlock.module.scss'
-
-interface UserBlockProps {
-  _id: string
-  avatar: string | null
-  username: string
-}
-
-const UserBlock: React.FC<UserBlockProps> = ({ _id, avatar, username }) => {
-  const { userOnline } = useTypedSelector((state) => state.userSlice)
+function UserBlock(user: PublicUser) {
+  const online = useTypedSelector((state) => state.userSlice.userOnline.includes(user._id))
+  const avatar = <Avatar {...user} />
   return (
     <>
-    {userOnline.includes(_id)
-      ? <span className={styles.root}>
-        <Avatar _id={_id} avatar={avatar} username={username}/>
-    </span>
-      : <Avatar _id={_id} avatar={avatar} username={username}/>}
-        <p className={styles.username}>{username}</p>
+      {online ? <span className={styles.root}>{avatar}</span> : avatar}
+      <p className={styles.username}>{user.username}</p>
     </>
   )
 }
-
-export default UserBlock
+export default memo(UserBlock)

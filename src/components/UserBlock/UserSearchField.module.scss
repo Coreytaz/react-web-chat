@@ -1,0 +1,14 @@
+.clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+
+  &:focus-visible {
+    outline: 2px solid var(--mainAccentColor);
+    outline-offset: 3px;
+  }
+}

@@ -1,39 +1,39 @@
-.skeleton stop[offset="0%"] {
-    stop-color: var(--skeleton-bg);
+.skeleton stop[offset='0%'] {
+  stop-color: var(--skeleton-bg);
 }
 
-.skeleton stop[offset="50%"] {
-    stop-color: var(--skeleton-fc);
+.skeleton stop[offset='50%'] {
+  stop-color: var(--skeleton-fc);
 }
 
-.skeleton stop[offset="100%"] {
-    stop-color: var(--skeleton-bg);
+.skeleton stop[offset='100%'] {
+  stop-color: var(--skeleton-bg);
 }
 
 .img {
-    position: relative;
-    object-fit: cover;
-    width: 45px;
-    height: 45px;
+  position: relative;
+  object-fit: cover;
+  width: 45px;
+  height: 45px;
 }
 
 .root {
-    position: relative;
-    &::after {
-        content: "";
-        position: absolute;
-        background-color: var(--status-user);
-        border-radius: 50%;
-        right: -3px;
-        bottom: 12%;
-        border: 2px solid var(--additionalAccentColor);
-        width: 15px;
-        height: 15px;
-    }
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    background-color: var(--status-user);
+    border-radius: 50%;
+    right: -3px;
+    bottom: 12%;
+    border: 2px solid var(--additionalAccentColor);
+    width: 15px;
+    height: 15px;
+  }
 }
 .img {
-    width: 45px;
-    height: 45px;
-    object-fit: cover;
-    border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 50%;
 }

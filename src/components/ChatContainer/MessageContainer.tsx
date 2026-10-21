@@ -1,77 +1,65 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React from 'react'
-import styles from './ChatContainer.module.scss'
-import { Loading } from '..'
-import { getAllMessage, MessageUpdatePayload } from '../../types/Chat.interface'
-import { generateUUID } from '../../utils/generateUUID'
+import { useMessageScroll } from '../../hooks/chat/useMessageScroll'
+import type { ChatMessage, MessageUpdatePayload } from '../../types/Chat.interface'
+import type { PublicUser } from '../../types/User.interface'
 import Message from './Message'
+import Loading from '../Loading/Loading'
+import styles from './ChatContainer.module.scss'
 import Robot from '../../assets/robot.gif'
-import { UseMutateAsyncFunction } from 'react-query'
-import { AxiosError, AxiosResponse } from 'axios'
-import useOnScreen from '../../hooks/useScroll'
-import { useTypedSelector } from '../../hooks/useTypedSelector'
-
-interface MessageContainerProps {
-  isLoading: boolean | undefined
-  setEditingState: React.Dispatch<React.SetStateAction<boolean>>
-  setEditingMessage: React.Dispatch<React.SetStateAction<MessageUpdatePayload>>
-  asyncGetAllMessage: UseMutateAsyncFunction<AxiosResponse<getAllMessage[], any>, AxiosError<unknown, any>, void, unknown>
-  editingState: boolean
+interface Props {
+  messages: ChatMessage[]
+  isLoading: boolean
+  error: Error | null
+  fetchingOlder: boolean
+  hasMore: boolean
+  loadMore: () => void
+  retry: () => void
+  user: PublicUser
+  editing: boolean
+  onEdit: (message: MessageUpdatePayload) => void
 }
-
-const MessageContainer: React.FC<MessageContainerProps> = ({ asyncGetAllMessage, isLoading, setEditingState, setEditingMessage, editingState }) => {
-  const { selectedUser, messages, lazyMessage } = useTypedSelector((state) => state.selectedUserSlice)
-  const childRef = React.useRef<HTMLDivElement>(null!)
-  const isOnScreen = useOnScreen(childRef)
-  const scrollRef = React.useRef<HTMLDivElement>(null!)
-  const isMounted = React.useRef(true)
-
-  React.useEffect(() => {
-    if (isOnScreen && messages.length > 29 && lazyMessage.length > 0) {
-      isMounted.current = false
-      void asyncGetAllMessage()
-    }
-  }, [isOnScreen])
-
-  if (isLoading) {
-    <Loading/>
-  }
-
-  React.useEffect(() => {
-    if (isMounted.current) {
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [lazyMessage, messages])
+export default function MessageContainer({
+  messages,
+  isLoading,
+  error,
+  fetchingOlder,
+  hasMore,
+  loadMore,
+  retry,
+  user,
+  editing,
+  onEdit
+}: Props) {
+  const { container, top, bottom, onScroll } = useMessageScroll({
+    messages,
+    hasMore,
+    fetchingOlder,
+    isLoading,
+    error,
+    loadMore
+  })
 
   return (
-    <div className={styles.message_inner}>
-              <div ref={childRef} style={{ height: 1 }}/>
-              {
-              (messages.length > 0)
-                ? (<>
-                      {messages.map((mes) =>
-                      <Message
-                      key={generateUUID()}
-                      setEditingState={setEditingState}
-                      setEditingMessage={setEditingMessage}
-                      scrollRef={scrollRef}
-                      editingState={editingState}
-                      {...mes} />
-                      )}
-                      </>)
-                : !isLoading
-                    ? <div className={styles.welcome}>
-                <img src={Robot} alt="" />
-              <h2>
-              У вас нету сообщений с пользователем, <span>{selectedUser?.username}!</span>
-              </h2>
-              <h4>Чтобы начать разговор напишите снизу сообщение</h4>
-                </div>
-                    : null}
-            </div>
+    <div className={styles.message_inner} ref={container} onScroll={onScroll}>
+      <div ref={top} style={{ height: 1 }} />
+      {isLoading || fetchingOlder ? <Loading /> : null}
+      {error ? (
+        <p role="alert">
+          Не удалось загрузить сообщения. <button onClick={retry}>Повторить</button>
+        </p>
+      ) : null}
+      {messages.map((message) => (
+        <Message key={message.id} {...message} editingState={editing} onEdit={onEdit} />
+      ))}
+      {!messages.length && !isLoading && !error ? (
+        <div className={styles.welcome}>
+          <img src={Robot} alt="" />
+          <h2>
+            У вас нет сообщений с пользователем, <span>{user.username}!</span>
+          </h2>
+          <h4>Чтобы начать разговор, напишите сообщение снизу</h4>
+        </div>
+      ) : null}
+      <div ref={bottom} />
+    </div>
   )
 }
-
-export default MessageContainer

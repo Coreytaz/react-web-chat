@@ -1,84 +1,42 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { UserService } from '../../service/user/user.service'
-import { generateUUID } from '../../utils/generateUUID'
-
-interface toastSliceProps {
-  toastlist: toastList[]
-}
-
-interface toastList {
+import { createSlice, nanoid, type PayloadAction } from '@reduxjs/toolkit'
+export interface ToastItem {
   id: string
   title: string
   description: string
   backgroundColor: string
 }
-
-const initialState: toastSliceProps = {
-  toastlist: []
+export interface ToastError {
+  message: string | string[]
+  error: string
 }
-
-export const onSendReguesFriend = createAsyncThunk<any, string>(
-  'toast/send-ReguesFriend',
-  async function (userId, { dispatch }) {
-    try {
-      const { data } = await UserService.getUser(userId)
-      dispatch(toastActions.setSuccess(`Вам приглашение в друзья от :${data.username}`))
-    } catch (error) {
-      dispatch(toastActions.setError(error))
-    }
-  }
-)
-
-export const onAcceptReguesFriend = createAsyncThunk<any, string>(
-  'toast/accept-ReguesFriend',
-  async function (userId, { dispatch }) {
-    try {
-      const { data } = await UserService.getUser(userId)
-      dispatch(toastActions.setSuccess(`Пользователь ${data.username} принял приглашение в друзья!`))
-    } catch (error) {
-      dispatch(toastActions.setError(error))
-    }
-  }
-)
-
-export const toastSlice = createSlice({
+const toastSlice = createSlice({
   name: 'toast',
-  initialState,
+  initialState: { toastlist: [] as ToastItem[] },
   reducers: {
-    setList (state, actions) {
-      state.toastlist = [...state.toastlist, actions.payload]
-    },
-    setSuccess (state, actions) {
-      state.toastlist = [...state.toastlist, {
-        id: generateUUID(),
-        title: 'Success',
-        description: actions.payload,
+    setSuccess(state, action: PayloadAction<string>) {
+      state.toastlist.push({
+        id: nanoid(),
+        title: 'Успешно',
+        description: action.payload,
         backgroundColor: '#5cb85c'
-      }]
+      })
     },
-    setError (state, actions) {
-      if (Array.isArray(actions.payload.message)) {
-        state.toastlist = [...state.toastlist, ...actions.payload.message.map((message: string) => ({
-          id: generateUUID(),
-          title: actions.payload.error,
-          description: message,
+    setError(state, action: PayloadAction<ToastError>) {
+      for (const description of [action.payload.message].flat())
+        state.toastlist.push({
+          id: nanoid(),
+          title: action.payload.error,
+          description,
           backgroundColor: '#bd362f'
-        }))]
-      } else {
-        state.toastlist = [...state.toastlist, {
-          id: generateUUID(),
-          title: actions.payload.error,
-          description: actions.payload.message,
-          backgroundColor: '#bd362f'
-        }]
-      }
+        })
     },
-    deleteList (state, actions) {
-      state.toastlist = state.toastlist.filter(e => e.id !== actions.payload)
+    deleteList(state, action: PayloadAction<string>) {
+      state.toastlist = state.toastlist.filter((t) => t.id !== action.payload)
+    },
+    clearToasts(state) {
+      state.toastlist = []
     }
   }
 })
-
 export const toastActions = toastSlice.actions
-
 export default toastSlice.reducer

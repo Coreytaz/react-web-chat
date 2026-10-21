@@ -1,89 +1,63 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React from 'react'
-import { ChatInput, Loading } from '..'
-import Robot from '../../assets/robot.gif'
-import styles from './ChatContainer.module.scss'
+import { useCallback, useState } from 'react'
+import Loading from '../Loading/Loading'
+import { useGetUser } from '../../hooks/user/useGetUser'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
-import { MessageUpdatePayload } from '../../types/Chat.interface'
-import socket from '../../service/chat/socket.service'
+import type { PublicUser } from '../../types/User.interface'
+import type { MessageUpdatePayload } from '../../types/Chat.interface'
 import { useGetAllMessages } from '../../hooks/chat/useGetAllMessages'
 import MessageContainer from './MessageContainer'
-import { useAction } from '../../hooks/useAction'
 import MessageHeader from './MessageHeader'
-import { useGetUser } from '../../hooks/user/useGetUser'
-import { useChat } from '../../hooks/useChat'
-
-const ChatContainer = (): JSX.Element => {
-  const { asyncUser, isFetching, userId } = useGetUser()
-  const { setMessages } = useAction()
-  const [page, setPage] = React.useState(0)
-  const { _id, username } = useTypedSelector((state) => state.authSlice.user)
-  const { selectedUser } = useTypedSelector((state) => state.selectedUserSlice)
-  const { asyncGetAllMessage, isLoading } = useGetAllMessages(_id, selectedUser._id, page, setPage)
-  const [editingState, setEditingState] = React.useState(false)
-  const [editingMessage, setEditingMessage] = React.useState<MessageUpdatePayload>(null!)
-  useChat()
-
-  React.useEffect(() => {
-    socket.emit('ADD-USER', _id)
-  }, [_id])
-
-  React.useEffect(() => {
-    if (userId !== null && userId !== selectedUser._id) {
-      setPage(0)
-      setMessages([])
-      void asyncUser()
-    }
-  }, [userId])
-
-  React.useEffect(() => {
-    if (selectedUser._id) {
-      void asyncGetAllMessage()
-    }
-    return () => {
-      setMessages([])
-    }
-  }, [selectedUser._id])
-
-  if (userId === null) {
-    return (
-        <div className={styles.welcome}>
-        <img src={Robot} alt="" />
-      <h2>
-      Добро пожаловать, <span>{username}!</span>
-      </h2>
-      <h4>Пожалуйста, выберите чат, чтобы начать разговор.</h4>
-        </div>
-    )
-  }
-
-  if (isFetching) {
-    return (
-    <Loading/>
-    )
-  }
-
+import ChatInput from './ChatInput'
+import styles from './ChatContainer.module.scss'
+import Robot from '../../assets/robot.gif'
+function Conversation({ user }: { user: PublicUser }) {
+  const id = useTypedSelector((s) => s.authSlice.user._id)
+  const query = useGetAllMessages(id, user._id)
+  const [editing, setEditing] = useState<MessageUpdatePayload | null>(null)
+  const { fetchNextPage } = query
+  const loadOlder = useCallback(() => {
+    void fetchNextPage({ cancelRefetch: false })
+  }, [fetchNextPage])
   return (
-  <>
-    <div className={styles.mesage_wrapper}>
-      <MessageHeader/>
-      <MessageContainer
-        isLoading={isLoading}
-        setEditingState={setEditingState}
-        setEditingMessage={setEditingMessage}
-        asyncGetAllMessage={asyncGetAllMessage}
-        editingState={editingState}
+    <>
+      <div className={styles.mesage_wrapper}>
+        <MessageHeader user={user} />
+        <MessageContainer
+          messages={query.messages}
+          isLoading={query.isPending}
+          error={query.error}
+          fetchingOlder={query.isFetchingNextPage}
+          hasMore={!!query.hasNextPage && !query.isFetching}
+          loadMore={loadOlder}
+          retry={() => void query.refetch()}
+          user={user}
+          editing={!!editing}
+          onEdit={setEditing}
+        />
+      </div>
+      <ChatInput
+        key={editing?.id || 'compose'}
+        to={user._id}
+        editing={editing}
+        onCancel={() => setEditing(null)}
       />
-    </div>
-    <ChatInput
-      setEditingState={setEditingState}
-      editingMessage={editingMessage}
-      editingState={editingState}
-      />
-  </>
+    </>
   )
 }
-
-export default ChatContainer
+export default function ChatContainer() {
+  const { userId, selectedUser, isFetching, error } = useGetUser()
+  const username = useTypedSelector((s) => s.authSlice.user.username)
+  if (!userId)
+    return (
+      <div className={styles.welcome}>
+        <img src={Robot} alt="" />
+        <h2>
+          Добро пожаловать, <span>{username}!</span>
+        </h2>
+        <h4>Пожалуйста, выберите чат, чтобы начать разговор.</h4>
+      </div>
+    )
+  if (error) return <p role="alert">Не удалось загрузить пользователя.</p>
+  if (isFetching || !selectedUser) return <Loading />
+  return <Conversation key={selectedUser._id} user={selectedUser} />
+}

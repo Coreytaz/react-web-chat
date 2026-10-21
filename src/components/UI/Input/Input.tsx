@@ -1,19 +1,19 @@
-/* eslint-disable react/display-name */
-import React, { ForwardedRef } from 'react'
-import styles from './Input.module.scss'
+import { forwardRef, useId, type InputHTMLAttributes } from 'react'
 import cn from 'classnames'
-
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-const Input = React.forwardRef(({ className, ...props }: InputProps, ref: ForwardedRef<HTMLInputElement>): JSX.Element => {
+import styles from './Input.module.scss'
+const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input(
+  { className, id, ...props },
+  ref
+) {
+  const generated = useId()
+  const inputId = id ?? generated
   return (
     <div className={cn(className, styles.form)}>
-      <input className={cn(styles.input)} {...props} placeholder="" ref={ref}/>
-      <label className={cn(styles.labelName)} htmlFor={props.name}>
-        <span className={cn(styles.contentName)}>{props.placeholder}</span>
+      <input {...props} className={styles.input} id={inputId} ref={ref} placeholder=" " />
+      <label className={styles.labelName} htmlFor={inputId}>
+        <span className={styles.contentName}>{props.placeholder}</span>
       </label>
     </div>
   )
 })
-
 export default Input

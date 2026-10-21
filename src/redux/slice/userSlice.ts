@@ -1,23 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit'
-
-interface userSliceProps {
-  userOnline: String[]
-}
-
-const initialState: userSliceProps = {
-  userOnline: []
-}
-
-export const userSlice = createSlice({
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+const userSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: { userOnline: [] as string[] },
   reducers: {
-    setOnline (state, actions) {
-      state.userOnline = actions.payload
+    setOnline(state, action: PayloadAction<string[]>) {
+      state.userOnline = action.payload
     }
   }
 })
-
 export const userActions = userSlice.actions
-
 export default userSlice.reducer

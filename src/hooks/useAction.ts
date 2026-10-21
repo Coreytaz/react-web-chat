@@ -1,27 +1,12 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useMemo } from 'react'
 import { bindActionCreators } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../redux/store'
 import { authActions } from '../redux/slice/authSlice'
-import { onClickClearAllMessages, onClickSendMessage, onClickSendRecordMessage, onRemoveMes, onUpdateMessage, selectedUserActions } from '../redux/slice/selectedUserSlice'
-import { onAcceptReguesFriend, onSendReguesFriend, toastActions } from '../redux/slice/toastSlice'
+import { toastActions } from '../redux/slice/toastSlice'
 import { userActions } from '../redux/slice/userSlice'
-
-const allActions = {
-  ...toastActions,
-  ...authActions,
-  ...userActions,
-  ...selectedUserActions,
-  onClickSendMessage,
-  onUpdateMessage,
-  onRemoveMes,
-  onClickClearAllMessages,
-  onSendReguesFriend,
-  onAcceptReguesFriend,
-  onClickSendRecordMessage
-}
-
+const actions = { ...authActions, ...toastActions, ...userActions }
 export const useAction = () => {
-  const dispatch = useDispatch()
-  return useMemo(() => bindActionCreators(allActions, dispatch), [dispatch])
+  const dispatch = useDispatch<AppDispatch>()
+  return useMemo(() => bindActionCreators(actions, dispatch), [dispatch])
 }

@@ -1,24 +1,24 @@
-/* eslint-disable react/display-name */
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
-import React, { ForwardedRef } from 'react'
-
+import { lazy, Suspense } from 'react'
+import type { EmojiClickData } from 'emoji-picker-react'
+import styles from './ChatContainer.module.scss'
+const EmojiPicker = lazy(() => import('emoji-picker-react'))
 interface ChatEmojiProps {
-  onClick: (emojiData: EmojiClickData, event: MouseEvent) => void
+  onClick: (data: EmojiClickData, event: MouseEvent) => void
 }
-
-const ChatEmoji = React.forwardRef(({ onClick, ...props }: ChatEmojiProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element => {
+export default function ChatEmoji({ onClick }: ChatEmojiProps) {
   return (
-    <div ref={ref} {...props}>
-    <EmojiPicker
-            onEmojiClick={onClick}
-            autoFocusSearch={false}
-            height={350}
-            searchDisabled
-            lazyLoadEmojis={true}
-            skinTonesDisabled
-             />
-    </div>
+    <Suspense fallback={<span role="status">Загрузка эмодзи…</span>}>
+      <EmojiPicker
+        className={styles.emoji_picker}
+        onEmojiClick={onClick}
+        autoFocusSearch={false}
+        width="100%"
+        height="min(350px, calc(100dvh - 100px))"
+        searchDisabled
+        lazyLoadEmojis
+        skinTonesDisabled
+        previewConfig={{ showPreview: false }}
+      />
+    </Suspense>
   )
-})
-
-export default ChatEmoji
+}

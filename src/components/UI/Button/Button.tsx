@@ -1,29 +1,11 @@
-import React from 'react'
-import styles from './Button.module.scss'
+import type { ButtonHTMLAttributes } from 'react'
 import cn from 'classnames'
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode
+import styles from './Button.module.scss'
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   appearance?: 'primary' | 'ghost'
 }
-
-const Button: React.FC<ButtonProps> = ({
-  children,
-  className,
-  appearance,
-  ...props
-}) => {
+export default function Button({ className, appearance, ...props }: ButtonProps) {
   return (
-    <button
-      className={cn(styles.button, className, {
-        [styles.primary]: appearance === 'primary',
-        [styles.ghost]: appearance === 'ghost'
-      })}
-      {...props}
-    >
-      {children}
-    </button>
+    <button className={cn(styles.button, className, appearance && styles[appearance])} {...props} />
   )
 }
-
-export default Button

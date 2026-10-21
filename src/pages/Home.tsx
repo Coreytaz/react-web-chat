@@ -1,94 +1,24 @@
-/* eslint-disable react/display-name */
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { FC, memo, useEffect, useState } from 'react'
-import { AsideFriends, Button, ChatContainer, Form } from '../components'
-import Input from '../components/UI/Input/Input'
-import { useLogin } from '../hooks/auth/useLogin'
-import styles from '../style/Page/Home.module.scss'
+import { lazy, Suspense } from 'react'
+import Loading from '../components/Loading/Loading'
+import { useLocation, Navigate } from 'react-router-dom'
+import AuthForm from '../components/Form/AuthForm'
 import { useTypedSelector } from '../hooks/useTypedSelector'
-import { useLocation, useNavigate } from 'react-router-dom'
-import socket from '../service/chat/socket.service'
-import { useAction } from '../hooks/useAction'
+const ChatWorkspace = lazy(() => import('../components/ChatContainer/ChatWorkspace'))
 
-const Home: FC = memo(() => {
-  const { auth } = useTypedSelector((state) => state.authSlice)
-  const { userOnline } = useTypedSelector((state) => state.userSlice)
-  const [emailOrLogin, setEmailOrLogin] = useState('')
-  const [password, setPassword] = useState('')
-  const { loginAsync, isLoading } = useLogin(emailOrLogin, password)
-  const navigate = useNavigate()
+export default function Home() {
+  const authenticated = useTypedSelector((state) => state.authSlice.auth)
   const location = useLocation()
-  const from = location.search || location.state?.from?.pathname
-  const { onSendReguesFriend, onAcceptReguesFriend, setOnline } = useAction()
-
-  const onHandleSubmit = (): void => {
-    void loginAsync()
-    setEmailOrLogin('')
-    setPassword('')
-  }
-
-  useEffect(() => {
-    socket.on('ADD-USER-STATUS', (data: String[]) => {
-      const is_same = (userOnline.length === data.length) && userOnline.every(el => data.includes(el))
-      if (!is_same) {
-        setOnline(data)
-      }
-    })
-    return () => {
-      socket.off('ADD-USER-STATUS')
-    }
-  }, [setOnline])
-
-  useEffect(() => {
-    if (auth) {
-      navigate(from, { replace: true })
-      socket.connect()
-    }
-  }, [auth, from, navigate])
-
-  useEffect(() => {
-    if (auth) {
-      socket.on('reguest:user-recieve', ({ request }) => {
-        onSendReguesFriend(request.sender)
-      })
-    }
-  }, [])
-
-  useEffect(() => {
-    if (auth) {
-      socket.on('accept:user-recieve', ({ request }) => {
-        onAcceptReguesFriend(request.taker)
-      })
-    }
-  }, [])
-
-  if (!auth) {
-    return (
-      <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-        <h2 className={styles.title}>Вход React Chat</h2>
-        <div className={styles.inputs}>
-          <Input name="Почта" value={emailOrLogin} onChange={(e => setEmailOrLogin(e.target.value))} placeholder="E-mail или Логин" required />
-          <Input name="Пароль" type="password" value={password} onChange={(e => setPassword(e.target.value))} placeholder="Пароль" required />
-        </div>
-        <Button appearance="primary" onClick={() => onHandleSubmit()} disabled={isLoading}>
-          Войти
-        </Button>
-      </Form>
-    )
-  }
-
+  const state = location.state as { from?: { pathname?: string; search?: string } } | null
+  const from = state?.from
+  const target =
+    from?.pathname?.startsWith('/') && !from.pathname.startsWith('//')
+      ? from.pathname + (from.search || '')
+      : null
+  if (!authenticated) return <AuthForm mode="login" />
+  if (target && target !== '/') return <Navigate to={target} replace />
   return (
-    <>
-      <div className={styles.inbox}>
-        <AsideFriends/>
-        <main>
-          <ChatContainer/>
-        </main>
-      </div>
-    </>
+    <Suspense fallback={<Loading />}>
+      <ChatWorkspace />
+    </Suspense>
   )
-})
-
-export default Home
+}

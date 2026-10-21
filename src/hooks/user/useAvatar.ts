@@ -1,28 +1,25 @@
-import { AxiosError, AxiosResponse } from 'axios'
-import { UseMutateAsyncFunction, useMutation } from 'react-query'
+import { useAccountMutation } from './useAccountMutation'
+import type { RefObject } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { UserService } from '../../service/user/user.service'
-import { ErrorResData } from '../../types/Error.interface'
-import { ChangeAvatar } from '../../types/User.interface'
 import { useAction } from '../useAction'
-
-interface useAvatarType {
-  avatarAsync: UseMutateAsyncFunction<AxiosResponse<ChangeAvatar> | null, AxiosError<unknown>, void, unknown>
-}
-
-export const useAvatar = (file: React.MutableRefObject<FormData | undefined>): useAvatarType => {
-  const { setAvatar, setError, setSuccess } = useAction()
-
-  const { mutateAsync: avatarAsync } = useMutation('avatar', async () => await UserService.avatar(file.current as FormData), {
-    onError: (err: AxiosError) => {
-      const { message, error } = err.response?.data as ErrorResData
-      setError({ message, error })
+import type { AuthResponse } from '../../types/User.interface'
+export const useAvatar = (file: RefObject<FormData | undefined>) => {
+  const { setAvatar, setSuccess } = useAction()
+  const client = useQueryClient()
+  const mutation = useAccountMutation({
+    mutationFn: () => {
+      if (!file.current) throw new Error('Выберите файл')
+      return UserService.avatar(file.current)
     },
-    onSuccess: ({ data }: any) => {
+    onSuccess: ({ data }) => {
       setAvatar(data.avatar)
+      client.setQueryData<AuthResponse>(['session'], (old) =>
+        old ? { user: { ...old.user, avatar: data.avatar } } : old
+      )
       setSuccess(data.message)
-      file.current?.delete('avatar')
+      file.current = undefined
     }
   })
-
-  return { avatarAsync }
+  return { avatarAsync: () => mutation.mutate(), isPending: mutation.isPending }
 }

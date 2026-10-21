@@ -1,31 +1,18 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { AxiosResponse } from 'axios'
-import { getAllMessage } from '../../types/Chat.interface'
+import type { ChatMessage } from '../../types/Chat.interface'
 import api from '../api.service'
-
 export const ChatService = {
-  async getAllMessage (from: string, to: string, page?: number, limit?: number): Promise<AxiosResponse<getAllMessage[]>> {
-    return await api.post('chat/getMessages', { from, to }, { params: { page, limit } })
+  getAllMessage: (from: string, to: string, page = 0, limit = 30, signal?: AbortSignal) =>
+    api.post<ChatMessage[]>('chat/getMessages', { from, to }, { params: { page, limit }, signal }),
+  recordMessage: (file: File, signal?: AbortSignal) => {
+    const form = new FormData()
+    form.append('recordMessage', file)
+    return api.postForm<string>('chat/recordMessage', form, { signal })
   },
-  async recordMessage (file: File): Promise<AxiosResponse<void>> {
-    const formData = new FormData()
-    formData.append('recordMessage', file)
-    return await api.post('chat/recordMessage', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+  uploadFile: (file: File, signal?: AbortSignal) => {
+    const form = new FormData()
+    form.append('file', file)
+    return api.postForm<string>('chat/file', form, { signal })
   },
-  async uploadFile (file: File): Promise<AxiosResponse<void>> {
-    const formData = new FormData()
-    formData.append('file', file)
-    return await api.post('chat/file', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  },
-  async removeFile (fileId: string): Promise<AxiosResponse<void>> {
-    return await api.delete(`/chat/file/${fileId.split('/').at(-1)}`)
-  }
+  removeFile: (url: string) =>
+    api.delete<void>('chat/file/' + encodeURIComponent(url.split('/').at(-1) || ''))
 }

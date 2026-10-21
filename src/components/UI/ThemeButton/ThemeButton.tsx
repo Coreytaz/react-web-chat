@@ -9,25 +9,30 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const ThemeButton: React.FC<ButtonProps> = ({
-  children,
+  children: _children,
   className,
   appearance,
   ...props
 }) => {
   return (
     <div className={styles.toggle}>
-      <button
-        className={cn(styles.button)}
-        {...props}
-      >
-        <img className={cn(styles.theme, {
-          [styles.dark]: appearance === 'dark'
-        })} src={Dark} alt="Dark" />
-        <img className={cn(styles.theme, {
-          [styles.dark]: appearance === 'light'
-        })} src={Light} alt="Light" />
+      <button className={cn(styles.button, className)} {...props}>
+        <img
+          className={cn(styles.theme, {
+            [styles.dark]: appearance === 'dark'
+          })}
+          src={Dark}
+          alt="Dark"
+        />
+        <img
+          className={cn(styles.theme, {
+            [styles.dark]: appearance === 'light'
+          })}
+          src={Light}
+          alt="Light"
+        />
       </button>
-      </div>
+    </div>
   )
 }
 

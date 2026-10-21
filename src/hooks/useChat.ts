@@ -1,69 +1,70 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React from 'react'
+import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import socket from '../service/chat/socket.service'
-import { getAllMessage } from '../types/Chat.interface'
-import { useAction } from './useAction'
+import { keys } from '../service/query'
+import { createMessageEventHandlers } from '../service/chat/message-events'
+import type { FriendRequest } from '../types/Chat.interface'
 import { useTypedSelector } from './useTypedSelector'
-
-export const useChat = (): void => {
-  const { _id } = useTypedSelector((state) => state.authSlice.user)
-  const { selectedUser, messages } = useTypedSelector((state) => state.selectedUserSlice)
-  const [arriveMes, setArriveMes] = React.useState<getAllMessage>(null!)
-  const { setMessages } = useAction()
-
-  React.useEffect(() => {
-    socket.on('MESG-RECIEVE', (data) => {
-      if (selectedUser?._id === data.from) {
-        setArriveMes({ fromSelf: false, ...data })
-      }
-    })
-    return () => {
-      socket.off('MESG-RECIEVE')
+import { useAction } from './useAction'
+export const useChat = () => {
+  const id = useTypedSelector((s) => s.authSlice.user._id)
+  const auth = useTypedSelector((s) => s.authSlice.auth)
+  const client = useQueryClient()
+  const { setOnline, setSuccess, setError } = useAction()
+  useEffect(() => {
+    if (!auth || !id) return
+    const connect = () => {
+      socket.emit('ADD-USER', id)
+      void client.invalidateQueries({ queryKey: ['messages', id] })
+      void client.invalidateQueries({ queryKey: keys.friends(id) })
+      void client.invalidateQueries({ queryKey: keys.requests(id) })
     }
-  }, [_id, selectedUser?._id, setMessages])
-
-  React.useEffect(() => {
-    socket.on('MESG-YOU', (data) => {
-      setMessages([...messages, { fromSelf: true, ...data }])
-    })
-    return () => {
-      socket.off('MESG-YOU')
+    const online = (users: string[]) => setOnline(users)
+    const operationError = (error: { code: string; message: string }) => {
+      setError({ error: 'Ошибка', message: error.message })
     }
-  }, [messages, setMessages])
-
-  React.useEffect(() => {
-    arriveMes && setMessages([...messages, arriveMes])
-  }, [arriveMes])
-
-  React.useEffect(() => {
-    socket.on('message:update-RECIEVE', ({ updatedMessage }) => {
-      const updatedMes = messages.map((mes) => {
-        if (mes.id === updatedMessage._id) {
-          return { ...mes, message: updatedMessage.message, updatedAt: updatedMessage.updatedAt, attachments: updatedMessage.attachments }
-        }
-        return mes
-      })
-      setMessages(updatedMes)
-    })
-    return () => {
-      socket.off('message:update-RECIEVE')
+    const connectionError = (error: Error) => {
+      setError({ error: 'Ошибка соединения с чатом', message: error.message })
     }
-  }, [messages, setMessages])
-
-  React.useEffect(() => {
-    socket.on('message:delete-RECIEVE', ({ removedMessage }) => {
-      setMessages(messages.filter((mes) => mes.id !== removedMessage._id))
-    })
-    return () => {
-      socket.off('message:delete-RECIEVE')
+    const { receive, update, remove } = createMessageEventHandlers(client, id)
+    const clear = () => {
+      void client.invalidateQueries({ queryKey: ['messages', id] })
     }
-  }, [messages, setMessages])
-
-  React.useEffect(() => {
-    socket.on('messages:clear-recieve', ({ clearAllmsg }) => {
-      console.log(clearAllmsg)
-    })
-  }, [messages, setMessages])
+    const request = (_data: { request: FriendRequest }) => {
+      void client.invalidateQueries({ queryKey: keys.requests(id) })
+      setSuccess('Вам пришло приглашение в друзья')
+    }
+    const accept = (_data: { request: FriendRequest }) => {
+      void client.invalidateQueries({ queryKey: keys.friends(id) })
+      void client.invalidateQueries({ queryKey: keys.requests(id) })
+      void client.invalidateQueries({ queryKey: ['search', id] })
+      setSuccess('Приглашение в друзья принято')
+    }
+    socket.on('connect', connect)
+    socket.on('connect_error', connectionError)
+    socket.on('operation:error', operationError)
+    socket.on('ADD-USER-STATUS', online)
+    socket.on('MESG-RECIEVE', receive)
+    socket.on('MESG-YOU', receive)
+    socket.on('message:update-RECIEVE', update)
+    socket.on('message:delete-RECIEVE', remove)
+    socket.on('messages:clear-recieve', clear)
+    socket.on('reguest:user-recieve', request)
+    socket.on('accept:user-recieve', accept)
+    socket.connect()
+    return () => {
+      socket.off('connect', connect)
+      socket.off('connect_error', connectionError)
+      socket.off('operation:error', operationError)
+      socket.off('ADD-USER-STATUS', online)
+      socket.off('MESG-RECIEVE', receive)
+      socket.off('MESG-YOU', receive)
+      socket.off('message:update-RECIEVE', update)
+      socket.off('message:delete-RECIEVE', remove)
+      socket.off('messages:clear-recieve', clear)
+      socket.off('reguest:user-recieve', request)
+      socket.off('accept:user-recieve', accept)
+      socket.disconnect()
+    }
+  }, [auth, id, client, setOnline, setSuccess, setError])
 }

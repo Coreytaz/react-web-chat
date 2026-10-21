@@ -1,27 +1,20 @@
-import { AxiosError, AxiosResponse } from 'axios'
-import { UseMutateAsyncFunction, useMutation } from 'react-query'
+import { useAccountMutation } from './useAccountMutation'
+import { useQueryClient } from '@tanstack/react-query'
 import { UserService } from '../../service/user/user.service'
-import { ErrorResData } from '../../types/Error.interface'
-import { IUser } from '../../types/User.interface'
 import { useAction } from '../useAction'
-
-interface useUpdateUserType {
-  userAsync: UseMutateAsyncFunction<AxiosResponse<IUser> | null, AxiosError<unknown>, void, unknown>
-}
-
-export const useUpdateUser = (email: string, username: string): useUpdateUserType => {
-  const { updateUser, setError, setSuccess } = useAction()
-
-  const { mutateAsync: userAsync } = useMutation('updateUser', async () => await UserService.updateUser({ email, username }), {
-    onError: (err: AxiosError) => {
-      const { message, error } = err.response?.data as ErrorResData
-      setError({ message, error })
-    },
+import type { AuthResponse } from '../../types/User.interface'
+export const useUpdateUser = (email: string, username: string) => {
+  const { updateUser, setSuccess } = useAction()
+  const client = useQueryClient()
+  const mutation = useAccountMutation({
+    mutationFn: () => UserService.updateUser({ email, username }),
     onSuccess: () => {
       updateUser({ email, username })
+      client.setQueryData<AuthResponse>(['session'], (old) =>
+        old ? { user: { ...old.user, email, username } } : old
+      )
       setSuccess('Данные изменены')
     }
   })
-
-  return { userAsync }
+  return { userAsync: () => mutation.mutate(), isPending: mutation.isPending }
 }

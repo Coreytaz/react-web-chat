@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-const NotFound: FC = (): JSX.Element => {
+const NotFound: FC = (): React.JSX.Element => {
   return (
     <h1>
       <span>😔</span>

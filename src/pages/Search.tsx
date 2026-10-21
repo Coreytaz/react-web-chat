@@ -1,79 +1,61 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { FC, useEffect, useRef, useState, MouseEvent } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Button, Input, UserBlock, UserBlockReqSkeleton } from '../components'
-import useDebounce from '../hooks/useDebounce'
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import Button from '../components/UI/Button/Button'
+import UserList from '../components/UserBlock/UserList'
+import UserSearchField from '../components/UserBlock/UserSearchField'
 import { useSearchUsers } from '../hooks/user/useSearchUsers'
+import { useFriendActions } from '../hooks/user/useFriendActions'
 import { useTypedSelector } from '../hooks/useTypedSelector'
-import socket from '../service/chat/socket.service'
-import { ReactComponent as Close } from '../assets/close.svg'
 import styles from '../style/Page/Search.module.scss'
-import { off } from 'process'
-
-const Search: FC = () => {
+export default function Search() {
   const navigate = useNavigate()
-  const [_, setSearchParams] = useSearchParams()
-  const [search, setSearch] = useState<string>('')
-  const inputRef = useRef<HTMLInputElement>(null)
-  const { refetch, isFetching, userList } = useSearchUsers()
-  const { _id } = useTypedSelector((state) => state.authSlice.user)
-  const debouncedValue = useDebounce<string>(search, 500)
-
-  useEffect(() => {
-    void refetch()
-  }, [debouncedValue, refetch])
-
-  const onClickRequestToFriends = (e: MouseEvent<HTMLButtonElement>, id: string): void => {
-    socket.emit('reguest:user', {
-      sender: _id,
-      taker: id
-    })
-    e.currentTarget.disabled = true
+  const [params, setParams] = useSearchParams()
+  const search = params.get('username') || ''
+  const { userList, isFetching, error } = useSearchUsers()
+  const id = useTypedSelector((state) => state.authSlice.user._id)
+  const [sent, setSent] = useState<string[]>([])
+  const { requestFriend } = useFriendActions()
+  const request = (taker: string) => {
+    if (requestFriend(taker)) setSent((old) => [...old, taker])
   }
-
-  const onClearSearch = (): void => {
-    setSearchParams()
-    setSearch('')
-    inputRef.current?.focus()
-  }
-
   return (
     <div className={styles.friend__block}>
-            <div className={styles.friend__header}>
-                <span onClick={() => navigate('/friends')}>Назад</span>
-                <h3>Все пользователя {userList?.total}</h3>
-            </div>
-            <div className={styles.search__friends}>
-                <Input name="Поиск" value={search} onChange={(e) => {
-                  setSearch(e.target.value)
-                  setSearchParams({ username: e.target.value })
-                }} placeholder="Введите запрос" required ref={inputRef} autoComplete={'off'}/>
-                {search && (
-                <Close className={styles.closeSearch} onClick={onClearSearch}/>
-                )}
-            </div>
-            <div className={styles.friends__list}>
-            {isFetching
-              ? [...new Array(5)].map((_, i) => <div className={styles.friends__user} key={i}>
-              <UserBlockReqSkeleton/>
-          </div>)
-              : userList?.items.length > 0
-                ? userList?.items.map((user) =>
-              <div className={styles.friends__user} key={user._id}>
-                <div>
-                    <UserBlock {...user}/>
-                </div>
-                <Button appearance='primary' onClick={(e) => onClickRequestToFriends(e, user._id)} disabled={user.friends}>Добавить в друзья</Button>
-              </div>)
-                : <h2 style={{ textAlign: 'center' }}>
-                <span>😔</span>
-                <br />
-                Не удалось найти пользователя
-              </h2>}
-            </div>
-        </div>
+      <div className={styles.friend__header}>
+        <span onClick={() => navigate('/friends')}>Назад</span>
+        <h3>Все пользователи {userList?.total ?? 0}</h3>
+      </div>
+      <UserSearchField
+        value={search}
+        onChange={(username) => setParams(username ? { username } : {}, { replace: true })}
+        placeholder="Введите запрос"
+        className={styles.search__friends}
+        clearClassName={styles.closeSearch}
+      />
+      <UserList
+        users={userList?.items ?? []}
+        loading={isFetching}
+        error={error}
+        errorMessage="Не удалось загрузить пользователей."
+        className={styles.friends__list}
+        rowClassName={styles.friends__user}
+        skeletonCount={5}
+        renderAction={(user) => (
+          <Button
+            appearance="primary"
+            disabled={user.friends || sent.includes(user._id) || user._id === id}
+            onClick={() => request(user._id)}
+          >
+            Добавить в друзья
+          </Button>
+        )}
+        empty={
+          <h2 style={{ textAlign: 'center' }}>
+            😔
+            <br />
+            Не удалось найти пользователя
+          </h2>
+        }
+      />
+    </div>
   )
 }
-
-export default Search

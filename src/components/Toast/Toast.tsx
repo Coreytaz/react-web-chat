@@ -1,29 +1,17 @@
-import React from 'react'
+import type { ToastItem } from '../../redux/slice/toastSlice'
+import ToastNotification from './ToastNotification'
 import styles from './Toast.module.scss'
-import TostList from './TostList'
-
-export interface toastList {
-  id: string
-  title: string
-  description: string
-  backgroundColor: string
-}
-
+export type ToastPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 interface ToastProps {
-  toastlist: toastList[]
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  toastlist: ToastItem[]
+  position: ToastPosition
 }
-
-const Toast: React.FC<ToastProps> = ({ position, toastlist }) => {
+export default function Toast({ position, toastlist }: ToastProps) {
   return (
-    <div className={`${styles.container}`}>
-      {
-        toastlist.map((toast) => (
-          <TostList key={toast.id} {...toast} position={position}/>
-        ))
-      }
+    <div className={styles.container}>
+      {toastlist.map((toast) => (
+        <ToastNotification key={toast.id} {...toast} position={position} />
+      ))}
     </div>
   )
 }
-
-export default Toast
