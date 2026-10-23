@@ -12,6 +12,42 @@ import { useLogout } from './useLogout'
 import Home from '../../pages/Home'
 import App from '../../App'
 import Auth from '../../pages/Auth'
+import { AuthService } from '../../service/auth.service'
+import authReducer, { authActions } from '../../redux/slice/authSlice'
+import type { AuthResponse } from '../../types/User.interface'
+
+describe('invalid session responses', () => {
+  it.each([{}, { user: null }, { user: {} }, '<!doctype html>'])(
+    'rejects malformed auth data: %j',
+    async (data) => {
+      server.use(
+        http.get('http://localhost/api/auth/refresh', () => HttpResponse.json(data)),
+        http.post('http://localhost/api/auth/login', () => HttpResponse.json(data)),
+        http.post('http://localhost/api/auth/register', () => HttpResponse.json(data))
+      )
+      await expect(AuthService.refresh()).rejects.toThrow('некорректные данные сессии')
+      await expect(AuthService.login('tester', 'secret')).rejects.toThrow(
+        'некорректные данные сессии'
+      )
+      await expect(AuthService.register('test@example.test', 'secret', 'tester')).rejects.toThrow(
+        'некорректные данные сессии'
+      )
+      const authenticated = authReducer(undefined, authActions.isAuth({ user }))
+      const state = authReducer(authenticated, authActions.isAuth(data as AuthResponse))
+      expect(state.auth).toBe(false)
+      expect(state.user._id).toBe('')
+    }
+  )
+
+  it('shows a retryable error instead of crashing when refresh returns no user', async () => {
+    server.use(http.get('http://localhost/api/auth/refresh', () => HttpResponse.json({})))
+    const h = harness(false)
+    h.render(<App />)
+    expect(await screen.findByRole('alert')).toHaveTextContent('Не удалось проверить сессию')
+    expect(h.store.getState().authSlice.user._id).toBe('')
+    expect(h.store.getState().authSlice.auth).toBe(false)
+  })
+})
 describe('authentication', () => {
   it('waits for refresh before rendering a protected route and preserves sel on return', async () => {
     server.use(

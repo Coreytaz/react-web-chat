@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { AuthResponse, SessionUser } from '../../types/User.interface'
+import { isAuthResponse } from '../../types/User.interface'
 const emptyUser: SessionUser = { _id: '', email: '', login: '', username: '', avatar: null }
 const initialState = { auth: false, user: emptyUser }
 export const authSlice = createSlice({
@@ -7,6 +8,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     isAuth(state, action: PayloadAction<AuthResponse>) {
+      if (!isAuthResponse(action.payload)) return initialState
       state.auth = true
       state.user = action.payload.user
     },
