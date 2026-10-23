@@ -4,15 +4,17 @@
 
 ## Запуск
 
-Требуется Node.js 24 LTS и npm. Версия указана в .nvmrc и engines.
+Требуется Node.js 24 LTS и pnpm 12.14.0. Версия указана в .nvmrc и engines.
 
 ```powershell
-npm ci
+corepack enable
+corepack prepare pnpm@12.14.0 --activate
+pnpm install --frozen-lockfile
 Copy-Item .env.example .env.local
-npm start
+pnpm start
 ```
 
-Откройте адрес из вывода Vite (обычно http://localhost:5173). npm run dev — синоним npm start.
+Откройте адрес из вывода Vite (обычно http://localhost:5173). pnpm run dev — синоним pnpm start.
 
 | Переменная      | Локальная разработка   | Production                                                            |
 | --------------- | ---------------------- | --------------------------------------------------------------------- |
@@ -27,12 +29,12 @@ Dev proxy проксирует /api и /socket.io на DEV_BACKEND_URL. Толь
 ## Проверки
 
 ```powershell
-npm run typecheck
-npm run lint
-npm test
-npm run test:integration
-npm run build
-npm run preview
+pnpm run typecheck
+pnpm run lint
+pnpm test
+pnpm run test:integration
+pnpm run build
+pnpm run preview
 ```
 
 build выполняет проверку TypeScript и создаёт dist. preview показывает production bundle, но не предоставляет dev proxy. Для проверки preview с API укажите подходящие VITE_* при сборке или используйте собственный reverse proxy. Vercel настроен на dist и SPA fallback; в настройках проекта задайте адреса существующего API и Socket.IO. Автоматическая публикация в рамках рефакторинга не выполняется.
@@ -53,7 +55,7 @@ node tests/fixtures/server.mjs
 
 ```powershell
 $env:DEV_BACKEND_URL='http://127.0.0.1:5050'
-npm start
+pnpm start
 ```
 
 Сервер fixture слушает только 127.0.0.1:5050 и хранит вымышленные данные в памяти. Логины alice и boris, любой непустой пароль. Для двух независимых сессий используйте разные браузерные профили. Поддержаны вход/выход/refresh, профиль, друзья, поиск, история и отправка/редактирование/удаление сообщений. Регистрация, загрузки, реальные приглашения и серверная очистка этим fixture не реализованы; media и uploads проверяются автоматическими тестами. Fixture не предназначен для публикации.
@@ -66,7 +68,7 @@ Redux хранит авторизацию, онлайн-статусы и уве
 
 ## Версии и ограничения
 
-Версии прямых зависимостей зафиксированы вместе с package-lock.json. Используются последние стабильные версии на момент обновления. Исключение: TypeScript 6.0.3 вместо 7, поскольку установленный typescript-eslint поддерживает TypeScript <6.1. Не применялись --force или --legacy-peer-deps.
+Версии прямых зависимостей зафиксированы вместе с pnpm-lock.yaml. Используются последние стабильные версии на момент обновления. Исключение: TypeScript 6.0.3 вместо 7, поскольку установленный typescript-eslint поддерживает TypeScript <6.1. Не применялись --force или --legacy-peer-deps.
 
 Локальный backend находится в соседнем проекте `D:/project/React_Chat_Back`. Он проверяет cookie JWT для HTTP и Socket.IO, ограничивает события участниками переписки и сообщает об ошибках через `operation:error`. Очистка переписки удаляет только собственные сообщения. Исторические названия HTTP-маршрутов и Socket.IO-событий сохранены.
 
@@ -84,3 +86,7 @@ Redux хранит авторизацию, онлайн-статусы и уве
 - `types/` — модели `PublicUser`, `SessionUser`, `AuthResponse`, `ChatMessage` и `Attachment`. Серверные данные хранятся в TanStack Query, текущая сессия/online/уведомления — в Redux, черновики и раскрытые меню — в локальном состоянии.
 
 При добавлении поведения оставляйте разметку в компоненте, а самостоятельные сетевые или браузерные сценарии — в профильном хуке. Маленькие UI-компоненты не требуют отдельного хука. `memo` используется для сообщений и аватаров; селектор online-статуса подписан на конкретного пользователя, чтобы изменения чужого статуса не обновляли все строки.
+
+## Менеджер пакетов
+
+Версия pnpm закреплена в `packageManager`. У каждого репозитория свой `pnpm-lock.yaml`; после изменения зависимостей обновляйте его через `pnpm install`. Для воспроизводимой установки используйте `pnpm install --frozen-lockfile`. Настройки pnpm и разрешения install-скриптов находятся в `pnpm-workspace.yaml`. Vercel вызывает pnpm через Corepack, чтобы использовать закреплённую версию.
